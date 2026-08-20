@@ -61,7 +61,7 @@ const rules = [
     severity: "warning",
     message: "Empty test — green with zero meaning (H3). Write the contract or delete the test.",
     test(line) {
-      const m = /\b(it|test)\s*\(\s*["'][^"']*["']\s*,\s*(?:async\s*)?(?:\([^)]*\)|function\s*\([^)]*\))\s*=>?\s*\{\s*\}\s*\)/i.exec(line);
+      const m = /\b(it|test)\s*\(\s*["'][^"']*["']\s*,\s*(?:async\s*)?(?:\([^)]*\)|function\s*\([^)]*\))\s*=>?\s*\{\s*(?:\/\*[^*/]*\*\/|\/\/[^}]*)?\s*\}\s*\)/i.exec(line);
       if (m) return m[0].slice(0, 60);
       const py = /\bdef\s+(test_[a-z0-9_]+)\s*\([^)]*\)\s*:\s*pass\s*(?:#.*)?$/i.exec(line);
       return py ? `${py[1]}(): pass` : null;
@@ -74,12 +74,16 @@ const rules = [
     test(line) {
       const js = /expect\(\s*(true|false|\d+|'[^']*'|"[^"]*")\s*\)\.(toBe|toEqual|toStrictEqual)\(\s*\1\s*\)/i.exec(line);
       if (js) return `expect(${js[1]}) ${js[2]} ${js[1]}`;
+      const sameId = /expect\(\s*([a-zA-Z_$][\w$]*)\s*\)\.(toBe|toEqual|toStrictEqual)\(\s*\1\s*\)/i.exec(line);
+      if (sameId) return `expect(${sameId[1]}) ${sameId[2]} ${sameId[1]} — always passes`;
       const py = /assert(?:Equal|True)?\(\s*(True|False|\d+|'[^']*')\s*,?\s*\1?\s*\)/i.exec(line);
       if (py && (py[0].includes("assertEqual") || /assert\s+(True|False)\b/i.test(line))) {
         const simple = /assert\s+(True|False)\b/i.exec(line);
         if (simple) return `assert ${simple[1]}`;
         return `assertEqual(${py[1]}, ${py[1]})`;
       }
+      const samePy = /assert(?:Equal|Equals)?\(\s*([a-z_][\w]*)\s*,\s*\1\s*\)/i.exec(line);
+      if (samePy) return `assertEqual(${samePy[1]}, ${samePy[1]}) — always passes`;
       const pyBare = /\bassert\s+(True|False)\s*(#.*)?$/i.exec(line);
       return pyBare ? `assert ${pyBare[1]}` : null;
     },
@@ -106,7 +110,7 @@ const rules = [
     severity: "warning",
     message: "Retry mask on a test — the flake still exists, now slower (F4). Fix the root cause; a retry is a stopgap with a ticket.",
     test(line) {
-      const m = /\bretryTimes\s*\(|\bmark\.flaky\b|@flaky\s*\(|@retry\s*\(|\breruns\s*=/i.exec(line);
+      const m = /\bretryTimes\s*\(|\bmark\.flaky\b|@flaky\s*\(|@retry\s*\(|\breruns\s*=|\bthis\.retries\s*\(/i.exec(line);
       return m ? m[0].trim() : null;
     },
   },
@@ -172,6 +176,11 @@ function isTestFile(p) {
   return TEST_FILE_RE.test(p.replaceAll("\\", "/"));
 }
 
+// Integration/E2E-level files honestly hit local services — the network rule does not apply
+function isNetworkHonest(p) {
+  return /(^|[/\\])(integration|e2e|api|contract)([/\\]|$)/i.test(p.replaceAll("\\", "/"));
+}
+
 function scan(file) {
   const findings = [];
   let text;
@@ -185,6 +194,7 @@ function scan(file) {
 
   lines.forEach((raw, i) => {
     for (const rule of rules) {
+      if (rule.id === "network-in-test" && isNetworkHonest(file)) continue;
       const detail = rule.test(raw);
       if (detail) {
         findings.push({ file: basename(file), line: i + 1, rule: rule.id, severity: rule.severity, message: rule.message, detail });

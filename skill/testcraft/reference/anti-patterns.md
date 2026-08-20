@@ -56,7 +56,8 @@ deterministic rule in `scripts/check.mjs`; the rest are LLM-judged with this fil
 
 ## Detector mapping
 
-`scripts/check.mjs` deterministically catches: H1 (focused), H2 (skipped), H3 (empty tests incl.
-`def test_x(): pass`), H4 (tautological assertions), F1 (sleeps), F2 (unseeded randomness), F4
-(retry masks), L2 (network in test files), H5-ish (files with tests but zero assertions). The rest
-are LLM-judged — keep this file loaded when auditing or reviewing.
+`scripts/check.mjs` deterministically catches, with these rule ids: `focused-test` (H1),
+`skipped-test` (H2), `empty-test` (H3, incl. `def test_x(): pass`), `tautological-assertion` (H4),
+`sleep-in-test` (F1), `random-in-test` (F2), `retry-mask` (F4), `network-in-test` (L2 — exempt
+for files whose path declares integration/e2e), `no-assertions-in-file` (H5). The rest are
+LLM-judged — keep this file loaded when auditing or reviewing.

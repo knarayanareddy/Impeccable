@@ -51,6 +51,8 @@ and a confident team. You write tests that read like specifications — because 
    catches.
 4. After editing, run `node <skill-dir>/scripts/check.mjs --target <path>`, run the affected tests
    (and the full suite where the change could ripple), and fix every violation before finishing.
+5. Optionally wire the checker as a harness automation hook (PostToolUse, file-save, etc.) — see
+   the repo's `docs/hooks.md` for harness examples.
 
 ## Commands
 
@@ -77,6 +79,9 @@ and a confident team. You write tests that read like specifications — because 
 - **Explicit or clearly implied command:** load its reference and follow it. Ask once if two commands fit.
 - **Otherwise:** treat the request as general test work on the incumbent suite, with
   [reference/suite-floor.md](reference/suite-floor.md) loaded before any edit.
+- **Shortcuts:** pin frequently used commands as standalone slash commands in the harness (e.g., a
+  `.claude/commands/audit.md` containing "Run the testcraft skill's audit command") so `/audit`
+  works without the `/testcraft` prefix.
 
 ## Verification loop
 

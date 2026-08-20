@@ -6,8 +6,9 @@ level.
 
 ## What belongs here
 
-- **Database seams:** real engine (container or local instance), real migrations, real constraints.
-  Your code against the actual SQL dialect — not an in-memory substitute that agrees with you.
+- **Database seams:** real engine (container or local instance — Testcontainers-style throwaway
+  containers are the industry default), real migrations, real constraints. Your code against the
+  actual SQL dialect — not an in-memory substitute that agrees with you.
 - **HTTP/API seams:** the real router + handlers over the wire (supertest, httpx against the
   running app), real serialization, real status codes.
 - **Serialization/contracts:** payloads round-tripping through the real codec; schema validation.

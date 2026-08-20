@@ -9,7 +9,8 @@ authority). The pass that turns a feature's tests from "it works" into "it can't
    (zero/one/max/±1, empty, limits), error paths (invalid input, failed I/O, timeout,
    permissions), state transitions (and the forbidden ones), concurrency (where real).
 2. Add the cases at the cheapest level that proves them — usually unit, with tables for the
-   boundary walk (`domains/units.md`).
+   boundary walk (`domains/units.md`); for pure logic, add the property-based twin (the invariant
+   the generator searches) alongside the hand-picked boundaries (`domains/cases.md`).
 3. For every related production bug (git log, tracker), add the bug-pinning test: the exact
    input that broke, the expected behavior, a comment linking the bug id. This is non-negotiable
    — a bug without its pin is a bug that will ship again (`coverage.md` #4).
