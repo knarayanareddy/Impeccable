@@ -21,6 +21,25 @@ one-line install.**
 | **[`testcraft`](skill/testcraft/SKILL.md)** | Testing (unit, integration, E2E) | *Tests are executable specifications. Confidence, not numbers.* |
 | **[`perfcraft`](skill/perfcraft/SKILL.md)** | Performance (web, backend, data, delivery) | *Measure before you optimize. The user's clock is the only clock.* |
 | **[`seccraft`](skill/seccraft/SKILL.md)** | Security (threat modeling, authn/authz, injection, secrets) | *Security is the design of failure, not a final scan. Trust is explicit.* |
+| **[`obscraft`](skill/obscraft/SKILL.md)** | Observability (logs, metrics, traces, alerts, SLOs) | *Logs that lie are worse than no logs. Every page wakes a human who can act.* |
+
+### obscraft — the Impeccable of observability
+
+- **15 commands** — a shared vocabulary: `slo` (signature: SLOs and error budgets from user
+  journeys), `alert` (actionability + burn rates, no fatigue), `correlate` (link the pillars),
+  `instrument`, `log`, `metric`, `trace`, `dashboard`, `monitor`, `respond`, `audit`, `review`,
+  `measure`…
+- **8 domain references** — **telemetry** (the differentiator: the question-first doctrine),
+  logs, metrics, traces, slos, alerts, dashboards, incidents
+- **A signal floor** — every journey has an SLO, every page is actionable, percentiles
+  everywhere, one correlation ID through every hop, cost budgeted
+- **20 observability-slop anti-patterns** — log-everything, "Something went wrong", mean-only
+  metrics, alerts nobody can act on, alert fatigue, dead-end traces, cargo-cult dashboards…
+  each with the fix
+- **A deterministic checker** — `scripts/check.mjs`: secrets/PII in logs, generic errors,
+  string-concat logs, log-in-loop, mean-only metrics, metric-name scatter, alerts without
+  owners, missing correlation propagation, no SLO definitions — zero dependencies, no LLM, no
+  API key
 
 ### seccraft — the Impeccable of security
 
@@ -126,6 +145,7 @@ npx skills add knarayanareddy/Impeccable --skill dbcraft
 npx skills add knarayanareddy/Impeccable --skill testcraft
 npx skills add knarayanareddy/Impeccable --skill perfcraft
 npx skills add knarayanareddy/Impeccable --skill seccraft
+npx skills add knarayanareddy/Impeccable --skill obscraft
 
 # Claude Code (plugin marketplace)
 /plugin marketplace add knarayanareddy/Impeccable
@@ -147,6 +167,8 @@ Then, in your AI coding tool:
 /perfcraft budget .              # performance budgets as code + CI regression gates
 /seccraft threatmodel orders     # trust boundaries → threats → tickets
 /seccraft authz src/api          # object-level authorization: fix the IDOR class
+/obscraft slo checkout           # SLOs and error budgets from the user journey
+/obscraft alert .                # every page actionable, no fatigue
 ```
 
 Manual install: copy a skill folder (`skill/codecraft/`, `skill/criterion/`) into your agent's
@@ -177,7 +199,7 @@ instead of judgment:
 | **Testing** | ✅ **shipped as `testcraft`** | `.only` left in, sleeps, tautological asserts, retry masks — suite floor + checker |
 | **Performance** | ✅ **shipped as `perfcraft`** | Optimize-without-measuring, N+1s, benchmark theater — perf floor + checker |
 | **Security** | ✅ **shipped as `seccraft`** | Complements tool-based scanners: trust-model judgment, authn-vs-authz, secure defaults — floor + checker |
-| **Observability** | planned | Logs that lie, metrics without meaning — what to record and why |
+| **Observability** | ✅ **shipped as `obscraft`** | Logs that lie, pages nobody can act on, unlinked pillars — signal floor + checker |
 | **DevOps / CI-CD** | planned | Pipeline slop: unreviewable workflows, deploy fear — the craft of shipping |
 | **Debugging** | planned | Print-debugging, shotgun fixes — root-cause discipline (`repro`, `bisect`, `hypothesis`) |
 

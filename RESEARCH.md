@@ -306,6 +306,20 @@ SKILL.md + reference/ + scripts/ + plugin.json + README row + before/after demo.
   attacks exploit defaults, missing checks, and the moment someone said "we'll harden it
   later."
 
+## 12f. Observability facet notes (shipped as `obscraft`)
+
+- **The landscape:** observability skills exist only as vendor-bound pieces (Sentry's skill) or
+  scattered checklists; no standalone category-defining *observability-craft* skill owns the
+  question-first doctrine — what to record and why.
+- **The differentiators:** the telemetry domain (every signal answers a named question with an
+  owner), `slo` as the signature command (error budgets from user journeys — observability as
+  product management), the actionability contract for alerts (every page wakes a human who can
+  act), and a deterministic checker for the slop tells (secrets/PII in logs, mean-only metrics,
+  metric-name scatter, unowned alerts, missing correlation propagation).
+- **The facet's "second hour" insight:** *logs that lie are worse than no logs* — telemetry that
+  answers no question, pages nobody can act on, and pillars that never link is noise with a
+  subscription fee.
+
 ## 13. Sources (engineering landscape)
 
 - [addyosmani/agent-skills — comparison doc](https://github.com/addyosmani/agent-skills/blob/main/docs/comparison.md)
