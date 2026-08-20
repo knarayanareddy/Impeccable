@@ -267,6 +267,20 @@ SKILL.md + reference/ + scripts/ + plugin.json + README row + before/after demo.
 - **The facet's "second hour" insight:** *data outlives code* — the schema is the longest-lived
   interface in the system; design for its decade, not the app's sprint.
 
+## 12c. Testing facet notes (shipped as `testcraft`)
+
+- **The landscape:** testing skills are dominated by *process* (obra/superpowers' TDD loop,
+  mattpocock's /tdd, anthropics' webapp-testing Playwright skill). None own the *quality of the
+  suite itself* — the confidence craft: which tests lie, which flake, which cost the team its
+  trust in red.
+- **The differentiators:** the suite floor (every test asserts a contract; determinism by
+  construction; no sleeps; focused tests never merge), the case-inventory model (shape →
+  scaffold), and a checker aimed at the honesty tells: `.only`/`.skip`, empty tests (including
+  Python's `def test_x(): pass`), tautological assertions, sleep-as-sync, retry masks.
+- **The facet's "second hour" insight:** *a green suite must be believable* — tests are executable
+  specifications, and a test that can't fail when behavior breaks is a lie wearing a test's
+  clothes.
+
 ## 13. Sources (engineering landscape)
 
 - [addyosmani/agent-skills — comparison doc](https://github.com/addyosmani/agent-skills/blob/main/docs/comparison.md)

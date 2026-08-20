@@ -18,6 +18,21 @@ one-line install.**
 | **[`codecraft`](skill/codecraft/SKILL.md)** | Code quality & maintainability (any language) | *Code is read ten times more than it is written. Simplify or justify.* |
 | **[`apicraft`](skill/apicraft/SKILL.md)** | API design (REST, GraphQL, gRPC, webhooks) | *An API is a promise, not an endpoint. Judge from the consumer's code.* |
 | **[`dbcraft`](skill/dbcraft/SKILL.md)** | Database & schema (SQL + ORM-managed) | *Data outlives code. The schema is the longest-lived interface in the system.* |
+| **[`testcraft`](skill/testcraft/SKILL.md)** | Testing (unit, integration, E2E) | *Tests are executable specifications. Confidence, not numbers.* |
+
+### testcraft — the Impeccable of testing
+
+- **14 commands** — a shared vocabulary: `shape`, `scaffold`, `flaky`, `strengthen`, `isolate`,
+  `speedup`, `harden`, `cover`, `prune`, `name`, `audit`, `review`, `measure`…
+- **8 domain references** — cases, units, fakes, integration, e2e, assertions, determinism,
+  coverage
+- **A suite floor** — every test asserts a contract, deterministic by construction, no sleeps,
+  no focused tests merged, behavior over implementation
+- **20 test-slop anti-patterns** — `.only` left in, skipping accumulating, empty tests,
+  tautological assertions, sleep-as-sync, retry masks, coverage theater… each with the fix
+- **A deterministic checker** — `scripts/check.mjs`: focused/skipped tests, empty tests (incl.
+  `def test_x(): pass`), tautological assertions, sleeps, unseeded randomness, retry masks,
+  network calls in tests, files with tests but no assertions — zero dependencies, no LLM, no API key
 
 ### dbcraft — the Impeccable of database/schema design
 
@@ -76,6 +91,7 @@ npx skills add knarayanareddy/Impeccable --skill codecraft
 npx skills add knarayanareddy/Impeccable --skill criterion
 npx skills add knarayanareddy/Impeccable --skill apicraft
 npx skills add knarayanareddy/Impeccable --skill dbcraft
+npx skills add knarayanareddy/Impeccable --skill testcraft
 
 # Claude Code (plugin marketplace)
 /plugin marketplace add knarayanareddy/Impeccable
@@ -91,6 +107,8 @@ Then, in your AI coding tool:
 /apicraft audit .                # API defect scan + deterministic checker
 /dbcraft constrain .             # add the constraints the schema is missing
 /dbcraft migrate                 # write safe, reversible, tested migrations
+/testcraft flaky .               # hunt and fix flaky tests — root cause, never retries
+/testcraft strengthen src/cart   # weak assertions → contract-pinning assertions
 ```
 
 Manual install: copy a skill folder (`skill/codecraft/`, `skill/criterion/`) into your agent's
@@ -118,7 +136,7 @@ instead of judgment:
 |---|---|---|
 | **API design** (REST/GraphQL/RPC) | ✅ **shipped as `apicraft`** | Endpoints that lie, pagination that breaks, errors that leak — contract-first + deterministic checker |
 | **Database & schema** | ✅ **shipped as `dbcraft`** | Nullable-everything, no constraints, floats for money, destructive migrations — schema floor + checker |
-| **Testing** | planned | Tests that test implementation, sleeps, no assertions — test-craft vocabulary |
+| **Testing** | ✅ **shipped as `testcraft`** | `.only` left in, sleeps, tautological asserts, retry masks — suite floor + checker |
 | **Performance** | planned | Optimize-without-measuring, N+1s, jank — profile-first discipline |
 | **Security** | planned | Complements tool-based scanners: authn/authz judgment, threat-model habits |
 | **Observability** | planned | Logs that lie, metrics without meaning — what to record and why |
