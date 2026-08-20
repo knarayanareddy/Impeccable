@@ -136,6 +136,7 @@ ${flakes.map((f, idx) => `  <div class="flake" id="flake-${idx}" data-name="${es
       <button class="fix" onclick="verdict(${idx}, 'fix-now')">Fix now</button>
       <button class="quarantine" onclick="verdict(${idx}, 'quarantine-ticket')">Quarantine + ticket</button>
       <button class="external" onclick="verdict(${idx}, 'known-external')">Known external</button>
+      <button class="quarantine" onclick="verdict(${idx}, 'cannot-reproduce')">Cannot reproduce</button>
       <button class="external" onclick="verdict(${idx}, 'n/a')">N/A</button>
     </div>
   </div>`).join("\n")}
@@ -187,7 +188,7 @@ ${flakes.map((f, idx) => `  <div class="flake" id="flake-${idx}" data-name="${es
           const known = new Set(flakes.map((f) => f.test));
           const valid = {};
           for (const [test, v] of Object.entries(verdicts)) {
-            if (known.has(test) && ["fix-now", "quarantine-ticket", "known-external", "n/a"].includes(v)) valid[test] = v;
+            if (known.has(test) && ["fix-now", "quarantine-ticket", "known-external", "cannot-reproduce", "n/a"].includes(v)) valid[test] = v;
           }
           if (Object.keys(valid).length !== flakes.length) {
             res.writeHead(400, { "content-type": "application/json" });

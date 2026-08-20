@@ -114,6 +114,31 @@ async function healthScenario(name, dirFiles, { contains = [], notContains = [] 
   }
 }
 
+await healthScenarioJson("suite-health: --json shape and two-record history trend", {
+  "a.test.js": `it.skip("x", () => { expect(work()).toBe(42); });\n`,
+});
+async function healthScenarioJson(name, dirFiles) {
+  const dir = TMP + "-shj";
+  mkdirSync(dir, { recursive: true });
+  for (const [fname, content] of Object.entries(dirFiles)) writeFileSync(join(dir, fname), content);
+  try {
+    const hist = join(dir, "history.json");
+    let out = "";
+    try { out = execFileSync("node", [HEALTH, "--target", dir, "--history", hist, "--json"], { encoding: "utf8" }); }
+    catch (e) { out = (e.stdout || "") + (e.stderr || ""); }
+    const parsed = JSON.parse(out);
+    if (parsed.worstFiles === undefined || parsed.ruleCounts === undefined) throw new Error("missing aggregate fields");
+    execFileSync("node", [HEALTH, "--target", dir, "--history", hist], { stdio: "pipe" });
+    const history = JSON.parse(readFileSync(hist, "utf8"));
+    if (history.length !== 2) throw new Error(`expected 2 history records, got ${history.length}`);
+    console.log(`✓ ${name}`); pass++;
+  } catch (e) {
+    console.log(`✗ ${name} — ${e.message}`); fail++;
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
 await healthScenario("suite-health: ranks worst files and appends history", {
   "a.test.js": `it.only("x", () => { expect(1).toBe(1); });\n`,
   "b.test.js": `it("x", () => { expect(1).toBe(1); });\n`,

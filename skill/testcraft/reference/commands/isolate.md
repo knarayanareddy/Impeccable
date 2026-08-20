@@ -5,7 +5,9 @@ parallel, a hundred times (`domains/determinism.md` is the authority).
 
 ## Steps
 
-1. Find the couplings (inspection + the order-dependence probe):
+1. If the framework is Jest/Vitest, pytest, or Playwright, the matching
+   `reference/frameworks/` sheet is this command's framework authority (isolation flags,
+   fixtures, contexts). Then find the couplings (inspection + the order-dependence probe):
    - Global/static mutable state (singletons with memory, module-level caches, env vars set and
      never reset).
    - Shared resources (one DB per suite with no per-test cleanup, shared files, shared ports).

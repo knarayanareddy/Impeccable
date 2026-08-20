@@ -66,7 +66,7 @@ const totalWarnings = findings.length - totalErrors;
 if (json) {
   console.log(
     JSON.stringify({
-      filesScanned: report.files || report.testFiles || 0,
+      filesScanned: report.testFiles || report.files || 0,
       totalErrors,
       totalWarnings,
       worstFiles: ranked.slice(0, topN),
@@ -74,7 +74,7 @@ if (json) {
     }, null, 2)
   );
 } else {
-  console.log(`suite-health: ${report.files || report.testFiles || 0} test file(s) · ${totalErrors} error(s), ${totalWarnings} warning(s)\n`);
+  console.log(`suite-health: ${report.testFiles || report.files || 0} test file(s) · ${totalErrors} error(s), ${totalWarnings} warning(s)\n`);
   if (ranked.length) {
     console.log(`Worst files (top ${topN}):`);
     for (const f of ranked.slice(0, topN)) {

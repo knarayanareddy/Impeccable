@@ -5,7 +5,9 @@ signature confidence move: a strengthened assertion is a green lie converted int
 
 ## Steps
 
-1. Find the weak spots (checker + inspection): truthiness finals (`toBeTruthy`), existence-only
+1. If the framework is Jest/Vitest, pytest, or Playwright, the matching
+   `reference/frameworks/` sheet is the assertion-idiom baseline. Find the weak spots
+   (checker + inspection): truthiness finals (`toBeTruthy`), existence-only
    checks (`toBeDefined`, `not.toBeNull` alone), `assert x`, `not.toThrow()` as the whole test,
    assert-on-mock-only tests, circular expected values.
 2. For each, derive the contract the test *should* pin, from the spec or the public interface:

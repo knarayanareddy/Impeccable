@@ -20,7 +20,9 @@ the root-cause discipline is that command's playbook (`domains/determinism.md`).
    node <skill-dir>/scripts/flake-review.mjs --round r1 --wait --timeout 900
    ```
 
-3. The human verdicts each flake — **fix now / quarantine + ticket / known external / n/a**
+3. The human verdicts each flake — **fix now / quarantine + ticket / known external /
+   cannot reproduce / n/a** (cannot-reproduce is the honest state between quarantine and fix —
+   the `flaky` command's reproduce-first gate owns what happens next)
    (retry-masking is deliberately not on the menu). `--wait` prints the recorded verdicts;
    `fix-now` entries become the root-cause worklist for `flaky`, `quarantine-ticket` entries
    get their ticket with the quarantine honored — silently quarantined forever is still a
