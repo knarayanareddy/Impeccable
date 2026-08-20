@@ -72,6 +72,19 @@ const rules = [
       if (/catch\s*\([^)]*\)\s*\{\s*\}/.test(line)) return "catch {}";
       if (/except[^:]*:\s*pass\s*(#.*)?$/.test(line)) return "except: pass";
       if (/catch\s*\([^)]*\)\s*\{\s*\/\/\s*ignore/i.test(line)) return "catch ignored";
+      // comment-only body: `catch (e) { /* TODO handle */ }` — single-line and opening-line forms
+      if (/catch\s*\([^)]*\)\s*\{\s*(?:\/\*[^*/]*\*\/|\/\/[^}]*)\s*\}?/.test(line)) return "catch { /* comment */ }";
+      return null;
+    },
+  },
+  {
+    id: "silent-catch-return",
+    severity: "warning",
+    message: "Silent return from catch — failure becomes indistinguishable from 'no result' (anti-patterns.md E3). Use result types or rethrow with context.",
+    test(line) {
+      if (/catch\s*\([^)]*\)\s*\{\s*return\s+(?:null|undefined|-1|false)\s*;?\s*\}/i.test(line)) return "catch { return null }";
+      if (/catch\s*\([^)]*\)\s*\{\s*return\s*;?\s*\}/.test(line)) return "catch { return; }";
+      if (/except[^:]*:\s*return\s+(?:None|-1|False)\s*(#.*)?$/i.test(line)) return "except: return None";
       return null;
     },
   },

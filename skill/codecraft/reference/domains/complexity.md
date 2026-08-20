@@ -11,8 +11,10 @@ performance, or domain modeling. The job of craft is to keep the tax as low as t
 - **Parameters** — 4+ means a hidden concept (#4).
 - **Cyclomatic complexity** — branches per function; >10 is a smell, >20 is a review blocker unless
   the domain itself branches (parsers, dispatchers).
-- **Cognitive load** — the count of things a reader must hold at once: flags, early mutations,
-  distant definitions. Reduce it, then measure again.
+- **Cognitive complexity** (SonarSource's metric, the industry standard) — weights nesting and
+  control-flow breaks over raw lines: a function can be short and cognitively dense. Use it in
+  `measure` alongside length; treat a per-function score > 15 as the review threshold where the
+  linter supports it.
 - **Duplication** — the same decision made twice (`domains/duplication.md`).
 - **Change coupling** — files that always change together are one module wearing two names
   (`domains/structure.md`).

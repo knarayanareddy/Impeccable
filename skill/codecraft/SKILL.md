@@ -44,9 +44,14 @@ the code simpler, and you can say exactly why each change serves the reader.
    explicit or clearly implied command. Then inspect the target and at least one neighboring file to
    absorb the codebase's conventions before editing.
 3. Load [reference/quality-floor.md](reference/quality-floor.md) **immediately before editing code**. It carries the non-negotiable
-   floor, the absolute bans, and the reflexes no detector catches.
+   floor, the absolute bans, and the reflexes no detector catches. The floor's ceilings are
+   tunable: `init` writes the project's overrides into CODEBASE.md (and optionally
+   `.codecraft/config.json` — see `assets/codecraft.config.example.json`); team rules stricter
+   than the defaults always win.
 4. After editing, run `node <skill-dir>/scripts/check.mjs --target <path>` on the changed files, run the
    project's tests/types/formatting where they exist, and fix every violation before finishing.
+5. Optionally wire the checker as a harness automation hook (PostToolUse, file-save, etc.) — see
+   the repo's `docs/hooks.md` for harness examples.
 
 ## Commands
 
@@ -74,6 +79,9 @@ the code simpler, and you can say exactly why each change serves the reader.
 - **Explicit or clearly implied command:** load its reference and follow it. Ask once if two commands fit.
 - **Otherwise:** treat the request as general code-quality work on the incumbent implementation, with
   [reference/quality-floor.md](reference/quality-floor.md) loaded before any edit.
+- **Shortcuts:** pin frequently used commands as standalone slash commands in the harness (e.g., a
+  `.claude/commands/audit.md` containing "Run the codecraft skill's audit command") so `/audit`
+  works without the `/codecraft` prefix.
 
 ## Verification loop
 

@@ -3,6 +3,11 @@
 Load this file **immediately before editing code**. It is the non-negotiable floor, the absolute bans,
 and the reflexes no detector catches. When the codebase's own conventions are stricter, theirs win.
 
+The numeric ceilings below (function lines, nesting, parameters, file lines) are tunable per
+project via CODEBASE.md / `.codecraft/config.json` (see `assets/codecraft.config.example.json`);
+the bans and reflexes are not. State and mutability rules live in `domains/state.md` — load it
+with this file when the pass touches state, nulls, or mutation.
+
 ## The floor
 
 1. **Behavior contract first.** Before refactoring, state what must not change (outputs, side effects,

@@ -67,7 +67,9 @@ rule in `scripts/check.mjs`; the rest are LLM-judged with this file loaded.
 
 ## Detector mapping
 
-`scripts/check.mjs` deterministically catches: V1 (magic numbers), E1 (swallowed errors), H1 (debug
-statements), V4 (`any`), H2 (suppressions), H3 (loose equality), H4 (`var`), C2 (commented-out code),
-S2 (deep nesting), S3 (long files), C5 (TODO sprawl), N2-ish (vague names in signatures). The rest are
+`scripts/check.mjs` deterministically catches, with these rule ids: `magic-number` (V1),
+`swallowed-error` (E1), `debug-statement` (H1), `ts-any` (V4), `suppression` (H2),
+`loose-equality` (H3), `legacy-var` (H4), `commented-out-code` (C2), `deep-nesting` (S2),
+`long-file` (S3), `todo-sprawl` (C5), `vague-name` (N1/N2 — function signatures and parameter
+lists only; variable declarations are LLM-judged to avoid false-positive windows). The rest are
 LLM-judged — keep this file loaded when auditing or reviewing.

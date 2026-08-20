@@ -1,0 +1,10 @@
+{
+  "$comment": "codecraft tunable quality floor. Omit any key to use the skill's default. init writes this from CODEBASE.md's floor tunables.",
+  "floor": {
+    "maxFunctionLines": 30,
+    "maxNestingDepth": 3,
+    "maxParameters": 4,
+    "maxFileLines": 600,
+    "maxTodoMarkersPerFile": 5
+  }
+}

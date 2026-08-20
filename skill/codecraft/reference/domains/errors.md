@@ -45,6 +45,8 @@ Every catch/except must do one of these four things — nothing else:
   result") without an explicit contract. Use `Option`/`Result`/nullable-with-doc, or exceptions,
   per the platform.
 - Distinguish "empty" from "error": an empty list is a valid answer; `null` is not a synonym.
+- The Option/Result side of this domain lives in `domains/state.md` — model absence and expected
+  failure explicitly there; this domain owns what happens to unexpected failure.
 
 ## Edge cases that must be named
 
