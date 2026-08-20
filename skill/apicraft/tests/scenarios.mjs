@@ -177,7 +177,9 @@ await diffScenario("contract-diff: additive changes are free", BASE(), BASE().re
 
 await diffScenario("contract-diff: removed operation flagged", BASE(), BASE().replace(/\n  \/orders:\n    get:[\s\S]*?responses: \{ "200": \{ description: ok \} \}\n/, ""), { exitCode: 1, contains: ["removed-operation"] });
 
-await diffScenario("contract-diff: deprecated removal exempt", BASE('    post:\n      operationId: createOrder\n      deprecated: true\n      responses: { "201": { description: created } }'), BASE(), { exitCode: 0, notContains: ["BREAKING"] });
+await diffScenario("contract-diff: deprecated removal exempt (announced in the OLD spec)", BASE('    post:\n      operationId: createOrder\n      deprecated: true\n      responses: { "201": { description: created } }'), BASE(), { exitCode: 0, notContains: ["BREAKING"] });
+
+await diffScenario("contract-diff: deprecated only in the NEW spec still breaks (no window)", BASE('    post:\n      operationId: createOrder\n      responses: { "201": { description: created } }'), BASE('    post:\n      operationId: createOrder\n      deprecated: true\n      responses: { "201": { description: created } }').replace(/\n    post:[\s\S]*?description: created \} \}\n/, "\n"), { exitCode: 1, contains: ["removed-operation"] });
 
 await diffScenario("contract-diff: enum removal + type change + added required flagged", BASE(), BASE()
   .replace("enum: [pending, paid, shipped]", "enum: [pending, paid]")

@@ -41,3 +41,16 @@ no findings — that's the versioning ledger (`domains/versioning.md`), now mech
   with `--json` first.
 - A breaking change that is *intended* still exits 1 — pair it with the version bump and the
   migration guide; the tool reports, the protocol decides.
+
+## Known limitations (stated, not silent)
+
+- **`$ref` properties are not followed** — a property typed as a `$ref` reports no type, so a
+  change *inside* the referenced schema is invisible to the diff until the ref is resolved.
+  Deferred to a later pass; until then, pair the diff with a manual review of referenced
+  schemas' diffs.
+- **Successors are not heuristics** — a removed operation reports breaking even when a `/v2`
+  successor exists. That's deliberate: the versioning decision belongs to the human
+  (`version`/`deprecate`), and the tool's job is to make the removal visible, never to bless
+  it by pattern-matching.
+- **Rename detection** — a renamed field reports as removed+added (both visible), not as a
+  rename. Read the pair together; `rename`'s alias protocol is the fix, not the tool's.

@@ -28,10 +28,21 @@ const b1 = run("node", [checker, "--strict", join(here, "before-handler.js"), jo
 console.log("\n═══ AFTER (the apicraft pass) ═══\n");
 const b2 = run("node", [checker, "--strict", join(here, "after-handler.js"), join(here, "after-spec.yaml")]);
 console.log("\n═══ CONTRACT-DIFF (before-spec → after-spec) ═══\n");
-const b3 = run("node", [diff, join(here, "before-spec.yaml"), join(here, "after-spec.yaml")]);
+let b3 = 1;
+let diffOut = "";
+try {
+  diffOut = execFileSync("node", [diff, join(here, "before-spec.yaml"), join(here, "after-spec.yaml")], { encoding: "utf8" });
+  b3 = 0;
+  process.stdout.write(diffOut);
+} catch (e) {
+  diffOut = (e.stdout || "") + (e.stderr || "");
+  process.stdout.write(diffOut);
+  b3 = e.status || 1;
+}
 
 console.log("\n═══ RESULT ═══");
 console.log(`before: exit ${b1} — the checker rejects the slop`);
 console.log(`after:  exit ${b2} — clean, the contract floor holds`);
-console.log(`contract-diff: exit ${b3} — the before→after rewrite IS breaking by design; a real migration ships as a versioned release (the deprecation protocol), and the diff is the justification`);
+const diffCount = (diffOut.match(/BREAKING/g) || []).length;
+console.log(`contract-diff: exit ${b3}, ${diffCount} breaking change(s) — the before→after rewrite IS breaking by design; a real migration ships as a versioned release (the deprecation protocol), and the diff is the justification`);
 process.exit(b1 === 0 || b2 !== 0 ? 1 : 0);

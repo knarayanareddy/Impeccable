@@ -131,6 +131,7 @@ ${endpoints.map((e, idx) => `  <div class="row" id="row-${idx}" data-ep="${esc(e
     <span class="meta">${esc(e.operationId || "")}${e.deprecated ? " · deprecated" : ""}${e.summary ? " · " + esc(e.summary) : ""}</span>
     <button class="approve" onclick="verdict(${idx}, 'approved')">Approve</button>
     <button class="flag" onclick="verdict(${idx}, 'flagged')">Flag</button>
+    <button class="flag" onclick="verdict(${idx}, 'n/a')">N/A</button>
   </div>`).join("\n")}
   <button id="submit" disabled onclick="submitAll()">Record verdicts</button>
   <div class="status" id="status">review every endpoint, then record</div>
@@ -183,7 +184,7 @@ ${endpoints.map((e, idx) => `  <div class="row" id="row-${idx}" data-ep="${esc(e
           const known = new Set(endpoints.map((e) => e.endpoint));
           const valid = {};
           for (const [ep, v] of Object.entries(verdicts)) {
-            if (known.has(ep) && (v === "approved" || v === "flagged")) valid[ep] = v;
+            if (known.has(ep) && (v === "approved" || v === "flagged" || v === "n/a")) valid[ep] = v;
           }
           if (Object.keys(valid).length !== endpoints.length) {
             res.writeHead(400, { "content-type": "application/json" });

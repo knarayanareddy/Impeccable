@@ -26,8 +26,9 @@ style). The style-native specifics; the compass domains still hold.
 ## Errors and idempotency
 
 - The platform's status codes are the error vocabulary — map domain errors to the standard
-  codes with details, never string-compare error text (`domains/errors.md`'s codes-not-messages
-  rule).
+  codes (the gRPC status + details pairing: a machine-readable `details` message carries the
+  domain error code, the status carries the class), never string-compare error text
+  (`domains/errors.md`'s codes-not-messages rule).
 - Mutating RPCs state their idempotency: natural idempotency (PUT-like full replace) or an
   explicit idempotency-key field in the request (`domains/idempotency.md` — the key is a field,
   not a header, here).
