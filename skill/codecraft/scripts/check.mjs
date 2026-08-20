@@ -266,8 +266,36 @@ function scan(file) {
 
   let pendingExcept = -1; // python: line index of a lone `except:` awaiting `pass`
   let lastDeepLine = -2; // dedupe consecutive deep-nesting lines (one finding per block)
+  let pendingCatch = -1; // js-like: `catch (e) {` awaiting its single-statement body
 
   lines.forEach((raw, i) => {
+    // Windowed multi-line catch bodies: comment-only, bare return, return-null
+    if (pendingCatch !== -1 && i - pendingCatch <= 3) {
+      const trimmed = raw.trim();
+      const isComment = /^\/\//.test(trimmed) || /^\/\*/.test(trimmed);
+      if (!isComment) {
+        if (trimmed === "}" || /^}\s*$/.test(trimmed)) {
+          // nothing but comments before the close → comment-only swallow
+          findings.push({ file: basename(file), line: pendingCatch + 1, rule: "swallowed-error",
+            severity: "error", message: "Swallowed exception — comment-only catch body (anti-patterns.md E1).",
+            detail: "catch { /* comment */ }" });
+          pendingCatch = -1;
+        } else if (/^return\s+(?:null|undefined|-1|false)\s*;?\s*$/.test(trimmed)) {
+          findings.push({ file: basename(file), line: pendingCatch + 1, rule: "silent-catch-return",
+            severity: "warning", message: "Silent return from catch — failure becomes indistinguishable from 'no result' (anti-patterns.md E3).",
+            detail: "catch { return null }" });
+          pendingCatch = -1;
+        } else if (/^return\s*;?\s*$/.test(trimmed)) {
+          findings.push({ file: basename(file), line: pendingCatch + 1, rule: "silent-catch-return",
+            severity: "warning", message: "Silent return from catch — the error vanishes (anti-patterns.md E3).",
+            detail: "catch { return; }" });
+          pendingCatch = -1;
+        } else {
+          pendingCatch = -1; // a real body — not a swallow
+        }
+      }
+    }
+    if (/^\s*\}?\s*catch\s*\([^)]*\)\s*\{\s*$/.test(raw)) pendingCatch = i;
     const line = stripStrings(raw);
     todos += (line.match(TODO_RE) || []).length;
     for (const rule of rules) {
