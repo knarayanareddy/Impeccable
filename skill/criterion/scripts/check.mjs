@@ -284,7 +284,7 @@ function main() {
     console.log(
       `\ncriterion: ${files.length} file(s) scanned · ${errors.length} error(s), ${warnings.length} warning(s)` +
         (strict ? " (--strict: warnings fail)" : "") +
-        (failed ? ` · FAILED` : " · clean ✓")
+        (failed ? ` · FAILED` : warnings.length ? " · warnings only (run with --strict to fail)" : " · clean ✓")
     );
   }
   process.exit(failed ? 1 : 0);

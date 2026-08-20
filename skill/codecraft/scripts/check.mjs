@@ -232,18 +232,23 @@ function scan(file) {
   const lines = text.split("\n");
   let todos = 0;
 
-  // Dominant indent unit: tabs=1 level, else 2 or 4 spaces per level
+  // Dominant indent unit: tabs=1 level, else gcd of positive indents clamped to {2,4}
   const indentUnit = (() => {
-    const counts = { tab: 0, two: 0, four: 0 };
-    for (const raw of lines.slice(0, 200)) {
+    const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
+    let unit = 0;
+    let hasTabs = false;
+    for (const raw of lines.slice(0, 300)) {
       const ws = raw.match(/^\s*/)[0];
       if (!ws || !raw.trim()) continue;
-      if (ws.includes("\t")) counts.tab++;
-      else if (ws.length % 4 === 0 && ws.length % 2 === 0) counts.four++;
-      else if (ws.length % 2 === 0) counts.two++;
+      if (ws.includes("\t")) {
+        hasTabs = true;
+        continue;
+      }
+      unit = unit === 0 ? ws.length : gcd(unit, ws.length);
     }
-    if (counts.tab >= Math.max(counts.two, counts.four)) return "tab";
-    return counts.two > counts.four ? 2 : 4;
+    if (hasTabs && unit === 0) return "tab";
+    if (unit < 3) return 2;
+    return unit % 2 === 0 ? 4 : 2;
   })();
 
   let pendingExcept = -1; // python: line index of a lone `except:` awaiting `pass`
@@ -271,17 +276,19 @@ function scan(file) {
     const ws = raw.match(/^\s*/)[0];
     if (ws && raw.trim() && !/^\s*(\/\/|#|<!--)/.test(raw)) {
       const levels = indentUnit === "tab" ? ws.length : Math.floor(ws.length / indentUnit);
-      if (levels >= 5 && i !== lastDeepLine + 1) {
-        findings.push({
-          file: basename(file),
-          line: i + 1,
-          rule: "deep-nesting",
-          severity: "warning",
-          message: "Indentation ≥5 levels — nesting depth likely >4 (quality-floor.md #3). Flatten it.",
-          detail: `${levels} levels`,
-        });
+      if (levels >= 5) {
+        if (i !== lastDeepLine + 1) {
+          findings.push({
+            file: basename(file),
+            line: i + 1,
+            rule: "deep-nesting",
+            severity: "warning",
+            message: "Indentation ≥5 levels — nesting depth likely >4 (quality-floor.md #3). Flatten it.",
+            detail: `${levels} levels`,
+          });
+        }
         lastDeepLine = i;
-      } else if (levels < 5) {
+      } else {
         lastDeepLine = -2;
       }
     }
@@ -370,7 +377,7 @@ function main() {
     console.log(
       `\ncodecraft: ${files.length} file(s) scanned · ${errors.length} error(s), ${warnings.length} warning(s)` +
         (strict ? " (--strict: warnings fail)" : "") +
-        (failed ? " · FAILED" : " · clean ✓")
+        (failed ? " · FAILED" : warnings.length ? " · warnings only (run with --strict to fail)" : " · clean ✓")
     );
   }
   process.exit(failed ? 1 : 0);
