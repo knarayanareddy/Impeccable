@@ -71,6 +71,10 @@ scenario("json sprawl at 3+ flagged", {
   files: [FIX("t.sql", `CREATE TABLE t (id INT PRIMARY KEY, a JSON, b JSON, c JSON);`)],
   exitCode: 0, contains: ["json-sprawl"],
 });
+scenario("documented-null comment after a comma-split column exempts it", {
+  files: [FIX("t.sql", `CREATE TABLE t (id INT PRIMARY KEY, deleted_at TIMESTAMPTZ, -- null = not deleted\n);`)],
+  exitCode: 0, notContains: ["nullable-columns"],
+});
 scenario("stringly status without CHECK flagged", {
   files: [FIX("t.sql", `CREATE TABLE t (id INT PRIMARY KEY, status VARCHAR(20));`)],
   exitCode: 0, contains: ["stringly-status"],

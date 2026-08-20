@@ -22,6 +22,8 @@ through expand/contract.
 ## Steps
 
 1. List candidate upgrades from `audit`/`measure`; rank by data-integrity and query impact.
+   If the engine is PostgreSQL, MySQL, or SQLite, the matching `reference/engines/` sheet is the
+   baseline — its bans are the upgrade list's targets.
 2. Verify each against the engine version in DATA.md — never modernize past what the running
    engine supports.
 3. Implement each via expand/contract (`migrations.md`): add the new column/type alongside,

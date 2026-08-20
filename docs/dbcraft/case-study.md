@@ -15,16 +15,16 @@ The checker's verdict (`node skill/dbcraft/scripts/check.mjs --strict demos/dbcr
 ```
 ERROR missing-primary-key     users — identity and integrity require one
 ERROR float-for-money        balance FLOAT · total DOUBLE PRECISION
-ERROR update-without-where   (in the demo's sibling query set)
-WARN  nullable-columns       users: 15 nullable columns
+WARN  nullable-columns       users: 15 nullable columns · orders: 3
 WARN  varchar-255-sprawl     4 × VARCHAR(255)
 WARN  timestamp-without-tz   created_at, deleted_at, updated_at
 WARN  fk-no-on-delete        orders.user_id
+WARN  fk-without-index       orders.user_id
 WARN  boolean-sprawl         3 flags
 WARN  json-sprawl            3 JSON columns
 WARN  stringly-status        status with no CHECK
 
-dbcraft: 1 file(s) scanned · 3 error(s), 10 warning(s) · FAILED
+dbcraft: 1 file(s) scanned · 3 error(s), 12 warning(s) · FAILED
 ```
 
 ## The pass

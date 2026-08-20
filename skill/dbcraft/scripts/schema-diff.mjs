@@ -66,18 +66,25 @@ for (const [tableName, oldTable] of Object.entries(oldSchema.tables)) {
   // table-level checks removed
   for (const chk of oldTable.checks) {
     if (!newTable.checks.includes(chk)) {
-      breaking.push({ change: "removed-check", target: tableName, why: "a rule moved out of the schema — the database stops enforcing it" });
+      const renamedPair = newTable.checks.length && oldTable.checks.length === newTable.checks.length;
+      breaking.push({ change: "removed-check", target: tableName, why: renamedPair
+        ? "removed/added pair — treat as a rename, and verify the replacement states the same rule"
+        : "a rule moved out of the schema — the database stops enforcing it" });
     }
   }
 
-  // indexes: dropped index on a column that still exists is a performance regression
+  // indexes: dropped index on a column that still exists is a performance regression.
+  // If every indexed column was itself dropped, the dropped-column finding already
+  // covers it — one finding per change, not two.
   for (const idx of oldTable.indexes) {
     const stillExists = newTable.indexes.some(
       (n) => n.columns.join(",") === idx.columns.join(",")
     );
-    if (!stillExists) {
-      breaking.push({ change: "removed-index", target: `${tableName}.${idx.name}`, why: "hot-path queries may fall back to scans — verify the plan before dropping" });
-    }
+    if (stillExists) continue;
+    const allColumnsDropped = idx.columns.length > 0 &&
+      idx.columns.every((c) => !newByName.has(c));
+    if (allColumnsDropped) continue;
+    breaking.push({ change: "removed-index", target: `${tableName}.${idx.name}`, why: "hot-path queries may fall back to scans — verify the plan before dropping" });
   }
 }
 

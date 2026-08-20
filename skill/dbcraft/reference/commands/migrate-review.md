@@ -22,8 +22,9 @@ browser. The daemon mode of `migrate`; the checklist itself is `domains/migratio
    ```
 
 3. The human verdicts each step — Approve / Flag / N/A (abstain). `--wait` prints the recorded
-   verdicts; flagged steps become the worklist: the checklist items they failed (down missing,
-   destructive, lock risk, backfill unhandled) are the findings.
+   verdicts (`--timeout S` bounds the wait, default 600); flagged steps become the worklist:
+   the checklist items they failed (down missing, destructive, lock risk, backfill unhandled)
+   are the findings.
 
 ## Notes
 

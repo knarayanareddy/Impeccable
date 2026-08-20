@@ -6,7 +6,9 @@ command of this skill: a migration is a contract with production.
 ## Steps
 
 1. Confirm the change from `shape` (or the request) and locate the migration tooling and history
-   (from DATA.md).
+   (from DATA.md). If the engine is PostgreSQL, MySQL, or SQLite, the matching
+   `reference/engines/` sheet is this command's engine authority (non-locking forms, rebuild
+   migrations, pragma realities).
 2. Decide the strategy before writing:
    - **Additive** (new table/column/index) → one forward migration.
    - **Breaking** (rename, retype, remove) → expand/contract sequence: add → backfill →
