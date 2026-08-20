@@ -7,7 +7,9 @@ system and defending a rumor of one.
 ## Steps
 
 1. Scope the component: the data it handles (by class — `domains/data.md`), the callers it
-   serves, the dependencies it trusts.
+   serves, the dependencies it trusts. If the surface is a web application, an API/service, or
+   a mobile app, the matching `reference/surfaces/` sheet is this command's attack-surface
+   authority — one sheet, never all.
 2. Draw the trust boundaries: every entry point (HTTP, queues, files, upstream APIs) and what
    crosses it. Everything outside a boundary is untrusted.
 3. Enumerate threats per boundary, STRIDE-style: spoofing (who can impersonate?), tampering

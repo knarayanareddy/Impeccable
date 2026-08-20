@@ -48,6 +48,11 @@ try {
 
 const gaps = [];
 
+// The honest gate: if no area is mapped at all, the adapter may be the gap.
+if (!config.headers && !config.cookies && !config.cors && !config.tls) {
+  gaps.push({ area: "config", rule: "no-areas-mapped", message: "config maps no areas (headers/cookies/cors/tls all absent) — is the adapter wired, or is the surface unconfigured?" });
+}
+
 // ---- headers (the standard set — lock.md) ----
 const headers = config.headers || {};
 for (const h of ["csp", "hsts"]) {

@@ -37,6 +37,10 @@ scenario("env fallback credential flagged (error)", {
   files: [FIX("t.js", `const apiKey = process.env.API_KEY || "sk-live-9f8e7d6c5b4a";`)],
   exitCode: 1, contains: ["hardcoded-credential"],
 });
+scenario(".env comment lines are not credentials", {
+  files: [FIX(".env", `# API_KEY=sk-live-9f8e7d6c5b4a3210 is the old value — rotated\n# docs only\n`)],
+  exitCode: 0, notContains: ["hardcoded-credential"],
+});
 scenario("placeholder values exempt", {
   files: [FIX("t.js", `const key = "changeme";\nconst pw = "password";`)],
   exitCode: 0, notContains: ["hardcoded-credential"],

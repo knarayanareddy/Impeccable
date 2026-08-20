@@ -141,6 +141,7 @@ ${threats.map((t, idx) => `  <div class="threat" id="t-${idx}" data-name="${esc(
       <button class="mitigate" onclick="verdict(${idx}, 'mitigate')">Mitigate</button>
       <button class="risk" onclick="verdict(${idx}, 'accept-risk')">Accept risk</button>
       <button class="escalate" onclick="verdict(${idx}, 'escalate')">Escalate</button>
+      <button class="escalate" onclick="verdict(${idx}, 'defer')">Defer</button>
     </div>
     ${t.control ? `<div class="control">control: ${esc(t.control)}</div>` : `<div class="control" style="color:var(--risk)">no control stated — this is the gap</div>`}
   </div>`).join("\n")}
@@ -192,7 +193,7 @@ ${threats.map((t, idx) => `  <div class="threat" id="t-${idx}" data-name="${esc(
           const known = new Set(threats.map((t) => t.threat));
           const valid = {};
           for (const [threat, v] of Object.entries(verdicts)) {
-            if (known.has(threat) && ["accept", "mitigate", "accept-risk", "escalate"].includes(v)) valid[threat] = v;
+            if (known.has(threat) && ["accept", "mitigate", "accept-risk", "escalate", "defer"].includes(v)) valid[threat] = v;
           }
           if (Object.keys(valid).length !== threats.length) {
             res.writeHead(400, { "content-type": "application/json" });

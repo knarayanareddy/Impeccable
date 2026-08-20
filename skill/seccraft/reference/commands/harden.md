@@ -6,7 +6,9 @@ to the security floor (`reference/security-floor.md` is the authority). The sign
 ## Steps
 
 1. Take the ranked findings from `audit` (or the floor checklist if auditing wasn't run) and
-   state the fix list with one change per finding.
+   state the fix list with one change per finding. If the surface is a web application, an
+   API/service, or a mobile app, the matching `reference/surfaces/` sheet is the control
+   checklist's surface authority.
 2. Fix in impact order:
    - **Authz first** (`domains/authz.md`): object-level checks on every resource access; the
      single authorization layer; deny-by-default routes.
