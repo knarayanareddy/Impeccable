@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfcraft — the craft skill for performance</title>
+<style>
+  :root { --bg:#101418; --panel:#161c22; --text:#e8eaf0; --muted:#8b93a1; --line:#262e37; --accent:#4d7cfe; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.6 system-ui,-apple-system,sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 56px 24px 80px; }
+  h1 { font-size: 34px; line-height:1.15; letter-spacing:-0.02em; margin:0 0 12px; }
+  .lede { color: var(--muted); font-size: 18px; margin: 0 0 36px; }
+  h2 { font-size: 20px; margin: 40px 0 12px; letter-spacing:-0.01em; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; text-decoration:none; color:var(--text); }
+  .card:hover { border-color: var(--accent); }
+  .card b { display:block; }
+  .card span { color: var(--muted); font-size: 13px; }
+  code, pre { font-family: ui-monospace, monospace; }
+  pre { background: var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:13px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); }
+  .num { color:var(--accent); font-variant-numeric: tabular-nums; }
+  a { color: var(--accent); }
+  .back { color:var(--muted); text-decoration:none; font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="../">← the craft-skill suite</a>
+  <h1>Perfcraft</h1>
+  <p class="lede">The craft skill for performance that is measured, budgeted, and owned. <em>Measure before you optimize. The user's clock is the only clock.</em></p>
+
+  <h2>Install</h2>
+  <pre>npx skills add knarayanareddy/Impeccable --skill perfcraft</pre>
+  <p>Then <code>/perfcraft profile src/checkout</code>, <code>/perfcraft budget .</code>, or any of the 17 commands.</p>
+
+  <h2>The commands <span class="num">17</span></h2>
+  <table>
+    <tr><th>Build</th><td>init · shape · benchmark</td></tr>
+    <tr><th>Evaluate</th><td>audit · profile · measure · review · optimize-review (daemon)</td></tr>
+    <tr><th>Refine</th><td>optimize · cache · defer · parallelize</td></tr>
+    <tr><th>Enhance</th><td>budget (· check mode) · harden · monitor · prune</td></tr>
+  </table>
+
+  <h2>The checker</h2>
+  <pre>node skill/perfcraft/scripts/check.mjs --strict --target src/
+# ERROR sync-io     handler.js:8   fs.readFileSync(
+# ERROR busy-retry  handler.js:22  while (true) without backoff
+# WARN  n-plus-one  handler.js:12  loop + per-item query
+# perfcraft: 14 file(s) scanned · FAILED</pre>
+  <p>Zero dependencies, no LLM, no API key. Behaviors pinned by <a href="../../skill/perfcraft/tests/scenarios.mjs">24 automated scenarios</a>.</p>
+
+  <h2>Budget-check — the gate, mechanically</h2>
+  <pre>node skill/perfcraft/scripts/budget-check.mjs --budget budget.json --measurements m.json
+# BREACH resource-size  script: 310KB > budget 200KB
+# BREACH metric         LCP: 2700 > budget 2500ms (p75)
+# budget-check: 2 breach(es) · FAILED</pre>
+  <p>The perf floor's "budgets in CI" as a tool — and its shape rule fires on any budget whose metric lacks a percentile.</p>
+
+  <h2>Optimization review daemon</h2>
+  <pre>node skill/perfcraft/scripts/optimize-review.mjs --options options.json --round r1 &amp;
+node skill/perfcraft/scripts/optimize-review.mjs --round r1 --wait</pre>
+  <p>Verdict optimization candidates on their measured receipts — options without before/after numbers are rejected at load. No number, no option.</p>
+
+  <h2>Environments</h2>
+  <p><code>reference/measurement/</code> ships sheets for the browser, backend services, and the data layer — one sheet, never all.</p>
+
+  <h2>Evidence</h2>
+  <div class="grid">
+    <a class="card" href="case-study.md"><b>Case study</b><span>The generic AI performance → the perfcraft pass, plus the gate demonstrated</span></a>
+    <a class="card" href="../../demos/perfcraft/before.js"><b>Demo — before</b><span>Runs the checker's failure list</span></a>
+    <a class="card" href="../../demos/perfcraft/after.js"><b>Demo — after</b><span>Passes clean</span></a>
+    <a class="card" href="../../REVIEWS/perfcraft-round1.md"><b>Expert review</b><span>Two-round panel archive</span></a>
+  </div>
+</main>
+<footer style="max-width:860px;margin:0 auto;padding:0 24px 32px;color:var(--muted);font-size:12px;">Apache-2.0 · original work, not affiliated with pbakaus/impeccable</footer>
+</body>
+</html>

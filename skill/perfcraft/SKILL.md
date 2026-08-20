@@ -47,7 +47,9 @@ and never let anyone call a bet a win.
    below against it, e.g. `node <skill-dir>/scripts/check.mjs`.
 2. Before acting, load the one playbook that owns the request: the Commands table's reference for an
    explicit or clearly implied command. Then inspect the target's code, its performance tooling
-   (profilers, budgets, CI gates), and PERF.md if present before editing.
+   (profilers, budgets, CI gates), and PERF.md if present before editing. If the surface is the
+   browser, backend services, or the data layer, also load the matching sheet in
+   `reference/measurement/` alongside the relevant domains — one sheet, never all.
 3. Load [reference/perf-floor.md](reference/perf-floor.md) **immediately before editing any
    performance-sensitive code**. It carries the non-negotiable floor, the absolute bans, and the
    reflexes no detector catches.
@@ -71,7 +73,8 @@ and never let anyone call a bet a win.
 | `cache [target]` | Refine | Caching where it pays, with invalidation contracts | [reference/commands/cache.md](reference/commands/cache.md) |
 | `defer [target]` | Refine | Perceived performance: lazy, async, skeleton, streaming | [reference/commands/defer.md](reference/commands/defer.md) |
 | `parallelize [target]` | Refine | Concurrency where it pays, with correctness guards | [reference/commands/parallelize.md](reference/commands/parallelize.md) |
-| `budget [target]` | Enhance | Performance budgets as code + CI regression gates | [reference/commands/budget.md](reference/commands/budget.md) |
+| `budget [target]` | Enhance | Performance budgets as code + CI regression gates · check mode: [reference/commands/budget-check.md](reference/commands/budget-check.md) | [reference/commands/budget.md](reference/commands/budget.md) |
+| `optimize-review` | Evaluate | Daemon mode: verdict optimization candidates on their measured receipts | `scripts/optimize-review.mjs` |
 | `harden [target]` | Enhance | Behavior under load: timeouts, backpressure, degradation | [reference/commands/harden.md](reference/commands/harden.md) |
 | `monitor [target]` | Enhance | Production observability: percentiles, tracing, alerts | [reference/commands/monitor.md](reference/commands/monitor.md) |
 | `prune [target]` | Enhance | Remove dead weight: dead code, unused deps, oversized assets | [reference/commands/prune.md](reference/commands/prune.md) |
@@ -85,6 +88,14 @@ and never let anyone call a bet a win.
 - **Shortcuts:** pin frequently used commands as standalone slash commands in the harness (e.g., a
   `.claude/commands/audit.md` containing "Run the perfcraft skill's audit command") so `/audit`
   works without the `/perfcraft` prefix.
+
+## Environments
+
+The floor is environment-agnostic; the instruments are not. For the browser, backend
+services, and the data layer, `reference/measurement/` ships a compact sheet per environment
+(the lab/field split, the profiler per question, the workflow, the bans) loaded with the
+relevant domains — the same one-variant-not-all convention as the suite's platform variants
+and style sheets. Other environments route through the domains alone.
 
 ## Verification loop
 

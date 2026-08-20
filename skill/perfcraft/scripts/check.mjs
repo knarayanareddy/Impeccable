@@ -183,7 +183,44 @@ function scan(file) {
     return findings;
   }
   const ext = extname(file).toLowerCase();
-  const lines = text.split("\n");
+  const rawLines = text.split("\n");
+  // Stateful comment stripping: comments are prose, not evidence. Line rules
+  // read the stripped lines; URL double-slashes are never comment starts.
+  const lines = [];
+  {
+    let inBlock = false;
+    for (const raw of rawLines) {
+      let line = raw;
+      if (inBlock) {
+        const end = line.indexOf("*/");
+        if (end === -1) { lines.push(""); continue; }
+        line = " ".repeat(end + 2) + line.slice(end + 2);
+        inBlock = false;
+      }
+      let out = "";
+      let i = 0;
+      while (i < line.length) {
+        if (line.startsWith("/*", i)) {
+          const end = line.indexOf("*/", i + 2);
+          if (end === -1) { inBlock = true; break; }
+          out += " ".repeat(end + 2 - i);
+          i = end + 2;
+        } else if (/\.(js|mjs|cjs|jsx|ts|tsx|vue|svelte)$/i.test(file) && line.startsWith("//", i) && (i === 0 || line[i - 1] !== ":")) {
+          break;
+        } else if (/\.py$/i.test(file) && line.startsWith("#", i)) {
+          break;
+        } else if (HTML_EXTS.has(ext) && line.startsWith("<!--", i)) {
+          const end = line.indexOf("-->", i + 4);
+          out += " ".repeat(end === -1 ? line.length - i : end + 3 - i);
+          i = end === -1 ? line.length : end + 3;
+        } else {
+          out += line[i];
+          i += 1;
+        }
+      }
+      lines.push(out);
+    }
+  }
 
   lines.forEach((raw, i) => {
     for (const rule of rules) {
@@ -193,10 +230,13 @@ function scan(file) {
       }
     }
 
-    // N+1: a query call on this line, with a loop on this line or within the previous 3,
-    // and no batch pattern (Promise.all / IN / join).
+    // N+1: a query call on this line, with a DATA-iteration loop on this line or within
+    // the previous 5, and no batch pattern (Promise.all / IN / join). Bounded-count loops
+    // (`while (attempt < 3)`) are retry loops — the retry rules own those.
+    const boundedRetryLoop = /\b(?:while\s*\([^)]*<\s*\d|for\s*\([^;]*;[^;]*<\s*\d)/i;
     if (QUERY_RE.test(raw) && !BATCH_RE.test(raw)) {
-      if (LOOP_RE.test(raw) || prevHas(lines, i, LOOP_RE, 5)) {
+      const loopLine = LOOP_RE.test(raw) ? raw : (prevHas(lines, i, LOOP_RE, 5) ? lines.slice(Math.max(0, i - 5), i).reverse().find((l) => LOOP_RE.test(l)) : null);
+      if (loopLine && !boundedRetryLoop.test(loopLine)) {
         findings.push({
           file: basename(file), line: i + 1, rule: "n-plus-one", severity: "warning",
           message: "Possible N+1 — per-item query inside a loop (Q1). Batch with IN(...)/join/Promise.all.",
@@ -216,7 +256,8 @@ function scan(file) {
     }
 
     // String concat in a loop: `x +=` with a for/while within the previous 3 lines
-    if ((/^\s*[a-zA-Z_$][\w$]*\s*\+=\s*[^=]/.test(raw) || /^\s*[a-zA-Z_$][\w$]*\s*=\s*[a-zA-Z_$][\w$]*\s*\+\s*/.test(raw)) && prevHas(lines, i, /\b(for|while)\b/, 3)) {
+    const isStringConcat = (/^\s*[a-zA-Z_$][\w$]*\s*\+=\s*[^=]/.test(raw) && !/\+=\s*\d/.test(raw)) || /^\s*[a-zA-Z_$][\w$]*\s*=\s*[a-zA-Z_$][\w$]*\s*\+\s*/.test(raw);
+    if (isStringConcat && prevHas(lines, i, /\b(for|while)\b/, 3)) {
       findings.push({
         file: basename(file), line: i + 1, rule: "string-concat-loop", severity: "warning",
         message: "String concatenation inside a loop — O(n²) building (Q5). Use a builder/join.",
