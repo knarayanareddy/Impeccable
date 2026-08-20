@@ -1,0 +1,11 @@
+{
+  "name": "criterion",
+  "description": "The design skill for interfaces that do work: dashboards, admin panels, internal tools, data tables, charts, and forms. 18 commands (/criterion audit, /criterion densify, /criterion measure, ...), 8 domain references, and a deterministic anti-pattern checker for product UI.",
+  "version": "0.1.0",
+  "author": {
+    "name": "knarayanareddy",
+    "url": "https://github.com/knarayanareddy"
+  },
+  "repository": "https://github.com/knarayanareddy/Impeccable",
+  "skills": "./skill/"
+}
