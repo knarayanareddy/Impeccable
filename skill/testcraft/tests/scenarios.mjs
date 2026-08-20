@@ -12,6 +12,7 @@
 
 import { execFileSync, spawn } from "node:child_process";
 import { writeFileSync, mkdirSync, rmSync, readFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -131,6 +132,30 @@ async function healthScenarioJson(name, dirFiles) {
     execFileSync("node", [HEALTH, "--target", dir, "--history", hist], { stdio: "pipe" });
     const history = JSON.parse(readFileSync(hist, "utf8"));
     if (history.length !== 2) throw new Error(`expected 2 history records, got ${history.length}`);
+    console.log(`✓ ${name}`); pass++;
+  } catch (e) {
+    console.log(`✗ ${name} — ${e.message}`); fail++;
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+await healthScenarioZero("suite-health: zero test files is reported honestly, not as clean", {
+  "src/main.ts": `export const x = 1;\n`,
+});
+async function healthScenarioZero(name, dirFiles) {
+  // Neutral path outside the skill's own tests/ dir: files under any `tests/`
+  // directory are legitimately classified as test files by the checker.
+  const dir = join(tmpdir(), "shz-" + process.pid);
+  mkdirSync(dir, { recursive: true });
+  for (const [fname, content] of Object.entries(dirFiles)) {
+    mkdirSync(join(dir, fname.split("/").slice(0, -1).join("/")), { recursive: true });
+    writeFileSync(join(dir, fname), content);
+  }
+  try {
+    const out = execFileSync("node", [HEALTH, "--target", dir], { encoding: "utf8" });
+    if (!out.includes("No test files found in scope")) throw new Error("zero-test wording missing");
+    if (out.includes("floor holds")) throw new Error("false clean claim on zero test files");
     console.log(`✓ ${name}`); pass++;
   } catch (e) {
     console.log(`✗ ${name} — ${e.message}`); fail++;

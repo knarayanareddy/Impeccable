@@ -62,11 +62,13 @@ const ranked = [...byFile.values()].sort(
 );
 const totalErrors = findings.filter((f) => f.severity === "error").length;
 const totalWarnings = findings.length - totalErrors;
+// 0 is a valid value: nullish coalescing, never truthiness fallback
+const testFiles = report.testFiles ?? report.files ?? 0;
 
 if (json) {
   console.log(
     JSON.stringify({
-      filesScanned: report.testFiles || report.files || 0,
+      filesScanned: testFiles,
       totalErrors,
       totalWarnings,
       worstFiles: ranked.slice(0, topN),
@@ -74,8 +76,10 @@ if (json) {
     }, null, 2)
   );
 } else {
-  console.log(`suite-health: ${report.testFiles || report.files || 0} test file(s) · ${totalErrors} error(s), ${totalWarnings} warning(s)\n`);
-  if (ranked.length) {
+  console.log(`suite-health: ${testFiles} test file(s) · ${totalErrors} error(s), ${totalWarnings} warning(s)\n`);
+  if (!testFiles) {
+    console.log("No test files found in scope — is the target a test suite? (the checker scans named test files only)");
+  } else if (ranked.length) {
     console.log(`Worst files (top ${topN}):`);
     for (const f of ranked.slice(0, topN)) {
       console.log(`  ${String(f.errors + f.warnings).padStart(3)}  ${f.path}`);
