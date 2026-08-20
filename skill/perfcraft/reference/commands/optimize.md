@@ -6,7 +6,8 @@ is where the floor's "no number, no optimization" rule gets executed. Load
 
 ## The loop (always in this order)
 
-1. **State the receipt:** the measured problem (from `profile`/`measure`), the attribution, the
+1. **State the receipt:** the measured problem (from `profile`/`measure` — the
+   `reference/measurement/` sheet for the surface is the harness authority), the attribution, the
    hypothesis ("the cart loop re-queries per item — that's 47 queries per checkout"), and the
    budget target.
 2. **Fix one thing** — the smallest change that tests the hypothesis. One fix per pass: two fixes

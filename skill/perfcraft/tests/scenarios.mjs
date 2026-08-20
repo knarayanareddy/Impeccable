@@ -159,6 +159,40 @@ await budgetScenario("budget-check: within budget passes", BUDGET_SHAPE,
   { resourceSizes: { script: 180, total: 950 }, resourceCounts: { "third-party": 8 }, metrics: { LCP: 2400, CLS: 0.08 } },
   { exitCode: 0, notContains: ["BREACH", "SHAPE"] });
 
+await budgetScenario("budget-check: unmeasured entries are visible, all-unmeasured fails the shape",
+  BUDGET_SHAPE, { resourceSizes: { unrelated: 50 }, metrics: {} },
+  { exitCode: 1, contains: ["nothing-measured", "unmeasured"] });
+
+await budgetScenario("budget-check: partially-unmeasured entries are reported, verdict holds",
+  BUDGET_SHAPE, { resourceSizes: { script: 180 }, resourceCounts: {}, metrics: { LCP: 2400 } },
+  { exitCode: 0, contains: ["unmeasured"] });
+
+await budgetScenarioShape("budget-check: wrong-shape budget exits 2 with a clear message",
+  { resourceSizes: { script: 200 } }, { resourceSizes: { script: 180 } },
+  "budget.resourceSizes must be an array");
+
+await budgetScenarioShape("budget-check: non-object measurements exits 2",
+  BUDGET_SHAPE, [1, 2, 3], "the measurements file must be an object");
+
+async function budgetScenarioShape(name, budget, measurements, expected) {
+  const dir = TMP + "-bcs";
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(join(dir, "budget.json"), JSON.stringify(budget));
+  writeFileSync(join(dir, "m.json"), JSON.stringify(measurements));
+  try {
+    try {
+      execFileSync("node", [BUDGET, "--budget", join(dir, "budget.json"), "--measurements", join(dir, "m.json")], { stdio: "pipe" });
+      console.log(`✗ ${name} — expected exit 2`); fail++;
+    } catch (e) {
+      const out = (e.stderr || "") + (e.stdout || "");
+      if (e.status === 2 && out.includes(expected)) { console.log(`✓ ${name}`); pass++; }
+      else { console.log(`✗ ${name} — exit ${e.status}, message missing: ${expected}`); fail++; }
+    }
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
 await budgetScenario("budget-check: percentile-less metric fails the shape", 
   { metrics: { LCP: { budgetMs: 2500 } } },
   { metrics: { LCP: 2400 } },

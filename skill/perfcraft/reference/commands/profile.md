@@ -6,7 +6,9 @@ belong to `optimize`).
 
 ## Steps
 
-1. Pick the instrument for the question (`domains/measurement.md`):
+1. Pick the instrument for the question (`domains/measurement.md`). If the surface is the
+   browser, backend services, or the data layer, the matching `reference/measurement/` sheet is
+   the instrument authority — one sheet, never all.
    - CPU-bound? → CPU profiler / flame graph.
    - Latency across services? → distributed trace.
    - Allocation/GC problems? → heap profiler / allocation trace.
