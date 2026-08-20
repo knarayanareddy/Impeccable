@@ -32,7 +32,8 @@ the fix targets the largest one, never the metric itself.
 3. **LCP element early and unblocked**: preload the hero image, no lazy-load on the LCP element,
    `fetchpriority="high"` where it counts.
 4. **Main thread stays free** (`domains/concurrency.md`): heavy work off the main thread, split
-   long tasks, no layout thrash (`anti-patterns.md` B3).
+   long tasks, no layout thrash (`anti-patterns.md` B3); for cooperative long-task breaking use
+   `scheduler.yield()` — the current platform API, over hand-rolled `setTimeout(0)` chunking.
 
 ## Payload discipline
 
