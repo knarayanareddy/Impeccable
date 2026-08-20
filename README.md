@@ -17,6 +17,21 @@ one-line install.**
 | **[`criterion`](skill/criterion/SKILL.md)** | Data-dense UI/UX (dashboards, tools, forms, tables) | *Design for the second hour, not the first impression. Measure, don't vibe.* |
 | **[`codecraft`](skill/codecraft/SKILL.md)** | Code quality & maintainability (any language) | *Code is read ten times more than it is written. Simplify or justify.* |
 | **[`apicraft`](skill/apicraft/SKILL.md)** | API design (REST, GraphQL, gRPC, webhooks) | *An API is a promise, not an endpoint. Judge from the consumer's code.* |
+| **[`dbcraft`](skill/dbcraft/SKILL.md)** | Database & schema (SQL + ORM-managed) | *Data outlives code. The schema is the longest-lived interface in the system.* |
+
+### dbcraft — the Impeccable of database/schema design
+
+- **14 commands** — a shared vocabulary: `migrate`, `constrain`, `normalize`, `index`, `denormalize`,
+  `harden`, `audit`, `review`, `measure`, `modernize`…
+- **8 domain references** — types, constraints, keys, relationships, normalization, indexes,
+  migrations, queries
+- **A schema floor** — every table keyed, every rule in the schema, migrations safe + reversible,
+  hot queries index-backed
+- **20 schema-slop anti-patterns** — nullable-everything, VARCHAR(255) sprawl, floats for money,
+  EAV, JSON-as-schema, destructive migrations, SELECT *, WHERE-less deletes… each with the fix
+- **A deterministic checker** — `scripts/check.mjs` with CREATE TABLE block parsing: missing PKs,
+  nullable columns, FKs without ON DELETE or indexes, float money, tz-less timestamps, interpolated
+  SQL, dynamic DDL, destructive DDL — zero dependencies, no LLM, no API key
 
 ### apicraft — the Impeccable of API design
 
@@ -60,6 +75,7 @@ one-line install.**
 npx skills add knarayanareddy/Impeccable --skill codecraft
 npx skills add knarayanareddy/Impeccable --skill criterion
 npx skills add knarayanareddy/Impeccable --skill apicraft
+npx skills add knarayanareddy/Impeccable --skill dbcraft
 
 # Claude Code (plugin marketplace)
 /plugin marketplace add knarayanareddy/Impeccable
@@ -73,6 +89,8 @@ Then, in your AI coding tool:
 /criterion densify dashboard     # more information per viewport, less clutter
 /apicraft contract orders        # write the machine-readable contract (spec-first)
 /apicraft audit .                # API defect scan + deterministic checker
+/dbcraft constrain .             # add the constraints the schema is missing
+/dbcraft migrate                 # write safe, reversible, tested migrations
 ```
 
 Manual install: copy a skill folder (`skill/codecraft/`, `skill/criterion/`) into your agent's
@@ -99,7 +117,7 @@ instead of judgment:
 | Facet | Status | The anti-slop thesis |
 |---|---|---|
 | **API design** (REST/GraphQL/RPC) | ✅ **shipped as `apicraft`** | Endpoints that lie, pagination that breaks, errors that leak — contract-first + deterministic checker |
-| **Database & schema** | planned | Nullable-everything, no constraints, EAV, stringly IDs — schema review + checker |
+| **Database & schema** | ✅ **shipped as `dbcraft`** | Nullable-everything, no constraints, floats for money, destructive migrations — schema floor + checker |
 | **Testing** | planned | Tests that test implementation, sleeps, no assertions — test-craft vocabulary |
 | **Performance** | planned | Optimize-without-measuring, N+1s, jank — profile-first discipline |
 | **Security** | planned | Complements tool-based scanners: authn/authz judgment, threat-model habits |

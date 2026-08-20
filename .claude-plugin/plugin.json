@@ -1,7 +1,7 @@
 {
   "name": "impeccable-craft-skills",
-  "description": "Craft skills for AI coding agents: criterion (data-dense product UI), codecraft (code quality), apicraft (API design) — each with commands, domain references, anti-pattern bans, and a deterministic checker.",
-  "version": "0.3.0",
+  "description": "Craft skills for AI coding agents: criterion (data-dense product UI), codecraft (code quality), apicraft (API design), dbcraft (database/schema) — each with commands, domain references, anti-pattern bans, and a deterministic checker.",
+  "version": "0.4.0",
   "author": {
     "name": "knarayanareddy",
     "url": "https://github.com/knarayanareddy"

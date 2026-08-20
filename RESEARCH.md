@@ -255,6 +255,18 @@ SKILL.md + reference/ + scripts/ + plugin.json + README row + before/after demo.
 - **The facet's "second hour" insight:** *an API is a promise that outlives its authors* — the
   consumer's decade, not the producer's sprint.
 
+## 12b. Database/schema facet notes (shipped as `dbcraft`)
+
+- **White space confirmed:** the only notable DB skills are vendor-bound (Supabase's Postgres/RLS
+  skill) or buried in suites; no vendor-neutral *schema-craft* skill owns the category. Schema
+  quality is the least-glamorous, highest-cost facet — and the most mechanically checkable.
+- **The differentiators:** the schema floor (the database as the last line of defense — every rule
+  expressible in DDL lives in DDL), expand/contract migration discipline, and the deepest
+  deterministic checker in the suite (CREATE TABLE block parsing: missing PKs, nullable columns, FK
+  policies, float-money, tz-less timestamps, interpolated SQL, dynamic DDL).
+- **The facet's "second hour" insight:** *data outlives code* — the schema is the longest-lived
+  interface in the system; design for its decade, not the app's sprint.
+
 ## 13. Sources (engineering landscape)
 
 - [addyosmani/agent-skills — comparison doc](https://github.com/addyosmani/agent-skills/blob/main/docs/comparison.md)
