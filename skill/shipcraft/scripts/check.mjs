@@ -102,7 +102,8 @@ const rules = [
       const m = /[\w./-]+:latest\b/i.exec(line);
       if (m) return m[0];
       // untagged reference — no tag IS latest: `image: app`, `FROM node`, `docker build -t app`
-      const u = /\bimage\s*:\s*["']?[\w./-]+["']?\s*$/i.exec(line) || /^\s*FROM\s+[\w./-]+\s*$/i.exec(line) || /\s-t\s+["']?[\w./-]+["']?\s*$/i.exec(line);
+      const u = /\bimage\s*:\s*["']?[\w./-]+["']?\s*$/i.exec(line) || /^\s*FROM\s+[\w./-]+\s*$/i.exec(line) ||
+        /\s-t\s+["']?[\w./-]+["']?(?=\s|$)/i.exec(line);
       if (u) return `${u[0].trim()} (untagged = latest)`;
       return null;
     },
