@@ -55,6 +55,14 @@ const rules = [
       if (/[<>{}]/.test(m[2])) return null;
       return `${m[1]} = "<redacted>"`;
     },
+    testFallback2(line) {
+      // env-fallback form: `const key = process.env.KEY || "sk-..."` — the
+      // fallback IS a committed credential (cross-skill parity with apicraft)
+      const m = /\b(api[_-]?key|api[_-]?secret|secret[_-]?key|client[_-]?secret|password|passwd|access[_-]?token|auth[_-]?token|db[_-]?password|jwt[_-]?secret|signing[_-]?key)\b[^=]*=\s*[^;]*\|\|\s*["']([A-Za-z0-9_\-+./=]{8,})["']/i.exec(line);
+      if (!m) return null;
+      if (/^(changeme|password|secret|example|dummy|test|testing|x{8,}|12345678)$/i.test(m[2])) return null;
+      return `${m[1]} ||= "<redacted>"`;
+    },
   },
   {
     id: "committed-private-key",
@@ -158,7 +166,7 @@ const rules = [
     test(line) {
       const m = /https?:\/\/([^\/"'\s]+)/i.exec(line);
       if (!m || !/^http:\/\//i.test(m[0])) return null;
-      const host = m[1].replace(/:\d+$/, "").toLowerCase();
+      const host = m[1].replace(/:\S*$/, "").toLowerCase();
       if (["localhost", "127.0.0.1", "0.0.0.0", "example.com", "www.example.com", "example.org", "example.net"].includes(host)) return null;
       return m[0];
     },
@@ -263,11 +271,50 @@ function scan(file) {
   } catch {
     return findings;
   }
-  const lines = text.split("\n");
+  const rawLines = text.split("\n");
+  // Stateful comment stripping: comments are prose, not evidence. Line rules
+  // read the stripped lines; URL double-slashes are never comment starts.
+  const lines = [];
+  {
+    let inBlock = false;
+    for (const raw of rawLines) {
+      let line = raw;
+      if (inBlock) {
+        const end = line.indexOf("*/");
+        if (end === -1) { lines.push(""); continue; }
+        line = " ".repeat(end + 2) + line.slice(end + 2);
+        inBlock = false;
+      }
+      let out = "";
+      let i = 0;
+      while (i < line.length) {
+        if (line.startsWith("/*", i)) {
+          const end = line.indexOf("*/", i + 2);
+          if (end === -1) { inBlock = true; break; }
+          out += " ".repeat(end + 2 - i);
+          i = end + 2;
+        } else if (/\.(js|mjs|cjs|jsx|ts|tsx|vue|svelte)$/i.test(file) && line.startsWith("//", i) && (i === 0 || line[i - 1] !== ":")) {
+          break;
+        } else if (/\.(py|yaml|yml)$/i.test(file) && line.startsWith("#", i)) {
+          break;
+        } else if (/\.(html?|vue|svelte)$/i.test(file) && line.startsWith("<!--", i)) {
+          const end = line.indexOf("-->", i + 4);
+          out += " ".repeat(end === -1 ? line.length - i : end + 3 - i);
+          i = end === -1 ? line.length : end + 3;
+        } else {
+          out += line[i];
+          i += 1;
+        }
+      }
+      lines.push(out);
+    }
+  }
 
   lines.forEach((raw, i) => {
     for (const rule of rules) {
-      const detail = rule.test(raw) || (rule.testFallback ? rule.testFallback(raw) : null);
+      let detail = rule.test(raw);
+      if (!detail && rule.testFallback) detail = rule.testFallback(raw);
+      if (!detail && rule.testFallback2) detail = rule.testFallback2(raw);
       if (detail) {
         findings.push({ file: basename(file), line: i + 1, rule: rule.id, severity: rule.severity, message: rule.message, detail });
       }
@@ -305,7 +352,8 @@ function main() {
   const hasSecConfig = files.some((f) =>
     /(helmet|security|headers|csp|seccraft|hardening|secure)/i.test(basename(f))
   );
-  if (!hasSecConfig) {
+  const isProjectScope = targets.some((p) => { try { return statSync(resolve(p)).isDirectory(); } catch { return false; } }) || files.length > 1;
+  if (!hasSecConfig && isProjectScope) {
     findings.push({
       file: "(project)", line: 0, rule: "no-security-config", severity: "warning",
       message: "No security configuration found (CSP/headers/CORS policy module) — the free defenses nobody enabled (K4).",

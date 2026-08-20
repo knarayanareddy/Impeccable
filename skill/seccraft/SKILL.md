@@ -50,7 +50,9 @@ safe by construction.
    below against it, e.g. `node <skill-dir>/scripts/check.mjs`.
 2. Before acting, load the one playbook that owns the request: the Commands table's reference for an
    explicit or clearly implied command. Then inspect the target's code, config, and dependency
-   manifests before editing.
+   manifests before editing. If the surface is a web application, an API/service, or a mobile
+   app, also load the matching sheet in `reference/surfaces/` alongside the relevant domains —
+   one sheet, never all.
 3. Load [reference/security-floor.md](reference/security-floor.md) **immediately before editing any
    security-relevant code or config**. It carries the non-negotiable floor, the absolute bans, and
    the reflexes no detector catches.
@@ -74,7 +76,8 @@ safe by construction.
 | `sanitize [target]` | Refine | Input/output handling: injection and XSS defense | [reference/commands/sanitize.md](reference/commands/sanitize.md) |
 | `authz [target]` | Refine | Object-level authorization: fix the IDOR class | [reference/commands/authz.md](reference/commands/authz.md) |
 | `secrets [target]` | Refine | Secrets management: move, rotate, scan | [reference/commands/secrets.md](reference/commands/secrets.md) |
-| `lock [target]` | Refine | Secure defaults: headers, TLS, cookies, CORS, sessions | [reference/commands/lock.md](reference/commands/lock.md) |
+| `lock [target]` | Refine | Secure defaults: headers, TLS, cookies, CORS, sessions · check mode: [reference/commands/lock-check.md](reference/commands/lock-check.md) | [reference/commands/lock.md](reference/commands/lock.md) |
+| `threatmodel [target]` | Evaluate | Map trust boundaries, threats, and mitigations · review daemon: `scripts/threat-review.mjs` | [reference/commands/threatmodel.md](reference/commands/threatmodel.md) |
 | `depend [target]` | Enhance | Dependency hygiene: pin, audit, update, SBOM | [reference/commands/depend.md](reference/commands/depend.md) |
 | `monitor [target]` | Enhance | Security observability: audit logs, detection, alerting | [reference/commands/monitor.md](reference/commands/monitor.md) |
 | `respond [target]` | Enhance | Incident response basics: runbooks and recovery posture | [reference/commands/respond.md](reference/commands/respond.md) |
@@ -88,6 +91,14 @@ safe by construction.
 - **Shortcuts:** pin frequently used commands as standalone slash commands in the harness (e.g., a
   `.claude/commands/audit.md` containing "Run the seccraft skill's audit command") so `/audit`
   works without the `/seccraft` prefix.
+
+## Surfaces
+
+The floor is surface-agnostic; the attack surface is not. For web applications, APIs/services,
+and mobile apps, `reference/surfaces/` ships a compact sheet per surface (the attack surface,
+the controls to wire, the traps, the bans) loaded with the relevant domains — the same
+one-variant-not-all convention as the suite's platform variants and style sheets. Other
+surfaces route through the domains alone.
 
 ## Verification loop
 

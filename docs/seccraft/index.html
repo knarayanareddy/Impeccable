@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seccraft — the craft skill for security</title>
+<style>
+  :root { --bg:#101418; --panel:#161c22; --text:#e8eaf0; --muted:#8b93a1; --line:#262e37; --accent:#4d7cfe; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.6 system-ui,-apple-system,sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 56px 24px 80px; }
+  h1 { font-size: 34px; line-height:1.15; letter-spacing:-0.02em; margin:0 0 12px; }
+  .lede { color: var(--muted); font-size: 18px; margin: 0 0 36px; }
+  h2 { font-size: 20px; margin: 40px 0 12px; letter-spacing:-0.01em; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; text-decoration:none; color:var(--text); }
+  .card:hover { border-color: var(--accent); }
+  .card b { display:block; }
+  .card span { color: var(--muted); font-size: 13px; }
+  code, pre { font-family: ui-monospace, monospace; }
+  pre { background: var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:13px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); }
+  .num { color:var(--accent); font-variant-numeric: tabular-nums; }
+  a { color: var(--accent); }
+  .back { color:var(--muted); text-decoration:none; font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="../">← the craft-skill suite</a>
+  <h1>Seccraft</h1>
+  <p class="lede">The craft skill for security that is designed, not bolted on. <em>Security is the design of failure, not a final scan. Trust is explicit.</em></p>
+
+  <h2>Install</h2>
+  <pre>npx skills add knarayanareddy/Impeccable --skill seccraft</pre>
+  <p>Then <code>/seccraft threatmodel orders</code>, <code>/seccraft authz src/api</code>, or any of the 16 commands.</p>
+
+  <h2>The commands <span class="num">16</span></h2>
+  <table>
+    <tr><th>Build</th><td>init · shape</td></tr>
+    <tr><th>Evaluate</th><td>threatmodel (· review daemon) · audit · review · measure</td></tr>
+    <tr><th>Refine</th><td>harden · sanitize · authz · secrets · lock (· check mode)</td></tr>
+    <tr><th>Enhance</th><td>depend · monitor · respond</td></tr>
+  </table>
+
+  <h2>The checker</h2>
+  <pre>node skill/seccraft/scripts/check.mjs --strict --target src/
+# ERROR hardcoded-credential config.js:5  apiKey = "&lt;redacted&gt;"
+# ERROR interpolated-sql     routes.js:12  python .format() SQL
+# WARN  weak-jwt             auth.js:3     hardcoded JWT secret
+# seccraft: 14 file(s) scanned · FAILED</pre>
+  <p>Zero dependencies, no LLM, no API key; values redacted in output. Behaviors pinned by <a href="../../skill/seccraft/tests/scenarios.mjs">24 automated scenarios</a>.</p>
+
+  <h2>Lock-check — the secure-defaults gate</h2>
+  <pre>node skill/seccraft/scripts/lock-check.mjs --config config.json
+# GAP headers  csp    missing csp — the free defense nobody enabled
+# GAP cors     origin origin "*" on an authenticated API
+# lock-check: 11 gap(s) · FAILED</pre>
+  <p>The lock command's checklist as a deploy gate — CI-ready.</p>
+
+  <h2>Threat review daemon</h2>
+  <pre>node skill/seccraft/scripts/threat-review.mjs --threats threats.json --round r1 &amp;
+node skill/seccraft/scripts/threat-review.mjs --round r1 --wait</pre>
+  <p>Serve the threat model's STRIDE entries as a decision page: control holds / mitigate / accept risk / escalate. Gaps cannot leave silently.</p>
+
+  <h2>Surfaces</h2>
+  <p><code>reference/surfaces/</code> ships sheets for web applications, APIs/services, and mobile apps — one sheet, never all.</p>
+
+  <h2>Evidence</h2>
+  <div class="grid">
+    <a class="card" href="case-study.md"><b>Case study</b><span>The generic AI security → the seccraft pass, plus the config gate</span></a>
+    <a class="card" href="../../demos/seccraft/before.js"><b>Demo — before</b><span>Runs the checker's failure list</span></a>
+    <a class="card" href="../../demos/seccraft/after.js"><b>Demo — after</b><span>Passes clean</span></a>
+    <a class="card" href="../../REVIEWS/seccraft-round1.md"><b>Expert review</b><span>Two-round panel archive</span></a>
+  </div>
+</main>
+<footer style="max-width:860px;margin:0 auto;padding:0 24px 32px;color:var(--muted);font-size:12px;">Apache-2.0 · original work, not affiliated with pbakaus/impeccable</footer>
+</body>
+</html>
