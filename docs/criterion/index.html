@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Criterion — the design skill for interfaces that do work</title>
+<style>
+  :root { --bg:#101418; --panel:#161c22; --text:#e8eaf0; --muted:#8b93a1; --line:#262e37; --accent:#4d7cfe; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.6 system-ui,-apple-system,sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 56px 24px 80px; }
+  h1 { font-size: 34px; line-height:1.15; letter-spacing:-0.02em; margin:0 0 12px; }
+  .lede { color: var(--muted); font-size: 18px; margin: 0 0 36px; }
+  h2 { font-size: 20px; margin: 40px 0 12px; letter-spacing:-0.01em; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; text-decoration:none; color:var(--text); }
+  .card:hover { border-color: var(--accent); }
+  .card b { display:block; }
+  .card span { color: var(--muted); font-size: 13px; }
+  code, pre { font-family: ui-monospace, monospace; }
+  pre { background: var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:13px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); }
+  .num { color:var(--accent); font-variant-numeric: tabular-nums; }
+  a { color: var(--accent); }
+  .back { color:var(--muted); text-decoration:none; font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="../">← the craft-skill suite</a>
+  <h1>Criterion</h1>
+  <p class="lede">The design skill for interfaces that do work — dashboards, admin panels, tools, tables, charts, forms. <em>Design for the second hour, not the first impression. Measure, don't vibe.</em></p>
+
+  <h2>Install</h2>
+  <pre>npx skills add knarayanareddy/Impeccable --skill criterion</pre>
+  <p>Then <code>/criterion audit dashboard</code>, <code>/criterion densify tickets</code>, or any of the 22 commands.</p>
+
+  <h2>The commands <span class="num">22</span></h2>
+  <table>
+    <tr><th>Build</th><td>init · document · shape · extract</td></tr>
+    <tr><th>Evaluate</th><td>audit (· native) · critique · measure · benchmark</td></tr>
+    <tr><th>Refine</th><td>polish · densify · distill · quieter · align · typeset · harden</td></tr>
+    <tr><th>Enhance</th><td>animate · colorize · clarify · adapt (· native) · optimize · onboard</td></tr>
+    <tr><th>Iterate</th><td>live (decision-page daemon)</td></tr>
+  </table>
+
+  <h2>The detector</h2>
+  <pre>node skill/criterion/scripts/check.mjs --strict --target src/
+# ERROR pure-black            Table.tsx:142  Pure black (#000)…
+# ERROR elastic-easing        theme.css:31    bounce/elastic easing…
+# WARN  banned-font           globals.css:9   Inter as a silent default…
+# criterion: 14 file(s) scanned · FAILED</pre>
+  <p>Zero dependencies, no LLM, no API key. It also ships as a <a href="../../skill/criterion/extension/">browser extension</a> that scans any live page, and its behaviors are pinned by <a href="../../skill/criterion/tests/scenarios.mjs">17 automated scenarios</a>.</p>
+
+  <h2>Live iteration</h2>
+  <pre>node skill/criterion/scripts/live.mjs --round density --options a.json b.json &amp;
+node skill/criterion/scripts/live.mjs --round density --wait</pre>
+  <p>Serve a decision page, let the user pick the variant, and the daemon records the choice for the agent.</p>
+
+  <h2>Evidence</h2>
+  <div class="grid">
+    <a class="card" href="case-study"><b>Case study</b><span>The generic AI dashboard → the criterion pass, measured both directions</span></a>
+    <a class="card" href="../../demos/criterion/before.html"><b>Demo — before</b><span>Runs the checker's failure list</span></a>
+    <a class="card" href="../../demos/criterion/after.html"><b>Demo — after</b><span>Passes clean</span></a>
+    <a class="card" href="../../REVIEWS/criterion-round1"><b>Expert review</b><span>Two-round panel archive</span></a>
+  </div>
+</main>
+</body>
+</html>

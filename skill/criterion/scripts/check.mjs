@@ -229,8 +229,41 @@ function scan(file, strict) {
   } catch {
     return findings;
   }
-  const lines = text.split("\n");
-  lines.forEach((line, i) => {
+  const rawLines = text.split("\n");
+  // Stateful comment stripping (multi-line blocks): comments are prose, not evidence.
+  const lines = [];
+  let inBlock = false;
+  for (const raw of rawLines) {
+    let line = raw;
+    if (inBlock) {
+      const end = line.indexOf("*/");
+      if (end === -1) { lines.push(""); continue; }
+      line = " ".repeat(end + 2) + line.slice(end + 2);
+      inBlock = false;
+    }
+    let out = "";
+    let i = 0;
+    while (i < line.length) {
+      if (line.startsWith("/*", i)) {
+        const end = line.indexOf("*/", i + 2);
+        if (end === -1) { inBlock = true; break; }
+        out += " ".repeat(end + 2 - i);
+        i = end + 2;
+      } else if (/\.(js|mjs|cjs|jsx|ts|tsx|vue|svelte)$/i.test(file) && line.startsWith("//", i)) {
+        break; // rest of the line is a comment
+      } else if (/\.html?$/i.test(file) && line.startsWith("<!--", i)) {
+        const end = line.indexOf("-->", i + 4);
+        out += " ".repeat(end === -1 ? line.length - i : end + 3 - i);
+        i = end === -1 ? line.length : end + 3;
+      } else {
+        out += line[i];
+        i += 1;
+      }
+    }
+    lines.push(out);
+  }
+  lines.forEach((rawLine, i) => {
+    const line = rawLine;
     for (const rule of rules) {
       const detail = rule.test(line);
       if (detail) {

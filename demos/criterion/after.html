@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>OpsBoard — after (criterion pass)</title>
+<style>
+  /* Deliberate workhorse font, tinted neutrals, 6px radius, 150ms ease-out,
+     semantic color, tabular figures, reserved image layout */
+  body { font-family: "Public Sans", system-ui, sans-serif; background: #f7f8fa; color: #1a1d21; margin: 0; }
+  header {
+    background: #1f2937; color: #e8eaf0;
+    padding: 24px 28px; margin: 20px;
+    border: 1px solid #262e37; border-radius: 6px;
+  }
+  header h1 { margin: 0; font-size: 18px; font-weight: 600; }
+  header p { color: #94a3b8; margin: 4px 0 0; font-size: 13px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 0 20px; }
+  .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 14px 16px; }
+  .card .kpi { font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .card .label { color: #4b5563; font-size: 12px; margin-top: 2px; }
+  .table-wrap { background: #fff; border: 1px solid #e5e7eb; border-radius: 6px; margin: 20px; padding: 12px 16px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+  th { text-align: left; color: #4b5563; font-weight: 600; padding: 8px 10px; border-bottom: 1px solid #e5e7eb; }
+  td { padding: 8px 10px; border-bottom: 1px solid #f3f4f6; text-align: left; }
+  .badge { background: #eef2ff; color: #3730a3; border-radius: 4px; padding: 2px 8px; font-size: 12px; }
+  .cta {
+    background: #2563eb; color: #fff; border: 0; border-radius: 6px;
+    padding: 10px 18px; font-size: 13px; margin: 0 20px 24px;
+    transition: opacity 150ms ease-out;
+  }
+  .cta:hover { opacity: 0.9; }
+  .cta:focus-visible { outline: 2px solid #1e40af; outline-offset: 2px; }
+  img.hero { width: 100%; height: 160px; border-radius: 6px; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>OpsBoard</h1>
+    <p>Open tickets by owner and severity.</p>
+  </header>
+  <div class="grid">
+    <div class="card"><div class="kpi">1,284</div><div class="label">Open tickets</div></div>
+    <div class="card"><div class="kpi">96.2%</div><div class="label">SLA met</div></div>
+    <div class="card"><div class="kpi">$42,900</div><div class="label">Revenue today</div></div>
+  </div>
+  <div class="table-wrap">
+    <img class="hero" src="chart.png" alt="Ticket volume, last 30 days" loading="lazy" width="800" height="160">
+    <table>
+      <tr><th>Ticket</th><th>Owner</th><th>Status</th><th>Age</th></tr>
+      <tr><td>#4821</td><td>Ana</td><td><span class="badge">open</span></td><td>2d</td></tr>
+      <tr><td>#4820</td><td>Bo</td><td><span class="badge">open</span></td><td>3d</td></tr>
+      <tr><td>#4819</td><td>Cem</td><td><span class="badge">closed</span></td><td>12d</td></tr>
+    </table>
+  </div>
+  <button class="cta">View all tickets</button>
+</body>
+</html>

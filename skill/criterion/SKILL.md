@@ -28,7 +28,7 @@ You are the senior product designer at a company whose software people use forty
 ## Setup
 
 1. Note the skill's base directory (the folder containing this SKILL.md). Resolve every script path below against it, e.g. `node <skill-dir>/scripts/check.mjs`.
-2. Before acting, load the one playbook that owns the request: the Commands table's reference for an explicit or clearly implied command, or `reference/new-work.md` for a new surface. Then inspect the target and at least one representative source of incumbent visual truth (tokens, theme, CSS, component, or asset) before editing.
+2. Before acting, load the one playbook that owns the request: the Commands table's reference for an explicit or clearly implied command, or `reference/new-work.md` for a new surface. On native projects (iOS/Android), `audit` and `adapt` load their `.native` variant instead — one file, never both. Then inspect the target and at least one representative source of incumbent visual truth (tokens, theme, CSS, component, or asset) before editing.
 3. After analysis and direction are resolved, load `reference/craft-floor.md` **immediately before editing UI**. It carries the numeric quality floor, the absolute bans, and the reflexes no detector catches.
 4. After editing or building UI, run `node <skill-dir>/scripts/check.mjs --target <path>` and fix every violation it reports before finishing. Treat violations as defects, not suggestions.
 5. Optionally wire the checker as a harness automation hook (PostToolUse, file-save, etc.) so it runs after UI edits automatically — see the repo's `docs/hooks.md` for harness examples.
@@ -52,7 +52,7 @@ See `reference/new-work.md` for starting a surface and choosing a register.
 | `document` | Build | Generate DESIGN.md from existing project code | `reference/commands/document.md` |
 | `shape [feature]` | Build | Plan the UX, IA, and data flow before writing code | `reference/commands/shape.md` |
 | `extract [target]` | Build | Pull reusable tokens and components from existing code into a design system | `reference/commands/extract.md` |
-| `audit [target]` | Evaluate | Technical quality checks: a11y, contrast, performance, responsive, tokens | `reference/commands/audit.md` |
+| `audit [target]` | Evaluate | Technical quality checks: a11y, contrast, performance, responsive, tokens · native: `reference/commands/audit.native.md` | `reference/commands/audit.md` |
 | `critique [target]` | Evaluate | Heuristic UX review with scoring: hierarchy, scanability, density, clarity | `reference/commands/critique.md` |
 | `measure [target]` | Evaluate | Quantitative pass: contrast ratios, alignment, spacing, density metrics | `reference/commands/measure.md` |
 | `benchmark [target]` | Evaluate | Compare against one or two category leaders; produce a ranked gap list | `reference/commands/benchmark.md` |
@@ -66,7 +66,7 @@ See `reference/new-work.md` for starting a surface and choosing a register.
 | `animate [target]` | Enhance | Add restrained, purposeful motion that serves task comprehension | `reference/commands/animate.md` |
 | `colorize [target]` | Enhance | Add strategic color to monochromatic UIs — meaning, not decoration | `reference/commands/colorize.md` |
 | `clarify [target]` | Enhance | Improve UX copy: labels, buttons, errors, empty states | `reference/commands/clarify.md` |
-| `adapt [target]` | Enhance | Adapt data views for devices: column priority, table→cards, density shifts | `reference/commands/adapt.md` |
+| `adapt [target]` | Enhance | Adapt data views for devices: column priority, table→cards, density shifts · native: `reference/commands/adapt.native.md` | `reference/commands/adapt.md` |
 | `optimize [target]` | Enhance | Diagnose and fix UI performance: render, load, interaction latency | `reference/commands/optimize.md` |
 | `onboard [target]` | Enhance | Design first-run flows, empty states, and activation paths | `reference/commands/onboard.md` |
 | `live` | Iterate | Visual variant mode: pick elements in the browser, generate alternatives | `reference/commands/live.md` |
@@ -80,7 +80,9 @@ See `reference/new-work.md` for starting a surface and choosing a register.
 
 ## Scope notes
 
-- **Web-first by design.** Native-platform variants (audit/adapt for iOS/Android) are out of scope in this version; route native work to platform-aware judgment with the same floor. Recorded as a deliberate scope decision, not an oversight.
+- **Web-first, native-aware.** The web is the primary target; native projects get authored
+  variants for `audit` and `adapt` (VoiceOver/TalkBack, size classes, dynamic type — see the
+  Commands table). The remaining commands translate per platform judgment with the same floor.
 - **No `bolder`.** The reference's bolder amplifies marketing expression; in the Command register, amplification is usually the disease. `densify` (add information) and `quieter` (remove noise) are the deliberate replacements.
 - **No `delight` / `overdrive`.** Same rationale, stronger case: confetti, mascots, and technically extraordinary effects belong to marketing and Experience surfaces — in task UI they tax attention and comprehension. The replacements are `animate` (comprehension motion), `onboard` (the real moment of delight in tools), and `live` (bounded iteration). `colorize` remains as the one strategic-expression move, applied as meaning, never decoration.
 
