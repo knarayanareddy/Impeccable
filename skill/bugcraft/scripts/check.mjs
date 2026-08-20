@@ -89,10 +89,10 @@ const rules = [
     severity: "warning",
     message: "Disabled code block — a shipped experiment (S5). Delete it; git remembers.",
     test(line) {
-      const m = /\bif\s*\(\s*(?:false|true)\s*\)\s*\{?|\bwhile\s*\(\s*false\s*\)/.exec(line);
+      const m = /\bif\s*\(\s*(?:false|true|0)\s*\)\s*\{?|\bwhile\s*\(\s*(?:false|0)\s*\)/.exec(line);
       if (!m) return null;
-      // `if (true)` as a comment-style gate is the tell; genuine `if (false)` too
-      if (/\b(?:debug|disable|temporar|hack|experiment|todo|fixme|test)\b/i.test(line) || /\bif\s*\(\s*false\s*\)/.test(line)) {
+      // `if (true)` as a comment-style gate is the tell; genuine `if (false)`/`if (0)` too
+      if (/\b(?:debug|disable|temporar|hack|experiment|todo|fixme|test)\b/i.test(line) || /\bif\s*\(\s*(?:false|0)\s*\)/.test(line)) {
         return m[0].trim();
       }
       return null;
@@ -112,10 +112,11 @@ const rules = [
     severity: "warning",
     message: "Uncertainty marker without an owner — the doubt is recorded and abandoned (C1). Owner + ticket, or resolve the doubt.",
     test(line) {
-      const isComment = /^\s*(\/\/|#|\/\*|\*)/.test(line);
-      if (!isComment || !UNCERTAINTY.test(line)) return null;
-      if (/\b(?:ticket|issue|#\d+|owner|TODO|FIXME|tracked|jira)\b/i.test(line)) return null;
-      return line.trim().slice(0, 60);
+      // comment lines AND inline trailing comments (`x = y; // hack`)
+      const commentText = (/^\s*(\/\/|#|\/\*|\*)/.test(line)) ? line : (line.includes("//") ? line.slice(line.indexOf("//")) : line.includes("#") ? line.slice(line.indexOf("#")) : "");
+      if (!commentText || !UNCERTAINTY.test(commentText)) return null;
+      if (/\b(?:ticket|issue|#\d+|owner|TODO|FIXME|tracked|jira)\b/i.test(commentText)) return null;
+      return commentText.trim().slice(0, 60);
     },
   },
 ];

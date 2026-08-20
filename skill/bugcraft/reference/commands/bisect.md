@@ -9,7 +9,8 @@ the authority). The logarithmic search — each step discards half the suspects.
    (`domains/reproduction.md`; a flaky repro makes the bisect lie).
 2. Choose the dimension by the bug's shape:
    - Regression → git bisect between last-good and first-bad commits; the repro marks each
-     checkout good/bad.
+     checkout good/bad — automate with `git bisect run <repro-script>` when the repro is a
+     script (the script exits 0 for good, 1–127 for bad).
    - Data-dependent → input half-splitting: remove half the input, check, recurse.
    - Order/time-dependent → split the event stream (logs, requests, writes) around the
      divergence.

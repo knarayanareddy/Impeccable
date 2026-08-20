@@ -56,6 +56,8 @@ the system how to catch its class.
    reflexes no detector catches.
 4. After editing, run `node <skill-dir>/scripts/check.mjs --target <path>`, verify the repro fails
    before and passes after, and run the regression pin before finishing.
+5. Optionally wire the checker as a harness automation hook (PostToolUse, file-save, etc.) — see
+   the repo's `docs/hooks.md` for harness examples.
 
 ## Commands
 
@@ -83,6 +85,9 @@ the system how to catch its class.
 - **Explicit or clearly implied command:** load its reference and follow it. Ask once if two commands fit.
 - **Otherwise:** treat the request as general debugging work on the incumbent implementation, with
   [reference/evidence-floor.md](reference/evidence-floor.md) loaded before any edit.
+- **Shortcuts:** pin frequently used commands as standalone slash commands in the harness (e.g., a
+  `.claude/commands/audit.md` containing "Run the bugcraft skill's audit command") so `/audit`
+  works without the `/bugcraft` prefix.
 
 ## Verification loop
 

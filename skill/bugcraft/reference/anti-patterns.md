@@ -46,7 +46,8 @@ have a deterministic rule in `scripts/check.mjs`; the rest are LLM-judged with t
 
 ## Detector mapping
 
-`scripts/check.mjs` deterministically catches: S1 (swallowed exceptions), S2 (log-and-swallow,
-JS single-line + Python windowed), S3 (silent catch returns), S4 (debug markers incl. `debugger;`
-and "here"-family prints), S5 (disabled code blocks + commented-out debug lines), C1 (uncertainty
-markers). The rest are LLM-judged — keep this file loaded when auditing or reviewing.
+`scripts/check.mjs` deterministically catches, with these rule ids: `swallowed-exception` (S1),
+`log-and-swallow` (S2, JS single-line + windowed, Python windowed), `silent-catch-return` (S3),
+`debug-marker` (S4, "here"-family + debugger), `disabled-code` (S5), `commented-out-debug` (S5),
+`uncertainty-marker` (C1, comment lines — owner/ticket escape hatch). The rest are LLM-judged —
+keep this file loaded when auditing or reviewing.

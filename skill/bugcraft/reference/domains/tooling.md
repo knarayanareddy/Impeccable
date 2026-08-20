@@ -13,6 +13,7 @@ recorded.
 | Where does the time go (is it stuck, or slow)? | Profiler / flame graph (`perfcraft`'s measurement domain) |
 | Which service diverged? | Distributed traces (`obscraft`'s traces domain — `trace` walks them) |
 | What was the state at failure? | Core dumps / heap snapshots / error reports (Sentry-style) |
+| Heisenbug under observation? | **Record/replay time-travel debugging** (rr, WinDbg TTD, browser replay) — record once, replay the failure backwards and forwards |
 | What does this expression do here? | REPL / scratch file — the 30-second question |
 | Which change broke it? | The deploy log, the diff (`shipcraft`'s monitor) |
 
