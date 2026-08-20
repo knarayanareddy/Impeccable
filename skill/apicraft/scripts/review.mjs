@@ -210,6 +210,14 @@ ${endpoints.map((e, idx) => `  <div class="row" id="row-${idx}" data-ep="${esc(e
     res.end();
   });
 
+  server.on("error", (e) => {
+
+    console.error("review: cannot bind port ${port} — ${e.message} (is another daemon running?)");
+
+    process.exit(2);
+
+  });
+
   server.listen(port, "0.0.0.0", () => {
     console.log(`review: round "${round}" · ${endpoints.length} endpoint(s) · http://localhost:${port}`);
     console.log("review: verdict each endpoint; the result lands in review-result.json");

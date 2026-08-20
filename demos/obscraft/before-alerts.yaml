@@ -1,0 +1,3 @@
+alerts:
+  - name: CheckoutHighLatency
+    expr: avg(checkout_latency_seconds) > 3

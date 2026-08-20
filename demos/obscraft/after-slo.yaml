@@ -1,0 +1,6 @@
+slo:
+  name: checkout-availability
+  sli: checkout.complete < 3s
+  target: 99.9
+  window: 30d
+  owner: payments-team

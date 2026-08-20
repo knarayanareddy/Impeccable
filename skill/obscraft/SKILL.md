@@ -49,7 +49,9 @@ journey backward: the question first, the signal second, the dashboard last.
    below against it, e.g. `node <skill-dir>/scripts/check.mjs`.
 2. Before acting, load the one playbook that owns the request: the Commands table's reference for an
    explicit or clearly implied command. Then inspect the target's code, its telemetry (logs,
-   metrics, traces, dashboards), and its on-call setup before editing.
+   metrics, traces, dashboards), and its on-call setup before editing. If the work is logging,
+   metrics, or tracing, also load the matching sheet in `reference/pillars/` alongside the
+   relevant domains — one sheet, never all.
 3. Load [reference/signal-floor.md](reference/signal-floor.md) **immediately before editing any
    instrumentation or alerting**. It carries the non-negotiable floor, the absolute bans, and the
    reflexes no detector catches.
@@ -72,8 +74,8 @@ journey backward: the question first, the signal second, the dashboard last.
 | `metric [target]` | Refine | Metric craft: names, percentiles, cardinality | [reference/commands/metric.md](reference/commands/metric.md) |
 | `trace [target]` | Refine | Distributed tracing: spans, propagation, sampling | [reference/commands/trace.md](reference/commands/trace.md) |
 | `correlate [target]` | Refine | Link the pillars: correlation IDs, exemplars, one vocabulary | [reference/commands/correlate.md](reference/commands/correlate.md) |
-| `slo [journey]` | Enhance | SLOs and error budgets from user journeys | [reference/commands/slo.md](reference/commands/slo.md) |
-| `alert [target]` | Enhance | Alert design: actionability, burn rates, no fatigue | [reference/commands/alert.md](reference/commands/alert.md) |
+| `slo [journey]` | Enhance | SLOs and error budgets from user journeys · review daemon: `scripts/slo-review.mjs` | [reference/commands/slo.md](reference/commands/slo.md) |
+| `alert [target]` | Enhance | Alert design: actionability, burn rates, no fatigue · shape gate: [reference/commands/telemetry-check.md](reference/commands/telemetry-check.md) | [reference/commands/alert.md](reference/commands/alert.md) |
 | `dashboard [target]` | Enhance | Dashboards that answer questions | [reference/commands/dashboard.md](reference/commands/dashboard.md) |
 | `monitor [target]` | Enhance | Wiring: collectors, exporters, storage, retention | [reference/commands/monitor.md](reference/commands/monitor.md) |
 | `respond [target]` | Enhance | Incident readiness: runbooks and the 3 a.m. test | [reference/commands/respond.md](reference/commands/respond.md) |
@@ -87,6 +89,13 @@ journey backward: the question first, the signal second, the dashboard last.
 - **Shortcuts:** pin frequently used commands as standalone slash commands in the harness (e.g., a
   `.claude/commands/audit.md` containing "Run the obscraft skill's audit command") so `/audit`
   works without the `/obscraft` prefix.
+
+## Pillars
+
+The floor is pillar-agnostic; the instruments are not. For logging, metrics, and tracing,
+`reference/pillars/` ships a compact sheet per pillar (the instruments, the workflow, the
+bans to enforce) loaded with the relevant domains — the same one-variant-not-all convention
+as the suite's platform variants and style sheets.
 
 ## Verification loop
 

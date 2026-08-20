@@ -5,8 +5,9 @@ that makes "where did the time go" answerable across services.
 
 ## Steps
 
-1. Audit the tracing posture: are there spans? at the boundaries? does the context cross service
-   edges? is there a sampling strategy?
+1. Load `reference/pillars/traces.md` — it is this command's instrument authority. Audit the
+   tracing posture: are there spans? at the boundaries? does the context cross service edges?
+   is there a sampling strategy?
 2. Fix per the rules:
    - **Spans at the boundaries** — every outgoing call (HTTP, DB, queue) becomes a child span
      with attributes (subject, outcome, sizes) (`anti-patterns.md` T2).

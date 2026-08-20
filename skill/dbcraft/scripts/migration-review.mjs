@@ -212,6 +212,14 @@ ${steps.map((s, idx) => `  <div class="step" id="step-${idx}" data-name="${esc(s
     res.end();
   });
 
+  server.on("error", (e) => {
+
+    console.error("migration-review: cannot bind port ${port} — ${e.message} (is another daemon running?)");
+
+    process.exit(2);
+
+  });
+
   server.listen(port, "0.0.0.0", () => {
     console.log(`migration-review: round "${round}" · ${steps.length} step(s) · http://localhost:${port}`);
     console.log("migration-review: verdict each step; the result lands in migration-review-result.json");

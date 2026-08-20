@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Obscraft — the craft skill for observability</title>
+<style>
+  :root { --bg:#101418; --panel:#161c22; --text:#e8eaf0; --muted:#8b93a1; --line:#262e37; --accent:#4d7cfe; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.6 system-ui,-apple-system,sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 56px 24px 80px; }
+  h1 { font-size: 34px; line-height:1.15; letter-spacing:-0.02em; margin:0 0 12px; }
+  .lede { color: var(--muted); font-size: 18px; margin: 0 0 36px; }
+  h2 { font-size: 20px; margin: 40px 0 12px; letter-spacing:-0.01em; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; text-decoration:none; color:var(--text); }
+  .card:hover { border-color: var(--accent); }
+  .card b { display:block; }
+  .card span { color: var(--muted); font-size: 13px; }
+  code, pre { font-family: ui-monospace, monospace; }
+  pre { background: var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:13px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); }
+  .num { color:var(--accent); font-variant-numeric: tabular-nums; }
+  a { color: var(--accent); }
+  .back { color:var(--muted); text-decoration:none; font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="../">← the craft-skill suite</a>
+  <h1>Obscraft</h1>
+  <p class="lede">The craft skill for observability that tells the truth. <em>Logs that lie are worse than no logs. Every page wakes a human who can act.</em></p>
+
+  <h2>Install</h2>
+  <pre>npx skills add knarayanareddy/Impeccable --skill obscraft</pre>
+  <p>Then <code>/obscraft slo checkout</code>, <code>/obscraft alert .</code>, or any of the 15 commands.</p>
+
+  <h2>The commands <span class="num">15</span></h2>
+  <table>
+    <tr><th>Build</th><td>init · shape · instrument</td></tr>
+    <tr><th>Evaluate</th><td>audit · review · measure</td></tr>
+    <tr><th>Refine</th><td>log · metric · trace · correlate</td></tr>
+    <tr><th>Enhance</th><td>slo (· review daemon) · alert (· shape gate) · dashboard · monitor · respond</td></tr>
+  </table>
+
+  <h2>The checker</h2>
+  <pre>node skill/obscraft/scripts/check.mjs --strict --target src/
+# ERROR secret-in-log    handler.js:6   token in the log statement
+# WARN  mean-only-metric handler.js:10  .mean( — the tail is hidden
+# WARN  metric-name-scatter handler.js:1  checkout_errors_total ×3
+# obscraft: 14 file(s) scanned · FAILED</pre>
+  <p>Zero dependencies, no LLM, no API key. Behaviors pinned by <a href="../../skill/obscraft/tests/scenarios.mjs">20 automated scenarios</a>.</p>
+
+  <h2>Telemetry-check — the question-first gate</h2>
+  <pre>node skill/obscraft/scripts/telemetry-check.mjs --slos slo.yaml --alerts alerts.yaml --metrics metrics.json
+# GAP slo   missing-owner   SLO "checkout-availability" has no owner
+# GAP alert missing-runbook Alert "CheckoutFastBurn" has no runbook
+# telemetry-check: 2 gap(s) · FAILED</pre>
+  <p>The SLO quartet, the alert actionability contract, and the metric vocabulary — mechanical, CI-ready. A file that parses to zero entries refuses, never claims valid.</p>
+
+  <h2>SLO/alert review daemon</h2>
+  <pre>node skill/obscraft/scripts/slo-review.mjs --review review.json --round r1 &amp;
+node skill/obscraft/scripts/slo-review.mjs --round r1 --wait</pre>
+  <p>Serve every SLO and alert as a decision page; gaps (no owner, no runbook) are shown in red.</p>
+
+  <h2>Pillars</h2>
+  <p><code>reference/pillars/</code> ships sheets for logs, metrics, and traces — one sheet, never all.</p>
+
+  <h2>Evidence</h2>
+  <div class="grid">
+    <a class="card" href="case-study.md"><b>Case study</b><span>The generic AI telemetry → the obscraft pass, plus the definitions gate</span></a>
+    <a class="card" href="../../demos/obscraft/before.js"><b>Demo — before</b><span>Runs the checker's failure list</span></a>
+    <a class="card" href="../../demos/obscraft/after.js"><b>Demo — after</b><span>Passes clean</span></a>
+    <a class="card" href="../../REVIEWS/obscraft-round1.md"><b>Expert review</b><span>Two-round panel archive</span></a>
+  </div>
+</main>
+<footer style="max-width:860px;margin:0 auto;padding:0 24px 32px;color:var(--muted);font-size:12px;">Apache-2.0 · original work, not affiliated with pbakaus/impeccable</footer>
+</body>
+</html>

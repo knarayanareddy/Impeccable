@@ -214,6 +214,14 @@ ${flakes.map((f, idx) => `  <div class="flake" id="flake-${idx}" data-name="${es
     res.end();
   });
 
+  server.on("error", (e) => {
+
+    console.error("flake-review: cannot bind port ${port} — ${e.message} (is another daemon running?)");
+
+    process.exit(2);
+
+  });
+
   server.listen(port, "0.0.0.0", () => {
     console.log(`flake-review: round "${round}" · ${flakes.length} flake(s) · http://localhost:${port}`);
     console.log("flake-review: verdict each flake; the result lands in flake-review-result.json");

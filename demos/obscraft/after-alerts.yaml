@@ -1,0 +1,5 @@
+alerts:
+  - name: CheckoutFastBurn
+    expr: slo_burn_rate(checkout, 1h) > 2
+    owner: payments-team
+    runbook: runbooks/checkout-burn.md

@@ -219,6 +219,14 @@ ${threats.map((t, idx) => `  <div class="threat" id="t-${idx}" data-name="${esc(
     res.end();
   });
 
+  server.on("error", (e) => {
+
+    console.error("threat-review: cannot bind port ${port} — ${e.message} (is another daemon running?)");
+
+    process.exit(2);
+
+  });
+
   server.listen(port, "0.0.0.0", () => {
     console.log(`threat-review: round "${round}" · ${threats.length} threat(s) · http://localhost:${port}`);
     console.log("threat-review: verdict each threat; the result lands in threat-review-result.json");

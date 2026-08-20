@@ -173,7 +173,44 @@ function scan(file) {
   }
   const ext = extname(file).toLowerCase();
   const isCode = CODE_EXTS.has(ext);
-  const lines = text.split("\n");
+  const rawLines = text.split("\n");
+  // Stateful comment stripping: comments are prose, not evidence. Windowed
+  // checks (log-in-loop) read the stripped lines — "for" in a comment is prose.
+  const lines = [];
+  {
+    let inBlock = false;
+    for (const raw of rawLines) {
+      let line = raw;
+      if (inBlock) {
+        const end = line.indexOf("*/");
+        if (end === -1) { lines.push(""); continue; }
+        line = " ".repeat(end + 2) + line.slice(end + 2);
+        inBlock = false;
+      }
+      let out = "";
+      let i = 0;
+      while (i < line.length) {
+        if (line.startsWith("/*", i)) {
+          const end = line.indexOf("*/", i + 2);
+          if (end === -1) { inBlock = true; break; }
+          out += " ".repeat(end + 2 - i);
+          i = end + 2;
+        } else if (/\.(js|mjs|cjs|jsx|ts|tsx|vue|svelte)$/i.test(file) && line.startsWith("//", i) && (i === 0 || line[i - 1] !== ":")) {
+          break;
+        } else if (/\.(py|yaml|yml)$/i.test(file) && line.startsWith("#", i)) {
+          break;
+        } else if (/\.(html?|vue|svelte)$/i.test(file) && line.startsWith("<!--", i)) {
+          const end = line.indexOf("-->", i + 4);
+          out += " ".repeat(end === -1 ? line.length - i : end + 3 - i);
+          i = end === -1 ? line.length : end + 3;
+        } else {
+          out += line[i];
+          i += 1;
+        }
+      }
+      lines.push(out);
+    }
+  }
 
   const metricNames = new Map(); // name -> line count
   const prevHas = (i, re, n) => {

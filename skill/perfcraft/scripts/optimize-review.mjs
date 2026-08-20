@@ -226,6 +226,14 @@ ${options.map((o, idx) => `  <div class="opt" id="opt-${idx}" data-name="${esc(o
     res.end();
   });
 
+  server.on("error", (e) => {
+
+    console.error("optimize-review: cannot bind port ${port} — ${e.message} (is another daemon running?)");
+
+    process.exit(2);
+
+  });
+
   server.listen(port, "0.0.0.0", () => {
     console.log(`optimize-review: round "${round}" · ${options.length} option(s) · http://localhost:${port}`);
     console.log("optimize-review: verdict each candidate; the result lands in optimize-review-result.json");

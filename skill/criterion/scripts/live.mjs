@@ -225,6 +225,14 @@ const server = createServer((req, res) => {
   res.end();
 });
 
+server.on("error", (e) => {
+
+  console.error("live: cannot bind port ${port} — ${e.message} (is another daemon running?)");
+
+  process.exit(2);
+
+});
+
 server.listen(port, "0.0.0.0", () => {
   console.log(`live: round "${round}" · ${options.length} option(s) · http://localhost:${port}`);
   console.log("live: open the URL, pick a variant; the choice lands in live-result.json");

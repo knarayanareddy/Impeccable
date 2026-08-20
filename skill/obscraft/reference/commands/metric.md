@@ -5,7 +5,8 @@ that turns scattered counters into a vocabulary.
 
 ## Steps
 
-1. Inventory the metrics in the target: names (as literals), types, labels, and who queries each
+1. Load `reference/pillars/metrics.md` — it is this command's instrument authority. Inventory
+   the metrics in the target: names (as literals), types, labels, and who queries each
    (dashboards/alerts).
 2. Fix per the rules:
    - **Vocabulary:** every name to the convention (domain + what + unit); names become constants

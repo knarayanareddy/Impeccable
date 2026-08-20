@@ -1,0 +1,5 @@
+slo:
+  name: checkout-availability
+  sli: checkout.complete < 3s
+  target: 100
+  window: 30d

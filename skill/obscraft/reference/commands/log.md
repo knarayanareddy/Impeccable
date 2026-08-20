@@ -5,8 +5,9 @@ pass that turns prose into signals — the highest-frequency observability fix i
 
 ## Steps
 
-1. Audit the current logging in the target: which levels are used, for what; which lines are
-   prose; where secrets/PII slip through; where the hot path logs synchronously.
+1. Load `reference/pillars/logs.md` — it is this command's instrument authority (the workflow,
+   the bans). Audit the current logging in the target: which levels are used, for what; which
+   lines are prose; where secrets/PII slip through; where the hot path logs synchronously.
 2. Fix per the contract:
    - **Structure:** warn+ lines become fields (operation, subject, outcome, error, correlation
      ID, duration) — string concatenation becomes structured fields
