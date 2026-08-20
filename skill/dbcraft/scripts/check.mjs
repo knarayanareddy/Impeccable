@@ -169,7 +169,11 @@ function blockRules(block, table, file) {
   const varchar255 = colLines.filter((l) => /VARCHAR\s*\(\s*255\s*\)/i.test(l)).length;
   const jsonCols = colLines.filter((l) => /\bJSONB?\b/i.test(l)).length;
   const boolCols = colLines.filter((l) => /\bBOOL(?:EAN)?\b|\bTINYINT\s*\(\s*1\s*\)/i.test(l)).length;
-  const statusCols = colLines.filter((l) => /\b(status|state|type|kind|role)\b/i.test(l) && /\b(VARCHAR|TEXT|CHAR)\b/i.test(l)).map((l) => l.trim().split(/\s+/)[0].replace(/[`"]/g, ""));
+  const statusCols = [];
+  for (const l of colLines) {
+    const m = /\b(status|state|type|kind|role)[a-z_]*\s+(?:VARCHAR|TEXT|CHAR)\b/i.exec(l);
+    if (m) statusCols.push(m[1] + (m[0].trim().split(/\s+/)[1] ? " (" + m[0].trim().split(/\s+/)[1].toUpperCase() + ")" : ""));
+  }
   const hasCheck = /CHECK\s*\(/i.test(block);
 
   if (nullable.length) {
