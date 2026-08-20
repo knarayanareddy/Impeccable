@@ -105,8 +105,10 @@ const rules = [
     severity: "warning",
     message: "Alert defined without an owner/runbook reference — at 3 a.m. nobody knows what it means (A4).",
     test(line) {
-      const alertCtx = /\b(alert|page|notify|notification|receiver|oncall|on_call)\b/i.test(line) ||
-        /^\s*-\s*(?:alert|page):/i.test(line) || /^\s*(?:alert|page):/i.test(line);
+      // Case-sensitive: real alert config keys are lowercase (alert:, receiver:, page:).
+      // Case-insensitive matching false-positives on component names like `Page`.
+      const alertCtx = /\b(alert|page|notify|notification|receiver|oncall|on_call)\b/.test(line) ||
+        /^\s*-\s*(?:alert|page):/.test(line) || /^\s*(?:alert|page):/.test(line);
       if (!alertCtx) return null;
       if (/\b(owner|runbook|playbook|doc|wiki|#\d+|ticket|escalat)\w*\b/i.test(line)) return null;
       return "no owner/runbook";
