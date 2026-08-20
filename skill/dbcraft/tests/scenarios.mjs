@@ -188,6 +188,9 @@ CREATE TABLE orders (
 );
 `;
 
+await diffScenario("schema-diff: ALTER-only snapshots refuse (no silent clean claim)", "ALTER TABLE t ADD COLUMN x INT;\n", "ALTER TABLE t DROP COLUMN x;\n", { exitCode: 2 });
+await diffScenario("schema-diff: schema-qualified additive is free", "CREATE TABLE public.users (\n  id BIGINT PRIMARY KEY\n);\n", "CREATE TABLE public.users (\n  id BIGINT PRIMARY KEY,\n  name TEXT\n);\n", { exitCode: 0, notContains: ["BREAKING"] });
+await diffScenario("schema-diff: renamed column reports the drop honestly", "CREATE TABLE t (\n  id INT PRIMARY KEY,\n  old_name TEXT\n);\n", "CREATE TABLE t (\n  id INT PRIMARY KEY,\n  new_name TEXT\n);\n", { exitCode: 1, contains: ["dropped-column"] });
 await diffScenario("schema-diff: additive changes are free", OLD, ADDITIVE, { exitCode: 0, notContains: ["BREAKING"] });
 await diffScenario("schema-diff: dropped column flagged", OLD, OLD.replace(/\n  role VARCHAR\(20\) NOT NULL DEFAULT 'member',/, ""), { exitCode: 1, contains: ["dropped-column"] });
 await diffScenario("schema-diff: type change + on-delete + not-null + removed-unique + removed-check flagged", OLD, DESTRUCTIVE, {

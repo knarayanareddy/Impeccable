@@ -30,6 +30,12 @@ const breaking = [];
 const oldSchema = extractSchema(readFileSync(oldFile, "utf8"));
 const newSchema = extractSchema(readFileSync(newFile, "utf8"));
 
+// Refuse the silent false-negative: if nothing parsed, "no breaking changes" is a lie.
+if (!Object.keys(oldSchema.tables).length || !Object.keys(newSchema.tables).length) {
+  console.error("schema-diff: nothing parsed — snapshots must contain CREATE TABLE statements (ALTER-only dumps carry no table shape). Refusing to claim no breaking changes.");
+  process.exit(2);
+}
+
 for (const [tableName, oldTable] of Object.entries(oldSchema.tables)) {
   const newTable = newSchema.tables[tableName];
   if (!newTable) {

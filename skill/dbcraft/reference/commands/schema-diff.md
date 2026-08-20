@@ -44,7 +44,8 @@ a default) are free and produce no findings — the migrations ledger
   indexes). If the snapshot uses syntax the extractor doesn't parse, findings will be
   conservative — never assert "no breaking changes" on a snapshot you couldn't extract:
   verify with `--json` first.
-- Renamed columns report as dropped+added (both visible) — read the pair together; the
-  expand/contract rename (`align`) is the fix, not the tool's.
+- Renamed columns report as **dropped only** (the addition is additive and silent). When a
+  drop appears, check the other side's additions for its replacement — the expand/contract
+  rename (`align`) is the fix, not the tool's.
 - An intended breaking change still exits 1 — pair it with the expand/contract migration and
   the backup plan; the tool reports, the protocol decides.
