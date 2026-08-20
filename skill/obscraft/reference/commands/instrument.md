@@ -10,7 +10,9 @@ every signal lands with its question intact.
 2. Implement per pillar:
    - **Metrics** (`domains/metrics.md`): the journey's golden signals — latency histogram with
      real buckets, traffic counter, error counter by class, saturation gauge; names from the
-     vocabulary, defined once as constants.
+     vocabulary, defined once as constants. Use the OTel semantic conventions for
+     infrastructure-shaped signals (`http.server.request.duration` etc.) and set the resource
+     attributes (`service.name`, `service.version`) once.
    - **Traces** (`domains/traces.md`): spans at every boundary (HTTP client, DB, queue), span
      attributes (subject, outcome, sizes), the sampling strategy applied.
    - **Logs** (`domains/logs.md`): the warn+ events per the line contract — structured fields,

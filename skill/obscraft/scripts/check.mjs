@@ -30,7 +30,7 @@ const SKIP_DIRS = new Set([
   ".next", ".nuxt", ".output", "vendor", ".venv", "__pycache__",
 ]);
 
-const SENSITIVE_FIELDS = /\b(password|passwd|secret|api[_-]?key|access[_-]?token|auth[_-]?token|apiToken|accessToken|authToken|sessionToken|privateKey|bearer|authorization|cookie|jwt|credential)\b/i;
+const SENSITIVE_FIELDS = /\b(password|passwd|secret|api[_-]?key|access[_-]?token|auth[_-]?token|token|apiToken|accessToken|authToken|sessionToken|privateKey|bearer|authorization|cookie|jwt|credential)\b/i;
 const PII_FIELDS = /\b(email|ssn|social[_-]?security|passport|credit[_-]?card|card[_-]?number|phone[_-]?number|cvv)\b/i;
 const LOG_CALL = /(console\.(log|info|warn|error|debug)|logger\.\w+|log\.\w+|logrus\.\w+|println|print\s*\(|LOG\.\w+|log\.\w+\()/;
 
@@ -193,7 +193,7 @@ function scan(file) {
     }
 
     // Log statement inside a loop (same line or within the previous 2) — a log storm (L5)
-    if (LOG_CALL.test(raw) && (/\b(for|while)\b/.test(raw) || prevHas(i, /\b(for|while)\b/, 2))) {
+    if (LOG_CALL.test(raw) && (/\b(for|while)\b/.test(raw) || prevHas(i, /\b(for|while)\b/, 4))) {
       findings.push({
         file: basename(file), line: i + 1, rule: "log-in-loop", severity: "warning",
         message: "Log statement inside a loop — a log storm (L5). One aggregate line per batch.",
@@ -213,8 +213,9 @@ function scan(file) {
     }
   }
 
-  // File-level (code): outgoing calls without correlation-ID propagation
-  if (isCode && /\b(fetch|axios|http\.(get|post)|requests\.(get|post)|client\.\w+\()/.test(text)) {
+  // File-level (code): outgoing calls without correlation-ID propagation.
+  // Frontend files (tsx/jsx) are exempt — the browser's propagation is the platform's job, not the page's.
+  if (isCode && !/\.(tsx|jsx)$/i.test(file) && /\b(fetch|axios|http\.(get|post)|requests\.(get|post)|client\.\w+\()/.test(text)) {
     if (!/x-request-id|traceparent|trace_id|correlation[-_]?id/i.test(text)) {
       findings.push({
         file: basename(file), line: 1, rule: "no-correlation-propagation", severity: "warning",
@@ -253,7 +254,8 @@ function main() {
 
   // Project-level: no SLO/budget definition anywhere
   const hasSlo = files.some((f) => /\b(slo|error[_-]?budget|service[_-]?level|reliability)\b/i.test(basename(f)));
-  if (!hasSlo) {
+  const isProjectScope = targets.some((p) => { try { return statSync(resolve(p)).isDirectory(); } catch { return false; } }) || files.length > 1;
+  if (!hasSlo && isProjectScope) {
     findings.push({
       file: "(project)", line: 0, rule: "no-slo-file", severity: "warning",
       message: "No SLO/error-budget definition found — 'working' has no definition until the outage (S1).",

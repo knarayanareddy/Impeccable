@@ -24,6 +24,12 @@ percentiles, one vocabulary, bounded cardinality.
 
 - Name = domain + what + unit: `http_request_duration_seconds`, `checkout_payment_total`. One
   convention (dots vs underscores) app-wide.
+- **Adopt the OpenTelemetry semantic conventions for anything they cover** — HTTP
+  (`http.server.request.duration`, `http.server.active_requests`), messaging, RPC, DB clients —
+  rather than inventing parallel names. Custom business metrics get the domain-first convention;
+  infrastructure-shaped metrics get the ecosystem's shared vocabulary, so dashboards, SDKs, and
+  vendors agree. Resource attributes (`service.name`, `service.version`, `deployment.environment`)
+  are set once and ride every signal.
 - **Metric names are constants, not string literals** — the same name written in three files is
   three opportunities for a typo'd series that silently diverges (`anti-patterns.md` M2,
   `metric` fixes this).

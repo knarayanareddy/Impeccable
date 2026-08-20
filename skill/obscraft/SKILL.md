@@ -55,6 +55,8 @@ journey backward: the question first, the signal second, the dashboard last.
    reflexes no detector catches.
 4. After editing, run `node <skill-dir>/scripts/check.mjs --target <path>` and verify the changed
    signals actually flow (log renders, metric appears, trace links) before finishing.
+5. Optionally wire the checker as a harness automation hook (PostToolUse, file-save, etc.) — see
+   the repo's `docs/hooks.md` for harness examples.
 
 ## Commands
 
@@ -82,6 +84,9 @@ journey backward: the question first, the signal second, the dashboard last.
 - **Explicit or clearly implied command:** load its reference and follow it. Ask once if two commands fit.
 - **Otherwise:** treat the request as general observability work on the incumbent implementation, with
   [reference/signal-floor.md](reference/signal-floor.md) loaded before any edit.
+- **Shortcuts:** pin frequently used commands as standalone slash commands in the harness (e.g., a
+  `.claude/commands/audit.md` containing "Run the obscraft skill's audit command") so `/audit`
+  works without the `/obscraft` prefix.
 
 ## Verification loop
 

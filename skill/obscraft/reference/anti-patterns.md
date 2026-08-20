@@ -62,8 +62,9 @@ LLM-judged with this file loaded.
 
 ## Detector mapping
 
-`scripts/check.mjs` deterministically catches: L1-ish (log-in-loop), L3 (generic error strings),
-L4 (string-concat logs), M1 (mean-only metrics), M2 (metric-name scatter ≥3), A4 (alerts without
-owner/runbook), T1 (outgoing calls without correlation-ID propagation in handler files), the
-secrets/PII-in-logs pair, sync-log-on-hot-path, and the project-level no-SLO finding. The rest are
-LLM-judged — keep this file loaded when auditing or reviewing.
+`scripts/check.mjs` deterministically catches, with these rule ids: `log-in-loop` (L5, windowed),
+`generic-error` (L3), `string-concat-log` (L4), `secret-in-log` (L7), `pii-in-log` (L7),
+`mean-only-metric` (M1), `metric-name-scatter` (M2, ≥3 literal occurrences),
+`alert-no-owner` (A4), `no-correlation-propagation` (T1, service files — frontend tsx/jsx
+exempt), `no-slo-file` (S1, project scope only). The rest are LLM-judged — keep this file loaded
+when auditing or reviewing.
