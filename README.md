@@ -250,11 +250,13 @@ research and the launch playbook.
 
 ## Docs, demo & case studies
 
-- **[Docs site](docs/)** — the suite home, the [criterion guide](docs/criterion/), and the
-  [codecraft guide](docs/codecraft/) (remaining skills' pages land with their launch passes)
+- **[Docs site](docs/)** — the suite home and the per-skill guides: [criterion](docs/criterion/),
+  [codecraft](docs/codecraft/), [apicraft](docs/apicraft/) (remaining skills' pages land with
+  their launch passes)
 - **[Demos](demos/)** — generic-AI before/after per facet with a runner that shows the checker
   rejecting the before and passing the after:
-  `node demos/criterion/run-demo.mjs` · `node demos/codecraft/run-demo.mjs`
+  `node demos/criterion/run-demo.mjs` · `node demos/codecraft/run-demo.mjs` ·
+  `node demos/apicraft/run-demo.mjs`
 - **[Case studies](docs/)** — [criterion](docs/criterion/case-study.md) ·
   [codecraft](docs/codecraft/case-study.md) — measured both directions
 - **Browser extension** — [skill/criterion/extension/](skill/criterion/extension/): runs the

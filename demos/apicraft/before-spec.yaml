@@ -1,0 +1,26 @@
+openapi: 3.0.3
+info:
+  title: Orders API
+  version: 1.0.0
+paths:
+  /api/getUser:
+    get:
+      summary: Get a user
+      responses:
+        "200":
+          description: ok
+  /api/orders:
+    get:
+      summary: All the orders
+    post:
+      summary: Make an order
+      responses:
+        "201":
+          description: created
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        created_at: { type: string }
+        total_cents: { type: number }

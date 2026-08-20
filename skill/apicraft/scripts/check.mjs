@@ -36,6 +36,10 @@ const SKIP_DIRS = new Set([
 const PATH_RE = /(["'`])(\/[^"'`\s]+)(["'`])/g;
 
 const ROUTE_VERBS = ["get", "set", "update", "delete", "remove", "create", "save"];
+// Segment-aware: /verb followed by end-of-segment, hyphen, digit, uppercase, or a lowercase
+// concatenation (getuser) — but NOT ordinary words that merely start with a verb prefix.
+const VERB_SEG_RE = new RegExp(`/(${ROUTE_VERBS.join("|")})(?:$|[-_0-9A-Z]|[a-z]+$)`, "i");
+const ORDINARY_WORDS = new Set(["settings", "setbacks"]);
 const VERB_RE = new RegExp(`/(${ROUTE_VERBS.join("|")})(?=[A-Za-z0-9_-])`, "i");
 const FINAL_VERB_RE = new RegExp(`/(${ROUTE_VERBS.join("|")})$`, "i");
 const SIDE_EFFECT_RE = /(create|update|delete|remove|save|set)[A-Z_-]/;
@@ -52,8 +56,9 @@ const rules = [
     test(line) {
       for (const m of line.matchAll(PATH_RE)) {
         const p = m[2];
-        if (VERB_RE.test(p)) return p;
         const last = p.split("/").filter(Boolean).pop() || "";
+        if (ORDINARY_WORDS.has(last.toLowerCase())) continue;
+        if (VERB_RE.test(p)) return p;
         if (FINAL_VERB_RE.test(`/${last}`)) return p;
       }
       return null;
@@ -160,7 +165,7 @@ const rules = [
     test(line) {
       for (const m of line.matchAll(PATH_RE)) {
         const p = m[2];
-        let segments = p.split("/").filter((s) => s && !/^v\d/i.test(s) && !/^[{:].*[})]?$/.test(s));
+        let segments = p.split("/").filter((s) => s && !/^v\d/i.test(s) && !/^[{:$].*[})]?$/.test(s));
         // A trailing verb segment (e.g. /users/delete) is a verb-in-url smell, not a resource level
         const last = segments[segments.length - 1] || "";
         if (FINAL_VERB_RE.test(`/${last}`)) segments = segments.slice(0, -1);
@@ -315,9 +320,10 @@ function scan(file) {
     }
   }
 
-  // File-level: mixed field casing in the same file
-  const snake = (text.match(/\b[a-z][a-z0-9]+_[a-z0-9_]+\s*:/g) || []).length;
-  const camel = (text.match(/\b[a-z][a-zA-Z0-9]*[A-Z][a-zA-Z0-9]*\s*:/g) || []).length;
+  // File-level: mixed field casing in the same file. Code files only — OpenAPI/GraphQL
+  // spec keys (operationId, requestBody) are schema vocabulary, not payload casing.
+  const snake = CODE_ONLY(ext) ? (text.match(/\b[a-z][a-z0-9]+_[a-z0-9_]+\s*:/g) || []).length : 0;
+  const camel = CODE_ONLY(ext) ? (text.match(/\b[a-z][a-zA-Z0-9]*[A-Z][a-zA-Z0-9]*\s*:/g) || []).length : 0;
   if (snake >= 2 && camel >= 2) {
     findings.push({
       file: basename(file),

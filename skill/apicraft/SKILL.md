@@ -47,7 +47,9 @@ design from the consumer's code outward, and you treat the contract as the produ
    below against it, e.g. `node <skill-dir>/scripts/check.mjs`.
 2. Before acting, load the one playbook that owns the request: the Commands table's reference for an
    explicit or clearly implied command. Then inspect the target's routes/controllers and the
-   machine-readable spec (if one exists) before editing.
+   machine-readable spec (if one exists) before editing. If the API style is GraphQL, gRPC/RPC,
+   or webhooks, also load the matching sheet in `reference/styles/` alongside the relevant
+   domains — one sheet, never all. REST (this skill's default accent) needs no sheet.
 3. Load [reference/contract-floor.md](reference/contract-floor.md) **immediately before editing any
    API surface**. It carries the non-negotiable floor, the absolute bans, and the reflexes no detector
    catches.
@@ -64,8 +66,9 @@ design from the consumer's code outward, and you treat the contract as the produ
 | `init` | Build | Capture API context: audience, style, conventions, compatibility policy | [reference/commands/init.md](reference/commands/init.md) |
 | `shape [resource]` | Build | Model resources, endpoints, and payloads before writing code | [reference/commands/shape.md](reference/commands/shape.md) |
 | `contract [endpoint]` | Build | Write/update the machine-readable contract (OpenAPI/GraphQL/proto) | [reference/commands/contract.md](reference/commands/contract.md) |
+| `contract-diff` | Evaluate | Mechanical breaking-change detection between two specs | [reference/commands/contract-diff.md](reference/commands/contract-diff.md) |
 | `audit [api]` | Evaluate | Defect scan: semantics, pagination, errors, versioning, security basics | [reference/commands/audit.md](reference/commands/audit.md) |
-| `review [api]` | Evaluate | Consumer-perspective design review with scoring | [reference/commands/review.md](reference/commands/review.md) |
+| `review [api]` | Evaluate | Consumer-perspective design review with scoring · daemon: `reference/commands/review-daemon.md` | [reference/commands/review.md](reference/commands/review.md) |
 | `measure [api]` | Evaluate | Quantitative consistency and contract-coverage metrics | [reference/commands/measure.md](reference/commands/measure.md) |
 | `simplify [api]` | Refine | Reduce surface complexity without breaking consumers | [reference/commands/simplify.md](reference/commands/simplify.md) |
 | `align [api]` | Refine | Align naming, errors, and pagination to the API's conventions | [reference/commands/align.md](reference/commands/align.md) |
@@ -85,6 +88,13 @@ design from the consumer's code outward, and you treat the contract as the produ
 - **Shortcuts:** pin frequently used commands as standalone slash commands in the harness (e.g., a
   `.claude/commands/audit.md` containing "Run the apicraft skill's audit command") so `/audit`
   works without the `/apicraft` prefix.
+
+## API styles
+
+REST is this skill's default accent (the domains are written REST-first). For GraphQL, gRPC/RPC,
+and webhooks, `reference/styles/` ships a compact sheet per style (schema evolution, error
+contracts, delivery semantics, bans) loaded with the relevant domains — the same one-variant-not-
+all convention as the suite's native platform variants and codecraft's language sheets.
 
 ## Verification loop
 

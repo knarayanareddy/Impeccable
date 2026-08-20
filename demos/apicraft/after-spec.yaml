@@ -1,0 +1,125 @@
+openapi: 3.0.3
+info:
+  title: Orders API
+  version: 1.0.0
+paths:
+  /api/v1/users/{id}:
+    get:
+      operationId: getUser
+      summary: Returns the user with the given id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The user
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/User" }
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Problem" }
+        "500":
+          description: Unexpected failure
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Problem" }
+  /api/v1/orders:
+    get:
+      operationId: listOrders
+      summary: Returns orders after the given cursor
+      parameters:
+        - name: cursor
+          in: query
+          schema: { type: string }
+        - name: limit
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+      responses:
+        "200":
+          description: A page of orders
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OrderPage" }
+        "422":
+          description: Invalid values
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Problem" }
+        "500":
+          description: Unexpected failure
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Problem" }
+    post:
+      operationId: createOrder
+      summary: Creates an order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/OrderCreate" }
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Order" }
+        "422":
+          description: Invalid values
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Problem" }
+        "500":
+          description: Unexpected failure
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Problem" }
+components:
+  schemas:
+    Problem:
+      type: object
+      required: [type, title, status]
+      properties:
+        type: { type: string, format: uri }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+        code: { type: string, description: Stable machine-readable error code }
+    User:
+      type: object
+      required: [id, email]
+      properties:
+        id: { type: string }
+        email: { type: string, format: email }
+    OrderCreate:
+      type: object
+      required: [items]
+      properties:
+        items: { type: array, items: { $ref: "#/components/schemas/OrderItem" } }
+    OrderItem:
+      type: object
+      required: [product_id, quantity]
+      properties:
+        product_id: { type: string }
+        quantity: { type: integer, minimum: 1 }
+    Order:
+      type: object
+      required: [id, status, total_cents, currency, created_at]
+      properties:
+        id: { type: string }
+        status: { type: string, enum: [pending, paid, shipped, cancelled] }
+        total_cents: { type: integer, minimum: 0, description: Total in minor units }
+        currency: { type: string, example: USD }
+        created_at: { type: string, format: date-time }
+    OrderPage:
+      type: object
+      required: [items, has_more]
+      properties:
+        items: { type: array, items: { $ref: "#/components/schemas/Order" } }
+        next_cursor: { type: string, nullable: true }
+        has_more: { type: boolean }

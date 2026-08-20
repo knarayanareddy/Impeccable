@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Apicraft — the craft skill for API design</title>
+<style>
+  :root { --bg:#101418; --panel:#161c22; --text:#e8eaf0; --muted:#8b93a1; --line:#262e37; --accent:#4d7cfe; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.6 system-ui,-apple-system,sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 56px 24px 80px; }
+  h1 { font-size: 34px; line-height:1.15; letter-spacing:-0.02em; margin:0 0 12px; }
+  .lede { color: var(--muted); font-size: 18px; margin: 0 0 36px; }
+  h2 { font-size: 20px; margin: 40px 0 12px; letter-spacing:-0.01em; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; text-decoration:none; color:var(--text); }
+  .card:hover { border-color: var(--accent); }
+  .card b { display:block; }
+  .card span { color: var(--muted); font-size: 13px; }
+  code, pre { font-family: ui-monospace, monospace; }
+  pre { background: var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:13px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); }
+  .num { color:var(--accent); font-variant-numeric: tabular-nums; }
+  a { color: var(--accent); }
+  .back { color:var(--muted); text-decoration:none; font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="../">← the craft-skill suite</a>
+  <h1>Apicraft</h1>
+  <p class="lede">The craft skill for APIs that feel like promises kept — REST, GraphQL, gRPC, webhooks. <em>An API is a promise, not an endpoint. Judge from the consumer's code.</em></p>
+
+  <h2>Install</h2>
+  <pre>npx skills add knarayanareddy/Impeccable --skill apicraft</pre>
+  <p>Then <code>/apicraft contract orders</code>, <code>/apicraft audit .</code>, or any of the 16 commands.</p>
+
+  <h2>The commands <span class="num">16</span></h2>
+  <table>
+    <tr><th>Build</th><td>init · shape · contract</td></tr>
+    <tr><th>Evaluate</th><td>audit · review (· daemon) · measure · contract-diff</td></tr>
+    <tr><th>Refine</th><td>simplify · align · rename · harden · paginate</td></tr>
+    <tr><th>Enhance</th><td>version · deprecate · document</td></tr>
+  </table>
+
+  <h2>The checker</h2>
+  <pre>node skill/apicraft/scripts/check.mjs --strict --target src/
+# ERROR verb-in-url           routes.js:7   /api/getUser
+# ERROR hardcoded-credential  config.js:5   apiKey = "&lt;redacted&gt;"
+# WARN  unbounded-page-size   orders.js:10  10000
+# apicraft: 14 file(s) scanned · FAILED</pre>
+  <p>Plus spec-lint: operations missing responses or operationIds. Zero dependencies, no LLM, no API key. Behaviors pinned by <a href="../../skill/apicraft/tests/scenarios.mjs">30 automated scenarios</a>.</p>
+
+  <h2>Contract-diff — breaking changes, mechanically</h2>
+  <pre>node skill/apicraft/scripts/contract-diff.mjs openapi/v1.yaml openapi/v2.yaml
+# BREAKING removed-operation        POST /orders   consumers calling this endpoint break
+# BREAKING changed-property-type    Order.total_cents  integer → string
+# contract-diff: 2 breaking change(s)</pre>
+  <p>The floor's cardinal sin — silent breaking changes — caught by a machine, CI-ready (<code>--json</code>, exit codes).</p>
+
+  <h2>Contract review daemon</h2>
+  <pre>node skill/apicraft/scripts/review.mjs --spec openapi.yaml --round r1 &amp;
+node skill/apicraft/scripts/review.mjs --round r1 --wait</pre>
+  <p>Serve every endpoint as a review page; the human approves or flags each from the consumer's seat.</p>
+
+  <h2>API styles</h2>
+  <p>REST is the default accent; <code>reference/styles/</code> ships sheets for GraphQL, gRPC/RPC, and webhooks — one sheet, never all.</p>
+
+  <h2>Evidence</h2>
+  <div class="grid">
+    <a class="card" href="case-study.md"><b>Case study</b><span>The generic AI API → the apicraft pass, measured both directions</span></a>
+    <a class="card" href="../../demos/apicraft/before-spec.yaml"><b>Demo — before spec</b><span>Runs the checker's failure list</span></a>
+    <a class="card" href="../../demos/apicraft/after-spec.yaml"><b>Demo — after spec</b><span>Passes clean</span></a>
+    <a class="card" href="../../REVIEWS/apicraft-round1.md"><b>Expert review</b><span>Two-round panel archive</span></a>
+  </div>
+</main>
+<footer style="max-width:860px;margin:0 auto;padding:0 24px 32px;color:var(--muted);font-size:12px;">Apache-2.0 · original work, not affiliated with pbakaus/impeccable</footer>
+</body>
+</html>
