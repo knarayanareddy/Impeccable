@@ -59,6 +59,8 @@ every "works on my machine" as a personal insult to the craft.
    bans, and the reflexes no detector catches.
 4. After editing, run `node <skill-dir>/scripts/check.mjs --target <path>` and verify the changed
    pipeline still passes (or fails for the right reason) before finishing.
+5. Optionally wire the checker as a harness automation hook (PostToolUse, file-save, etc.) — see
+   the repo's `docs/hooks.md` for harness examples.
 
 ## Commands
 
@@ -86,6 +88,9 @@ every "works on my machine" as a personal insult to the craft.
 - **Explicit or clearly implied command:** load its reference and follow it. Ask once if two commands fit.
 - **Otherwise:** treat the request as general delivery work on the incumbent implementation, with
   [reference/ship-floor.md](reference/ship-floor.md) loaded before any edit.
+- **Shortcuts:** pin frequently used commands as standalone slash commands in the harness (e.g., a
+  `.claude/commands/audit.md` containing "Run the shipcraft skill's audit command") so `/audit`
+  works without the `/shipcraft` prefix.
 
 ## Verification loop
 

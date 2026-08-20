@@ -60,8 +60,9 @@ deterministic rule in `scripts/check.mjs`; the rest are LLM-judged with this fil
 
 ## Detector mapping
 
-`scripts/check.mjs` deterministically catches: S1 (secret echoes), H4 (curl|sh), H1 (red masks),
-H3 (pipeline retries on test steps), D1 (unpinned installs), D2 (latest tags), H1-adjacent
-(force flags on destructive ops), I2 (destructive ops in pipeline configs), P1 (deploy steps with
-no rollback reference), plus the project-level no-CI-config and missing-lockfile findings. The rest
-are LLM-judged — keep this file loaded when auditing or reviewing.
+`scripts/check.mjs` deterministically catches, with these rule ids: `secret-echo` (S1),
+`pipe-to-shell` (H4), `masked-failure` (H1, reason-comment escape hatch), `pipeline-retry` (H3,
+file-context), `unpinned-install` (D1), `latest-tag` (D2), `force-flag` (H1-adjacent),
+`destructive-op` (I2, approval-reference escape hatch), `deploy-without-rollback` (P1), plus
+`no-ci-config` and `missing-lockfile` (project-level). The rest are LLM-judged — keep this file
+loaded when auditing or reviewing.

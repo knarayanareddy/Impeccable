@@ -64,7 +64,10 @@ const rules = [
     message: "curl/wget piped to shell — executing the internet with CI's permissions (H4). Use pinned, checksummed installers.",
     test(line) {
       const m = /\b(curl|wget)\b[^|]*\|\s*(?:sudo\s+)?(?:ba)?sh\b/i.exec(line);
-      return m ? "curl | sh" : null;
+      if (m) return "curl | sh";
+      // to-file-then-execute form: curl -o install.sh URL && bash install.sh
+      if (/\b(curl|wget)\b[^;]*-(?:o|output)\s+\S+[^;]*(?:&&|;)\s*(?:sudo\s+)?(?:ba)?sh\b/i.test(line)) return "curl -o file && sh";
+      return null;
     },
   },
   {
@@ -72,7 +75,7 @@ const rules = [
     severity: "error",
     message: "Red mask — the step's failure is swallowed (H1). Fix the step or delete it; a mask is an incident in waiting.",
     test(line) {
-      const m = /\|\|\s*(true|exit\s+0)\s*;?|continue-on-error\s*:\s*true|allow_failure\s*:\s*true/i.exec(line);
+      const m = /\|\|\s*(true|exit\s+0)\s*;?|continue-on-error\s*:\s*true|allow_failure\s*:\s*true|^\s*set\s+\+e\b/i.exec(line);
       if (!m) return null;
       // A written reason keeps it a reviewed exception, not a mask
       if (/#.*(reason|because|ticket|issue|known|temporary|todo|fixme)/i.test(line)) return null;
@@ -97,7 +100,11 @@ const rules = [
     message: "`:latest` image tag in a pipeline — 'latest' is a different image tomorrow (D2). Pin versions or digests.",
     test(line) {
       const m = /[\w./-]+:latest\b/i.exec(line);
-      return m ? m[0] : null;
+      if (m) return m[0];
+      // untagged reference — no tag IS latest: `image: app`, `FROM node`, `docker build -t app`
+      const u = /\bimage\s*:\s*["']?[\w./-]+["']?\s*$/i.exec(line) || /^\s*FROM\s+[\w./-]+\s*$/i.exec(line) || /\s-t\s+["']?[\w./-]+["']?\s*$/i.exec(line);
+      if (u) return `${u[0].trim()} (untagged = latest)`;
+      return null;
     },
   },
   {
@@ -239,9 +246,10 @@ function main() {
     }
   }
 
-  // Project-level: no CI configuration anywhere
+  // Project-level: no CI configuration anywhere (project-scope scans only)
   const hasCi = files.some((f) => isCiFile(f));
-  if (!hasCi) {
+  const isProjectScope = targets.some((p) => { try { return statSync(resolve(p)).isDirectory(); } catch { return false; } }) || files.length > 1;
+  if (!hasCi && isProjectScope) {
     findings.push({
       file: "(project)", line: 0, rule: "no-ci-config", severity: "warning",
       message: "No CI configuration found — the delivery system doesn't exist yet (ship-floor #10).",

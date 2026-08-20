@@ -9,6 +9,7 @@ passes is a lie with a webhook (`ship-floor.md` #2).
 | Stage | The gate |
 |---|---|
 | On push | Lint, format, types — seconds, must pass |
+| On branch | **Branch protection itself is a gate**: PRs required, CI green required, approvals per policy, force-push disabled — the platform-level baseline under everything else |
 | On PR | Unit tests, coverage policy, dependency audit, secret scan — must pass |
 | Pre-merge | Integration tests, build, security scan — must pass |
 | Pre-deploy | The artifact checks, env parity check, deploy approval (if the policy says) |

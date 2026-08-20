@@ -18,6 +18,10 @@ review and rollback path as code.
 
 ## Configuration as code
 
+Align with **12-factor**'s config tenet by default: config comes from the environment, not from
+committed files — the per-environment deltas below are the deliberate, reviewed exception to
+that rule, not a slide back into config-in-code.
+
 - **Config lives in the repo**, versioned with the code it configures — a config-only change is a
   deploy (`ship-floor.md` Reflexes) with the same review and gates.
 - **One template, per-environment deltas** — the shared shape in one file, the differences (URLs,

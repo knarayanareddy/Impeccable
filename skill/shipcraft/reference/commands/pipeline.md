@@ -6,7 +6,8 @@ The signature build command of this skill.
 ## Steps
 
 1. Take the release plan from `shape` (or the request) and the gate stack it defines.
-2. Write the workflow in the boring shape:
+2. Write the workflow in the boring shape — start from `assets/workflow.example.yml` (the
+   canonical stage order, concurrency groups, lockfile discipline, digest-pinned deploys):
    - Fast validation first (lint, types — seconds), then tests, then build, then scan, then
      deploy, then verify (`domains/pipelines.md`).
    - One artifact built once, promoted unchanged (`domains/builds.md`).
