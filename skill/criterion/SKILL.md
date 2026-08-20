@@ -64,6 +64,7 @@ See `reference/new-work.md` for starting a surface and choosing a register.
 | `typeset [target]` | Refine | Fix type hierarchy, data figures, sizing, and truncation | `reference/commands/typeset.md` |
 | `harden [target]` | Refine | Production-readiness: empty/loading/error/overflow states, edge cases, i18n | `reference/commands/harden.md` |
 | `animate [target]` | Enhance | Add restrained, purposeful motion that serves task comprehension | `reference/commands/animate.md` |
+| `colorize [target]` | Enhance | Add strategic color to monochromatic UIs — meaning, not decoration | `reference/commands/colorize.md` |
 | `clarify [target]` | Enhance | Improve UX copy: labels, buttons, errors, empty states | `reference/commands/clarify.md` |
 | `adapt [target]` | Enhance | Adapt data views for devices: column priority, table→cards, density shifts | `reference/commands/adapt.md` |
 | `optimize [target]` | Enhance | Diagnose and fix UI performance: render, load, interaction latency | `reference/commands/optimize.md` |
@@ -81,6 +82,7 @@ See `reference/new-work.md` for starting a surface and choosing a register.
 
 - **Web-first by design.** Native-platform variants (audit/adapt for iOS/Android) are out of scope in this version; route native work to platform-aware judgment with the same floor. Recorded as a deliberate scope decision, not an oversight.
 - **No `bolder`.** The reference's bolder amplifies marketing expression; in the Command register, amplification is usually the disease. `densify` (add information) and `quieter` (remove noise) are the deliberate replacements.
+- **No `delight` / `overdrive`.** Same rationale, stronger case: confetti, mascots, and technically extraordinary effects belong to marketing and Experience surfaces — in task UI they tax attention and comprehension. The replacements are `animate` (comprehension motion), `onboard` (the real moment of delight in tools), and `live` (bounded iteration). `colorize` remains as the one strategic-expression move, applied as meaning, never decoration.
 
 ## Verification loop
 
