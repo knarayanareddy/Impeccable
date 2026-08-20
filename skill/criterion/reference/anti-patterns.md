@@ -70,7 +70,8 @@ deterministic detector rule in `scripts/check.mjs` — see the rule ids.
 
 ## Detector mapping
 
-`scripts/check.mjs` deterministically catches: T1 (banned fonts), C1 (purple-blue gradients), C3 (pure
-black), C2-ish (low-contrast grays on light backgrounds), S3 (radius ≥16px), I1 (elastic easing), I2
-(`transition: all`), plus `blink`/`marquee` and 500ms+ transitions. The rest are LLM-judged — keep this
-file loaded when auditing.
+`scripts/check.mjs` deterministically catches, with these rule ids: `banned-font` (T1),
+`purple-blue-gradient` (C1), `pure-black` (C3), `pure-gray-text` (C2), `gray-on-color` (C2),
+`radius-too-large` (S3), `elastic-easing` (I1), `transition-all` (I2), `slow-feedback` (I2),
+`deprecated-motion` (blink/marquee). The rest are LLM-judged — keep this file loaded when
+auditing.

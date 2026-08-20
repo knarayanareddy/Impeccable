@@ -51,8 +51,9 @@ const rules = [
     severity: "error",
     message: "Pure black (#000). Use a tinted near-black (domains/color.md). Shadows with alpha are exempt.",
     test(line) {
-      // Hex / named / opaque rgb black. Skip rgba(0,0,0,<1) — that's a shadow.
+      // Hex / named / opaque rgb black. Skip rgba(0,0,0,<1) and shadow contexts — shadows are layers, not surfaces.
       if (/#000\b|#000000\b|\bblack\b/i.test(line)) {
+        if (/box-shadow/i.test(line)) return null;
         return line.trim().slice(0, 120);
       }
       const opaque = /rgb\(\s*0\s*,\s*0\s*,\s*0\s*\)|rgba?\(\s*0\s*,\s*0\s*,\s*0\s*,\s*1\s*\)/i.exec(line);
@@ -97,11 +98,14 @@ const rules = [
     severity: "warning",
     message: "Radius ≥16px (rounded-2xl) on a data-dense region. 4–8px belongs in Command/Configure registers (craft-floor.md).",
     test(line) {
+      const avatarCtx = /(avatar|image|img|icon|logo|profile|photo|thumb)/i.test(line);
+      if (/rounded-full/i.test(line) && avatarCtx) return null;
       if (/rounded-(?:2xl|3xl|full)/i.test(line)) return line.trim().slice(0, 120);
       const m = /border-?radius\s*:\s*['"]?\s*([\d.]+)\s*(px|rem)/i.exec(line);
       if (!m) return null;
       const val = parseFloat(m[1]);
       const px = m[2] === "rem" ? val * 16 : val;
+      if (px >= 100 && avatarCtx) return null; // fully-round avatar/icon pill
       return px >= 16 ? `${m[1]}${m[2]}` : null;
     },
   },

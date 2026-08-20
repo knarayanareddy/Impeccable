@@ -44,6 +44,9 @@ Rules:
 - **Legend or direct labels, not both**; series colors follow the global categorical palette; markers
   for color-vision safety (dash patterns or labels).
 - **No 3D, no gradient fills, no decorative gridlines.**
+- **Small multiples for group comparisons** — one chart per group with shared axes beats one
+  overstuffed chart. **Sparklines** for trends where the shape matters and the exact values live
+  in the table next to it.
 - Every chart has a title that states the *finding* ("Weekend deploys fail 3× more"), not the data
   ("Deploys by day") — when the finding is unknown, the title states the question.
 - Charts and tables never duplicate each other: chart for shape/trend, table for exact values.

@@ -38,7 +38,7 @@ with all of them.
   applied filters always render as removable chips *with a count of results*.
 - Filters and search have a single visible empty state: "No results for X — [clear filters]".
 - Sort state is visible (arrow + direction) on the active column; default sort is meaningful.
-- Table row actions appear on hover *and* on focus, and are also reachable via a row menu on touch.
+- Table row actions appear on hover *and* on focus (with visible `:focus-visible` styles), and are also reachable via a row menu on touch.
 - Pagination shows where you are and how many ("Page 3 of 12 · 240 rows") — or infinite scroll with a
   restore-position affordance. Never silent truncation ("showing 10 of …").
 

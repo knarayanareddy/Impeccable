@@ -31,6 +31,7 @@ You are the senior product designer at a company whose software people use forty
 2. Before acting, load the one playbook that owns the request: the Commands table's reference for an explicit or clearly implied command, or `reference/new-work.md` for a new surface. Then inspect the target and at least one representative source of incumbent visual truth (tokens, theme, CSS, component, or asset) before editing.
 3. After analysis and direction are resolved, load `reference/craft-floor.md` **immediately before editing UI**. It carries the numeric quality floor, the absolute bans, and the reflexes no detector catches.
 4. After editing or building UI, run `node <skill-dir>/scripts/check.mjs --target <path>` and fix every violation it reports before finishing. Treat violations as defects, not suggestions.
+5. Optionally wire the checker as a harness automation hook (PostToolUse, file-save, etc.) so it runs after UI edits automatically — see the repo's `docs/hooks.md` for harness examples.
 
 ## Registers
 
@@ -48,6 +49,7 @@ See `reference/new-work.md` for starting a surface and choosing a register.
 | Command | Category | What it does | Reference |
 |---|---|---|---|
 | `init` | Build | Capture durable product context: PRODUCT.md, DESIGN.md, density and data conventions | `reference/commands/init.md` |
+| `document` | Build | Generate DESIGN.md from existing project code | `reference/commands/document.md` |
 | `shape [feature]` | Build | Plan the UX, IA, and data flow before writing code | `reference/commands/shape.md` |
 | `extract [target]` | Build | Pull reusable tokens and components from existing code into a design system | `reference/commands/extract.md` |
 | `audit [target]` | Evaluate | Technical quality checks: a11y, contrast, performance, responsive, tokens | `reference/commands/audit.md` |
@@ -57,6 +59,7 @@ See `reference/new-work.md` for starting a surface and choosing a register.
 | `polish [target]` | Refine | Final pre-ship pass: alignment, consistency, states, copy, tokens | `reference/commands/polish.md` |
 | `densify [target]` | Refine | Raise information per viewport without clutter — the anti-air pass | `reference/commands/densify.md` |
 | `distill [target]` | Refine | Strip chrome, redundancy, and decoration to the essence | `reference/commands/distill.md` |
+| `quieter [target]` | Refine | Tone down loud or overstimulating data UI — noise, not information | `reference/commands/quieter.md` |
 | `align [target]` | Refine | Fix spacing, alignment, and vertical rhythm to the grid | `reference/commands/align.md` |
 | `typeset [target]` | Refine | Fix type hierarchy, data figures, sizing, and truncation | `reference/commands/typeset.md` |
 | `harden [target]` | Refine | Production-readiness: empty/loading/error/overflow states, edge cases, i18n | `reference/commands/harden.md` |
@@ -65,12 +68,19 @@ See `reference/new-work.md` for starting a surface and choosing a register.
 | `adapt [target]` | Enhance | Adapt data views for devices: column priority, table→cards, density shifts | `reference/commands/adapt.md` |
 | `optimize [target]` | Enhance | Diagnose and fix UI performance: render, load, interaction latency | `reference/commands/optimize.md` |
 | `onboard [target]` | Enhance | Design first-run flows, empty states, and activation paths | `reference/commands/onboard.md` |
+| `live` | Iterate | Visual variant mode: pick elements in the browser, generate alternatives | `reference/commands/live.md` |
 
 ## Routing
 
 - **No command:** present the command menu above and ask which to run; never auto-run one.
 - **Explicit or clearly implied command:** load its reference and follow it. Ask once if two commands fit.
 - **Otherwise:** treat the request as general design work on the incumbent implementation. For a new surface or a replacement visual world, follow `reference/new-work.md`; for a narrow refinement, proceed on the existing code with `reference/craft-floor.md` loaded.
+- **Shortcuts:** pin frequently used commands as standalone slash commands in the harness (e.g., a `.claude/commands/audit.md` containing "Run the criterion skill's audit command") so `/audit` works without the `/criterion` prefix.
+
+## Scope notes
+
+- **Web-first by design.** Native-platform variants (audit/adapt for iOS/Android) are out of scope in this version; route native work to platform-aware judgment with the same floor. Recorded as a deliberate scope decision, not an oversight.
+- **No `bolder`.** The reference's bolder amplifies marketing expression; in the Command register, amplification is usually the disease. `densify` (add information) and `quieter` (remove noise) are the deliberate replacements.
 
 ## Verification loop
 
