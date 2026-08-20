@@ -65,9 +65,10 @@ rule in `scripts/check.mjs`; the rest are LLM-judged with this file loaded.
 
 ## Detector mapping
 
-`scripts/check.mjs` deterministically catches: T1 (float-for-money), T2 (varchar-255 sprawl), T3
-(timestamps without tz), T4 (stringly status, no check), T5 (boolean sprawl), C1 (nullable columns),
-C2 (missing PK), C4 (FK without ON DELETE), M4 (dynamic DDL), I1 (unindexed FK, same-file),
-G1 (destructive DDL), G2-adjacent (no `down` in migration file pairs is LLM-judged), Q1 (SELECT * in
-code), Q2 (interpolated SQL), Q4 (OFFSET pagination), Q5 (UPDATE/DELETE without WHERE), M3
-(json-column sprawl). The rest are LLM-judged — keep this file loaded when auditing or reviewing.
+`scripts/check.mjs` deterministically catches, with these rule ids: `float-for-money` (T1),
+`varchar-255-sprawl` (T2), `timestamp-without-tz` (T3), `stringly-status` (T4),
+`boolean-sprawl` (T5), `nullable-columns` (C1), `missing-primary-key` (C2), `fk-no-on-delete`
+(C4), `dynamic-ddl` (M4), `fk-without-index` (I1, same-file check only), `destructive-ddl` (G1),
+`select-star` (Q1), `interpolated-sql` (Q2), `offset-pagination` (Q4), `delete-without-where` /
+`update-without-where` (Q5), `json-sprawl` (M3). No-`down` migration-file pairs are LLM-judged.
+The rest are LLM-judged — keep this file loaded when auditing or reviewing.

@@ -41,6 +41,21 @@ ever exist.
   temporarily violates a rule (`DEFERRABLE INITIALLY DEFERRED`) — the exception that proves the
   rules matter.
 
+## Row-level security (multi-tenant Postgres)
+
+RLS is the constraint stack's tenant dimension: the database itself enforces "this tenant can only
+see its rows", immune to every application bug.
+
+- Enable RLS on multi-tenant tables; the default policy is **deny** (`CREATE POLICY` only grants
+  access — a table with RLS enabled and no policies returns nothing).
+- Policies express the tenant predicate (`tenant_id = current_setting('app.tenant_id')` from a
+  transaction-scoped setting), plus role-based clauses for staff/back-office access.
+- RLS pairs with the rest of the stack: the tenant FK is NOT NULL (a row with no tenant is a leak
+  waiting), unique constraints include the tenant key where uniqueness is per-tenant
+  (`UNIQUE (tenant_id, email)`), and the service account cannot `BYPASSRLS`.
+- Test with `SET ROLE` for each access class — the matrix test from `authz` thinking applied at
+  the storage layer. This is the database-side twin of seccraft's object-level authorization.
+
 ## The failure modes
 
 - **App-only validation** — one bad deploy, one hand-written SQL, one legacy script: corrupted.

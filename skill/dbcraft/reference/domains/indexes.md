@@ -46,6 +46,19 @@ patterns, not from the columns** — and every index must be able to name the qu
 - **Respect the tradeoffs:** each index adds write amplification. On write-heavy tables, index the
   minimum that serves the measured read patterns — and say which queries justify each one.
 
+## Partitioning (when scale demands it)
+
+- Partition when a table's size makes maintenance (VACUUM, index rebuilds) or retention the
+  bottleneck — *measured*, not guessed. Time-series and event tables are the usual candidates.
+- Partition by the key the queries filter on (time for retention, tenant for isolation); indexes
+  stay local to partitions, so the pruning plan (`EXPLAIN`) must show only the needed partitions
+  scanned.
+- Partitioning changes the constraint story: PKs must include the partition key; unique
+  constraints without it need the partition column added or become per-partition (a known,
+  documented tradeoff — it is how the "unique email" guarantee quietly loosens).
+- Rule of thumb: a table under ~50M rows is usually fine unpartitioned with good indexes —
+  partitioning is the answer to maintenance pain, not to "big".
+
 ## Soft deletes and uniqueness
 
 `deleted_at` + `UNIQUE(email)` breaks the moment a deleted user re-registers. The fix is a partial

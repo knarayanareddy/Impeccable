@@ -42,10 +42,10 @@ const lineRules = [
     severity: "error",
     message: "Floating-point type on a money column — binary floats cannot represent decimal money (T1). Use NUMERIC/DECIMAL or integer minor units.",
     test(line) {
-      // column-first (Postgres: `balance FLOAT`) and type-first (MySQL: `FLOAT balance`)
-      const colFirst = /([a-z_]+)\s+(?:FLOAT|DOUBLE|REAL)(?:\s+PRECISION)?\b/i.exec(line);
+      // column-first (Postgres: `balance FLOAT[8]`) and type-first (MySQL: `FLOAT balance`)
+      const colFirst = /([a-z_]+)\s+(?:FLOAT(?:8|4)?|DOUBLE|REAL)(?:\s+PRECISION)?\b/i.exec(line);
       if (colFirst && MONEY_RE.test(colFirst[1])) return `${colFirst[1]} ${colFirst[0].slice(colFirst[1].length).trim()}`;
-      const typeFirst = /(?:FLOAT|DOUBLE|REAL)(?:\s+PRECISION)?\s+([a-z_]+)/i.exec(line);
+      const typeFirst = /(?:FLOAT(?:8|4)?|DOUBLE|REAL)(?:\s+PRECISION)?\s+([a-z_]+)/i.exec(line);
       if (typeFirst && MONEY_RE.test(typeFirst[1])) return `${typeFirst[0].trim()}`;
       return null;
     },
@@ -93,6 +93,8 @@ const lineRules = [
       // f-string / template literal / concatenation into a SQL statement
       if (/(f["']|`)\s*[A-Z\s]*\b(SELECT|INSERT|UPDATE|DELETE)\b/i.test(line) && /[{}$]/.test(line)) return "interpolated SQL";
       if (/(["'])\s*(SELECT|INSERT|UPDATE|DELETE)\b/i.test(line) && /\+\s*\w/.test(line)) return "concatenated SQL";
+      if (/["']\s*(SELECT|INSERT|UPDATE|DELETE)\b/i.test(line) && /\.format\s*\(/.test(line)) return "python .format() SQL";
+      if (/["']\s*(SELECT|INSERT|UPDATE|DELETE)\b[^"']*%s/.test(line) && /%\s*\(/.test(line)) return "python %-formatted SQL";
       return null;
     },
   },
@@ -101,9 +103,15 @@ const lineRules = [
     severity: "error",
     message: "DELETE without WHERE — the one-row typo that empties the table (Q5).",
     test(line) {
-      return /\bdelete\s+from\s+[\w"`.]+[^;]*;?\s*$/i.test(line) && !/\bwhere\b/i.test(line) && !/\blimit\s+\d/i.test(line)
+      // single-line form only — a DELETE without a terminating `;` is a multi-line statement,
+      // handled by the windowed pass below
+      return /\bdelete\s+from\s+[\w"`.]+[^;]*;\s*$/i.test(line) && !/\bwhere\b/i.test(line) && !/\blimit\s+\d/i.test(line)
         ? line.trim().slice(0, 100)
         : null;
+    },
+    // windowed form: DELETE FROM t (no semicolon) — WHERE on a following line makes it clean
+    opensDelete(line) {
+      return /^\s*delete\s+from\s+[\w"`.]+\s*$/i.test(line);
     },
   },
   {
@@ -280,12 +288,27 @@ function scan(file) {
   lines.forEach((raw, i) => {
     for (const rule of lineRules) {
       if (rule.codeOnly && !isCode) continue;
-      const detail = rule.test(raw);
+      const detail = rule.test(raw) || (rule.opensDelete ? null : null);
       if (detail) {
         findings.push({ file: basename(file), line: i + 1, rule: rule.id, severity: rule.severity, message: rule.message, detail });
       }
     }
   });
+
+  // Windowed DELETE: a DELETE FROM opener whose next lines contain no WHERE and no LIMIT
+  for (let i = 0; i < lines.length; i++) {
+    const rule = lineRules.find((r) => r.opensDelete);
+    if (rule.opensDelete(lines[i])) {
+      const rest = lines.slice(i + 1, i + 6).join("\n");
+      const stmtEnd = rest.indexOf(";");
+      const stmt = stmtEnd === -1 ? rest : rest.slice(0, stmtEnd);
+      if (!/\bwhere\b/i.test(stmt) && !/\blimit\s+\d/i.test(stmt)) {
+        findings.push({ file: basename(file), line: i + 1, rule: "delete-without-where", severity: "error",
+          message: "DELETE without WHERE (multi-line form) — every row goes (Q5).",
+          detail: lines[i].trim() });
+      }
+    }
+  }
 
   // CREATE TABLE blocks (SQL files; also embedded in code but parsed best in .sql)
   if (isSql || isCode) {

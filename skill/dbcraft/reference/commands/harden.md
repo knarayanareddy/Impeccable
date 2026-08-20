@@ -19,6 +19,8 @@ corrupt data.
      signs and magnitudes, text length limits enforced, timezone correctness on every write path.
    - **Retention** — if DATA.md has a retention policy, the deletion jobs and their indexes exist
      and are scheduled, not promised.
+   - **Multi-tenancy** — RLS on and deny-by-default with per-role tests (constraints.md's RLS
+     section); tenant-scoped uniqueness verified (no cross-tenant leak via a shared unique key).
 3. Verify with the failure-matrix walk: for each table, reason through (or test) each failure class
    and record the outcome — duplicates rejected, lost updates prevented, deletes behaving per
    policy.
