@@ -16,6 +16,14 @@ the browser.
 Measure with **RUM** (real user monitoring) for the truth, lab tools (Lighthouse) for the
 reproducible gate — both, not either.
 
+## Acting on LCP (the sub-part attribution)
+
+When LCP misses budget, attribute it before fixing: **TTFB** (server/network — fix the backend
+or CDN), **resource load delay** (discovery/queueing — preload, fetchpriority), **resource load
+duration** (bytes — compress, format), **render delay** (blocked by scripts/CSS — defer,
+non-render-blocking). The standard web-vitals attribution library reports the four sub-parts;
+the fix targets the largest one, never the metric itself.
+
 ## The critical rendering path
 
 1. **HTML arrives fast** (TTFB): edge/CDN, streaming, no blocking render.

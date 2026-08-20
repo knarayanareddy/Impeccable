@@ -13,7 +13,9 @@ can make: gates don't optimize anything, they prevent everything.
    - Backend: P95 latency per hot path, from traces/load tests.
    - Delivery: bundle/asset size budgets (per route, per class), gated at build.
 3. Encode the budgets in the repo: budget files (lighthouse budgets, bundle budgets, custom
-   scripts) wired into CI so a regression **fails the build** — notifies are not gates.
+   scripts) wired into CI so a regression **fails the build** — notifies are not gates. Start
+   from `assets/budget.example.json` (lighthouse-style budgets: resource sizes, counts, and
+   metric thresholds with the percentile stated).
 4. Wire the escalation: which budgets are hard gates (block merge) vs warnings (non-blocking,
    reviewed) — and who owns each.
 5. Verify the gate works: introduce a deliberate regression (in a branch), watch it fail, revert.

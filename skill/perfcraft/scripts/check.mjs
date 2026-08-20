@@ -46,7 +46,7 @@ const rules = [
     severity: "error",
     message: "Synchronous I/O call — one blocked worker per request (B1). Use the async form; never in a request path.",
     test(line) {
-      const m = /\b(?:fs\.)?(?:readFileSync|writeFileSync|existsSync|mkdirSync|rmSync|unlinkSync)\s*\(|\b(?:execSync|spawnSync|child_process\.execSync)\s*\(/i.exec(line);
+      const m = /\b(?:fs\.)?(?:readFileSync|writeFileSync|readSync|writeSync|existsSync|mkdirSync|rmSync|unlinkSync)\s*\(|\b(?:execSync|execFileSync|spawnSync|child_process\.execSync|child_process\.execFileSync)\s*\(/i.exec(line);
       return m ? m[0].trim().replace(/\s*\(.*/, "(") : null;
     },
   },
@@ -196,7 +196,7 @@ function scan(file) {
     // N+1: a query call on this line, with a loop on this line or within the previous 3,
     // and no batch pattern (Promise.all / IN / join).
     if (QUERY_RE.test(raw) && !BATCH_RE.test(raw)) {
-      if (LOOP_RE.test(raw) || prevHas(lines, i, LOOP_RE, 3)) {
+      if (LOOP_RE.test(raw) || prevHas(lines, i, LOOP_RE, 5)) {
         findings.push({
           file: basename(file), line: i + 1, rule: "n-plus-one", severity: "warning",
           message: "Possible N+1 — per-item query inside a loop (Q1). Batch with IN(...)/join/Promise.all.",
@@ -216,7 +216,7 @@ function scan(file) {
     }
 
     // String concat in a loop: `x +=` with a for/while within the previous 3 lines
-    if (/^\s*[a-zA-Z_$][\w$]*\s*\+=\s*[^=]/.test(raw) && prevHas(lines, i, /\b(for|while)\b/, 3)) {
+    if ((/^\s*[a-zA-Z_$][\w$]*\s*\+=\s*[^=]/.test(raw) || /^\s*[a-zA-Z_$][\w$]*\s*=\s*[a-zA-Z_$][\w$]*\s*\+\s*/.test(raw)) && prevHas(lines, i, /\b(for|while)\b/, 3)) {
       findings.push({
         file: basename(file), line: i + 1, rule: "string-concat-loop", severity: "warning",
         message: "String concatenation inside a loop — O(n²) building (Q5). Use a builder/join.",
@@ -284,9 +284,12 @@ function main() {
     }
   }
 
-  // Project-level: no performance budget/gate config anywhere
+  // Project-level: no performance budget/gate config anywhere.
+  // Emit only for project-scope scans (a directory or multiple files) — single-file targeted
+  // scans are focused work, not a project claim.
   const hasGate = all.some(({ p }) => /\b(lighthouse|budget|webperf|perf(?:ormance)?)\b/i.test(basename(p)) && /\.(json|js|mjs|cjs|ts|yml|yaml)$/i.test(p));
-  if (!hasGate) {
+  const isProjectScope = targets.some((p) => { try { return statSync(resolve(p)).isDirectory(); } catch { return false; } }) || all.length > 1;
+  if (!hasGate && isProjectScope) {
     findings.push({
       file: "(project)", line: 0, rule: "no-budget-gate", severity: "warning",
       message: "No performance budget/gate config found — un-gated performance rots (D3).",

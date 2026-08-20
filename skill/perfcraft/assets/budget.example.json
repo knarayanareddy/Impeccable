@@ -1,0 +1,17 @@
+{
+  "$comment": "lighthouse-style performance budgets (budget command's starting shape). Wire into CI so regressions FAIL the build; metric budgets state their percentile.",
+  "resourceSizes": [
+    { "resourceType": "script", "budget": 200 },
+    { "resourceType": "image", "budget": 500 },
+    { "resourceType": "total", "budget": 1200 }
+  ],
+  "resourceCounts": [
+    { "resourceType": "third-party", "budget": 10 },
+    { "resourceType": "font", "budget": 2 }
+  ],
+  "metrics": {
+    "LCP": { "budgetMs": 2500, "percentile": "p75" },
+    "INP": { "budgetMs": 200, "percentile": "p75" },
+    "CLS": { "budget": 0.1, "percentile": "p75" }
+  }
+}

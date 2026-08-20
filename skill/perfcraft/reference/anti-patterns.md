@@ -67,8 +67,8 @@ are LLM-judged with this file loaded.
 
 ## Detector mapping
 
-`scripts/check.mjs` deterministically catches: Q1 (loop + per-item query), B1 (sync I/O calls), Q3
-(`SELECT *`), Q4 (unbounded `.find()`/`findAll()`), B4 (busy retry loops), B3 (layout-thrash reads
-in loops, `innerHTML +=`), M1 (deep clone), Q5 (string concat in loops), D1 (image files > 1MB),
-D3 (no budget/gate config found in the project). The rest are LLM-judged — keep this file loaded
-when auditing or profiling.
+`scripts/check.mjs` deterministically catches, with these rule ids: `n-plus-one` (Q1),
+`sync-io` (B1), `select-star` (Q3), `unbounded-load` (Q4), `busy-retry` (B4), `layout-thrash` +
+`dom-thrash` (B3), `deep-clone` (M1), `string-concat-loop` (Q5), `img-no-lazy` (D1),
+`heavy-asset` (D1, >1MB), `no-budget-gate` (D3, project scope only). The rest are LLM-judged —
+keep this file loaded when auditing or profiling.
