@@ -242,7 +242,20 @@ vocabulary (evaluate/refine/enhance/build); (3) write 8 domain references with a
 domain; (4) catalog 20 anti-pattern tells; (5) build the deterministic checker; (6) same packaging:
 SKILL.md + reference/ + scripts/ + plugin.json + README row + before/after demo.
 
-## 12. Sources (engineering landscape)
+## 12. API facet notes (shipped as `apicraft`)
+
+- **White space confirmed:** no standalone category-defining API *craft* skill exists — hookdeck's
+  webhook-skills are provider-specific, addyosmani's api-and-interface-design is one of 24 inside a
+  suite, vendor skills (Supabase) are platform-bound. Nothing owns contract-first API design as a
+  taste skill.
+- **The differentiators vs the crowded process-zone:** the consumer-code test ("write the caller's
+  code first"), the contract floor (spec as source of truth, one error envelope, compatibility
+  sacred), and a deterministic checker aimed at API tells (verbs in URLs, GET side effects, success
+  wrappers, hardcoded credentials — redacted, mixed casing, missing spec file).
+- **The facet's "second hour" insight:** *an API is a promise that outlives its authors* — the
+  consumer's decade, not the producer's sprint.
+
+## 13. Sources (engineering landscape)
 
 - [addyosmani/agent-skills — comparison doc](https://github.com/addyosmani/agent-skills/blob/main/docs/comparison.md)
 - [pinggy.io — Top 14 AI Agent Skills 2026](https://pinggy.io/blog/ai_agent_skills/)

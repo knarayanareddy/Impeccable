@@ -16,6 +16,21 @@ one-line install.**
 |---|---|---|
 | **[`criterion`](skill/criterion/SKILL.md)** | Data-dense UI/UX (dashboards, tools, forms, tables) | *Design for the second hour, not the first impression. Measure, don't vibe.* |
 | **[`codecraft`](skill/codecraft/SKILL.md)** | Code quality & maintainability (any language) | *Code is read ten times more than it is written. Simplify or justify.* |
+| **[`apicraft`](skill/apicraft/SKILL.md)** | API design (REST, GraphQL, gRPC, webhooks) | *An API is a promise, not an endpoint. Judge from the consumer's code.* |
+
+### apicraft — the Impeccable of API design
+
+- **14 commands** — a shared vocabulary: `contract`, `review`, `audit`, `paginate`, `rename`,
+  `version`, `deprecate`, `harden`, `measure`…
+- **8 domain references** — resources, HTTP semantics, errors, payloads, pagination, idempotency,
+  versioning, specs (contract-first)
+- **A contract floor** — every endpoint in the spec, one error envelope, bounded collections,
+  retry-safe mutations, compatibility sacred
+- **20 API-slop anti-patterns** — verbs in URLs, 200-with-error, success wrappers, leaked
+  internals, unbounded pagination, ambiguous dates… each with the fix
+- **A deterministic checker** — `scripts/check.mjs`: verbs in URLs, GET side effects, deep nesting,
+  hardcoded credentials (redacted), `SELECT *`, missing Retry-After, mixed casing, missing spec
+  file — zero dependencies, no LLM, no API key
 
 ### codecraft — the Impeccable of code quality
 
@@ -44,6 +59,7 @@ one-line install.**
 # From your project root — auto-detects your agent (Claude Code, Cursor, Codex, …)
 npx skills add knarayanareddy/Impeccable --skill codecraft
 npx skills add knarayanareddy/Impeccable --skill criterion
+npx skills add knarayanareddy/Impeccable --skill apicraft
 
 # Claude Code (plugin marketplace)
 /plugin marketplace add knarayanareddy/Impeccable
@@ -54,8 +70,9 @@ Then, in your AI coding tool:
 ```
 /codecraft review src/api        # readability review with scoring
 /codecraft simplify src/payment  # reduce complexity, preserve behavior
-/codecraft audit .               # defect scan + deterministic checker
 /criterion densify dashboard     # more information per viewport, less clutter
+/apicraft contract orders        # write the machine-readable contract (spec-first)
+/apicraft audit .                # API defect scan + deterministic checker
 ```
 
 Manual install: copy a skill folder (`skill/codecraft/`, `skill/criterion/`) into your agent's
@@ -81,7 +98,7 @@ instead of judgment:
 
 | Facet | Status | The anti-slop thesis |
 |---|---|---|
-| **API design** (REST/GraphQL/RPC) | planned | Endpoints that lie, pagination that breaks, errors that leak — a vocabulary (`contract`, `version`, `paginate`, `idempotent`) + deterministic checks |
+| **API design** (REST/GraphQL/RPC) | ✅ **shipped as `apicraft`** | Endpoints that lie, pagination that breaks, errors that leak — contract-first + deterministic checker |
 | **Database & schema** | planned | Nullable-everything, no constraints, EAV, stringly IDs — schema review + checker |
 | **Testing** | planned | Tests that test implementation, sleeps, no assertions — test-craft vocabulary |
 | **Performance** | planned | Optimize-without-measuring, N+1s, jank — profile-first discipline |
