@@ -153,6 +153,46 @@ async function diffScenario(name, oldSpec, newSpec, { exitCode, contains = [], n
   }
 }
 
+const JSON_OLD = `{
+  "paths": {
+    "/orders": { "get": { "operationId": "listOrders" } },
+    "/users": { "get": { "operationId": "listUsers" } }
+  },
+  "components": { "schemas": {} }
+}`;
+const JSON_NEW = `{
+  "paths": {
+    "/orders": { "get": { "operationId": "listOrders" } }
+  },
+  "components": { "schemas": {} }
+}`;
+
+const BLOCK_ENUM_OLD = `components:
+  schemas:
+    S:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - a
+            - b
+            - c
+      required: [status]
+`;
+const BLOCK_ENUM_NEW = `components:
+  schemas:
+    S:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - a
+            - b
+      required: [status]
+`;
+
 const BASE = (extraPaths = "", extraSchemas = "") => `openapi: 3.0.3
 info: { title: T, version: 1.0.0 }
 paths:
@@ -176,6 +216,10 @@ ${extraSchemas}
 await diffScenario("contract-diff: additive changes are free", BASE(), BASE().replace("version: 1.0.0", "version: 1.1.0").replace("enum: [pending, paid, shipped]", "enum: [pending, paid, shipped, refunded]").replace("total_cents:\n          type: integer", "total_cents:\n          type: integer\n        currency:\n          type: string"), { exitCode: 0, notContains: ["BREAKING"] });
 
 await diffScenario("contract-diff: removed operation flagged", BASE(), BASE().replace(/\n  \/orders:\n    get:[\s\S]*?responses: \{ "200": \{ description: ok \} \}\n/, ""), { exitCode: 1, contains: ["removed-operation"] });
+
+await diffScenario("contract-diff: JSON specs parse (removal flagged)", JSON_OLD, JSON_NEW, { exitCode: 1, contains: ["removed-operation"] });
+
+await diffScenario("contract-diff: block-form enums parse (removal flagged)", BLOCK_ENUM_OLD, BLOCK_ENUM_NEW, { exitCode: 1, contains: ["removed-enum-value"] });
 
 await diffScenario("contract-diff: deprecated removal exempt (announced in the OLD spec)", BASE('    post:\n      operationId: createOrder\n      deprecated: true\n      responses: { "201": { description: created } }'), BASE(), { exitCode: 0, notContains: ["BREAKING"] });
 
@@ -213,7 +257,7 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 await (async () => {
   const dir = TMP + "-review";
   mkdirSync(dir, { recursive: true });
-  writeFileSync(join(dir, "s.yaml"), `paths:\n  /orders:\n    get:\n      operationId: listOrders\n      responses: { "200": { description: ok } }\n    post:\n      operationId: createOrder\n      responses: { "201": { description: created } }\n`);
+  writeFileSync(join(dir, "s.yaml"), `paths:\n  /orders:\n    get:\n      operationId: listOrders\n      summary: returns <script>alert(1)</script> things\n      responses: { "200": { description: ok } }\n    post:\n      operationId: createOrder\n      responses: { "201": { description: created } }\n`);
   const port = 8998;
   const srv = spawn("node", [REVIEW, "--spec", "s.yaml", "--round", "r1", "--port", String(port)], { cwd: dir });
   try {
@@ -225,6 +269,7 @@ await (async () => {
     if (!up) { console.log("✗ review daemon: did not come up"); fail++; }
     else {
       const page = await (await fetch(`http://localhost:${port}/`)).text();
+      if (page.includes("<script>alert(1)") || !page.includes("&lt;script&gt;alert(1)&lt;/script&gt;")) { console.log("✗ review daemon: summary HTML not escaped"); fail++; }
       if (!page.includes("GET /orders") || !page.includes("POST /orders")) { console.log("✗ review daemon: endpoints missing from page"); fail++; }
       else {
         console.log("✓ review daemon: serves every endpoint");
