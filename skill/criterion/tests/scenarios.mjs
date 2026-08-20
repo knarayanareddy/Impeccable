@@ -18,6 +18,7 @@ import { fileURLToPath } from "node:url";
 const here = dirname(fileURLToPath(import.meta.url));
 const CHECKER = join(here, "..", "scripts", "check.mjs");
 const TMP = join(here, ".tmp-fixtures");
+let pass = 0, fail = 0;
 
 const scenarios = [];
 
@@ -80,6 +81,10 @@ scenario("comment prose is not evidence (multi-line block)", {
   files: [FIX("t.css", `/* Inter as a silent default, pure black,\n   transition:all — the tells, in prose */\n.a { color: #1a1d21; }`)],
   exitCode: 0, notContains: ["pure-black", "banned-font", "transition-all"],
 });
+scenario("HTML comment prose is not evidence", {
+  files: [FIX("t.html", `<!-- this page uses pure black accents and transition:all in prose -->\n<div class="a">x</div>`)],
+  exitCode: 0, notContains: ["pure-black", "transition-all"],
+});
 scenario("deprecated marquee flagged", {
   files: [FIX("t.html", `<marquee>ticker</marquee>`)],
   exitCode: 1, contains: ["deprecated-motion"],
@@ -97,8 +102,75 @@ scenario("--json emits machine shape", {
   args: ["--json"], exitCode: 1, json: true,
 });
 
+// --- daemon protocol scenarios (live.mjs) ---
+import { spawn } from "node:child_process";
+const LIVE = join(here, "..", "scripts", "live.mjs");
+
+async function daemonScenario(name, fn) {
+  try {
+    await fn();
+    console.log(`✓ ${name}`);
+    pass++;
+  } catch (e) {
+    console.log(`✗ ${name} — ${e.message}`);
+    fail++;
+  }
+}
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const post = async (port, body) => {
+  const res = await fetch(`http://localhost:${port}/choose`, {
+    method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body),
+  });
+  return res.status;
+};
+
+await (async () => {
+  // scenario: serve → choose → --wait resolves with the recorded choice
+  await daemonScenario("live daemon records a choice and --wait resolves", async () => {
+    const tmpDir = TMP + "-live";
+    mkdirSync(tmpDir, { recursive: true });
+    writeFileSync(join(tmpDir, "a.json"), JSON.stringify({ name: "A", rationale: "r", css: "* {}" }));
+    const port = 8971;
+    const srv = spawn("node", [LIVE, "--round", "s1", "--port", String(port), "--options", "a.json"], { cwd: tmpDir });
+    try {
+      for (let i = 0; i < 20; i++) {
+        try { if ((await fetch(`http://localhost:${port}/beat`)).status === 204) break; } catch {}
+        await wait(150);
+      }
+      if ((await post(port, { option: "A" })) !== 200) throw new Error("choose rejected");
+      const out = execFileSync("node", [LIVE, "--round", "s1", "--result"], { cwd: tmpDir, encoding: "utf8" });
+      if (!out.includes('"chosen": "A"')) throw new Error("result missing the choice");
+    } finally {
+      srv.kill();
+      rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+
+  // scenario: unknown option rejected + --wait times out
+  await daemonScenario("live daemon rejects unknown options and --wait times out", async () => {
+    const tmpDir = TMP + "-live2";
+    mkdirSync(tmpDir, { recursive: true });
+    writeFileSync(join(tmpDir, "a.json"), JSON.stringify({ name: "A", rationale: "r", css: "* {}" }));
+    const port = 8972;
+    const srv = spawn("node", [LIVE, "--round", "s2", "--port", String(port), "--options", "a.json"], { cwd: tmpDir });
+    try {
+      for (let i = 0; i < 20; i++) {
+        try { if ((await fetch(`http://localhost:${port}/beat`)).status === 204) break; } catch {}
+        await wait(150);
+      }
+      if ((await post(port, { option: "NOPE" })) !== 400) throw new Error("unknown option not rejected");
+      let timedOut = false;
+      try { execFileSync("node", [LIVE, "--round", "s3", "--wait", "--timeout", "1"], { cwd: tmpDir, stdio: "pipe" }); }
+      catch (e) { timedOut = e.status === 1; }
+      if (!timedOut) throw new Error("--wait did not time out with exit 1");
+    } finally {
+      srv.kill();
+      rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+})();
+
 // --- runner ---
-let pass = 0, fail = 0;
 rmSync(TMP, { recursive: true, force: true });
 mkdirSync(TMP, { recursive: true });
 

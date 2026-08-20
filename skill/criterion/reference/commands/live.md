@@ -30,6 +30,14 @@ it — the browser-native flow:
 3. Apply the pick in one batch; re-screenshot. Record the choice so the final state can be
    rebuilt from the brief.
 
+## Protocol notes
+
+- **Last choice wins.** Re-picking overwrites the result file — the agent consumes the choice
+  once (`--wait` returns, then it's read); a re-pick after that belongs to a new round.
+- **Trusted network only.** The daemon binds 0.0.0.0 so a preview/tunnel can reach it; share the
+  URL only on networks you trust — it is a decision page, not a public API.
+- **Stop with Ctrl-C.** The server runs until killed; there is no idle shutdown.
+
 ## Mode 2 — prompt-based fallback
 
 If no browser/server is available, present the same 2–3 variants as descriptions + CSS snippets

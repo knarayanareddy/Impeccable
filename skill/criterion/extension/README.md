@@ -29,6 +29,13 @@ DOM-only rules (`img-no-lazy`, `deprecated-motion`) use the same ids as the CLI.
 | `deprecated-motion` | `<blink>` / `<marquee>` |
 | `img-no-lazy` | images without loading/width/height |
 
+## Known limitations
+
+- Same-origin iframes are scanned recursively; cross-origin frames are skipped (no access).
+- `img-no-lazy` marks the first image as a note (assumed LCP candidate) — a heuristic, not a
+  fact; treat notes as prompts to look.
+- Computed styles only: rules that need source-level signals (e.g., `SELECT *`) stay CLI-only.
+
 ## Relationship to the CLI
 
 - The CLI (`scripts/check.mjs`) is the source-code checker (pre-merge, CI).

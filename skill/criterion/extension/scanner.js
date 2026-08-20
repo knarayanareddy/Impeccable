@@ -15,11 +15,10 @@
     return n;
   };
 
-  window.__criterionScan = () => {
+  const scanDoc = (doc) => {
     const findings = [];
-
-    // --- style rules (check.mjs parity) ---
-    for (const node of document.querySelectorAll("*")) {
+    const all = [];
+    for (const node of doc.querySelectorAll("*")) {
       const s = getComputedStyle(node);
 
       // banned-font (T1)
@@ -111,9 +110,10 @@
       }
     }
 
-    // img-no-lazy (D1) — img without loading, excluding the first-viewport candidate
+    // img-no-lazy (D1) — img without loading, excluding the first-viewport candidate.
+    // Heuristic: the first image is assumed to be the LCP candidate (documented limitation).
     let first = true;
-    for (const img of document.querySelectorAll("img")) {
+    for (const img of doc.querySelectorAll("img")) {
       if (!img.hasAttribute("loading") && !img.hasAttribute("width") && !img.hasAttribute("height")) {
         findings.push({ rule: "img-no-lazy", severity: first ? "info" : "warning",
           message: "<img> without loading/width/height — lazy-load below the fold and reserve layout.",
@@ -121,7 +121,26 @@
       }
       first = false;
     }
+    return findings;
+  };
 
-    return { findings, scanned: document.querySelectorAll("*").length };
+  window.__criterionScan = () => {
+    const findings = scanDoc(document);
+    let scanned = document.querySelectorAll("*").length;
+
+    // Same-origin iframes are part of the page too; cross-origin stays out (no access)
+    for (const frame of document.querySelectorAll("iframe")) {
+      try {
+        const inner = frame.contentDocument;
+        if (inner) {
+          findings.push(...scanDoc(inner));
+          scanned += inner.querySelectorAll("*").length;
+        }
+      } catch {
+        // cross-origin or inaccessible — skipped by design
+      }
+    }
+
+    return { findings, scanned };
   };
 })();
