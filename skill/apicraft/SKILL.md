@@ -54,6 +54,8 @@ design from the consumer's code outward, and you treat the contract as the produ
 4. After editing, run `node <skill-dir>/scripts/check.mjs --target <path>`, verify the spec is in sync
    with the implementation (openapi-diff or the equivalent for the stack), and fix every violation
    before finishing.
+5. Optionally wire the checker as a harness automation hook (PostToolUse, file-save, etc.) — see
+   the repo's `docs/hooks.md` for harness examples.
 
 ## Commands
 
@@ -80,6 +82,9 @@ design from the consumer's code outward, and you treat the contract as the produ
 - **Explicit or clearly implied command:** load its reference and follow it. Ask once if two commands fit.
 - **Otherwise:** treat the request as general API design work on the incumbent implementation, with
   [reference/contract-floor.md](reference/contract-floor.md) loaded before any edit.
+- **Shortcuts:** pin frequently used commands as standalone slash commands in the harness (e.g., a
+  `.claude/commands/audit.md` containing "Run the apicraft skill's audit command") so `/audit`
+  works without the `/apicraft` prefix.
 
 ## Verification loop
 

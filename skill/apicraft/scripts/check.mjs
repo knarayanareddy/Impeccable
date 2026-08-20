@@ -36,8 +36,8 @@ const SKIP_DIRS = new Set([
 const PATH_RE = /(["'`])(\/[^"'`\s]+)(["'`])/g;
 
 const ROUTE_VERBS = ["get", "set", "update", "delete", "remove", "create", "save"];
-const VERB_RE = new RegExp(`/(${ROUTE_VERBS.join("|")})[A-Z]`);
-const FINAL_VERB_RE = new RegExp(`/(${ROUTE_VERBS.join("|")})$`);
+const VERB_RE = new RegExp(`/(${ROUTE_VERBS.join("|")})(?=[A-Za-z0-9_-])`, "i");
+const FINAL_VERB_RE = new RegExp(`/(${ROUTE_VERBS.join("|")})$`, "i");
 const SIDE_EFFECT_RE = /(create|update|delete|remove|save|set)[A-Z_-]/;
 
 // ---------------------------------------------------------------------------
@@ -135,6 +135,13 @@ const rules = [
       if (/^(changeme|password|secret|example|dummy|test|testing|x{8,}|12345678)$/i.test(val)) return null;
       if (/[<>]/.test(val)) return null;
       return `${key} = "<redacted>"`;
+    },
+    testFallback(line) {
+      // env fallback form: `const key = process.env.KEY || "sk-..."` — the fallback IS a committed credential
+      const m = /\b(api[_-]?key|api[_-]?secret|secret[_-]?key|password|passwd|access[_-]?token|auth[_-]?token|bearer[_-]?token)\b[^=]*=\s*[^;]*\|\|\s*["']([A-Za-z0-9_\-+./=]{8,})["']/i.exec(line);
+      if (!m) return null;
+      if (/^(changeme|password|secret|example|dummy|test|testing|x{8,}|12345678)$/i.test(m[2])) return null;
+      return `${m[1]} ||= "<redacted>"`;
     },
   },
   {
@@ -252,7 +259,7 @@ function scan(file) {
 
   lines.forEach((raw, i) => {
     for (const rule of rules) {
-      const detail = rule.test(raw);
+      const detail = rule.test(raw) || (rule.testFallback ? rule.testFallback(raw) : null);
       if (detail) {
         findings.push({
           file: basename(file),
@@ -265,6 +272,29 @@ function scan(file) {
       }
     }
   });
+
+  // Spec-lint block pass: each operation must declare responses + operationId
+  if (SPEC_EXTS.has(ext)) {
+    const opRe = /^\s{2,8}(get|post|put|patch|delete):\s*$/gm;
+    const positions = [];
+    let op;
+    while ((op = opRe.exec(text))) {
+      positions.push({ index: op.index, method: op[1], line: text.slice(0, op.index).split("\n").length });
+    }
+    positions.forEach((pos, i) => {
+      const block = text.slice(pos.index, i + 1 < positions.length ? positions[i + 1].index : text.length);
+      if (!/responses\s*:/.test(block)) {
+        findings.push({ file: basename(file), line: pos.line, rule: "spec-missing-responses", severity: "warning",
+          message: "OpenAPI operation with no responses block — the contract can't state its outcomes (specs.md).",
+          detail: pos.method + ":" });
+      }
+      if (!/operationId\s*:/.test(block)) {
+        findings.push({ file: basename(file), line: pos.line, rule: "spec-missing-operationid", severity: "warning",
+          message: "OpenAPI operation without operationId — SDK generation and traceability need it (specs.md).",
+          detail: pos.method + ":" });
+      }
+    });
+  }
 
   // File-level: unversioned /api/ endpoints (code files only)
   if (CODE_ONLY(ext)) {
@@ -326,11 +356,14 @@ function main() {
     }
   }
 
-  // Project-level: no machine-readable contract anywhere
+  // Project-level: no machine-readable contract anywhere.
+  // Emit only for project-scope scans (a directory or multiple files) — a single-file
+  // targeted scan is focused work, not a project claim.
   const hasSpec = files.some(
     (f) => SPEC_EXTS.has(extname(f).toLowerCase()) || /(openapi|swagger|api[-_]?spec)/i.test(basename(f))
   );
-  if (!hasSpec) {
+  const isProjectScope = targets.some((p) => { try { return statSync(resolve(p)).isDirectory(); } catch { return false; } }) || files.length > 1;
+  if (!hasSpec && isProjectScope) {
     all.push({
       file: "(project)",
       line: 0,

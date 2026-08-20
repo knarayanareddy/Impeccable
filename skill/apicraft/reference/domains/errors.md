@@ -28,6 +28,9 @@ path. Design errors like the product feature they are.
   integration and a thundering herd.
 - Status code is chosen first, then `code` within it. The envelope is identical for 400, 401, 403,
   404, 409, 422, 429, 500, 503.
+- **Align with RFC 9457 (Problem Details)** where the platform fits: `application/problem+json`
+  with `type`, `title`, `status`, `detail` — map `code` into the `type` URI or a custom extension
+  member, don't invent a parallel standard.
 
 ## Choosing codes and codes
 

@@ -48,8 +48,9 @@ deterministic rule in `scripts/check.mjs`; the rest are LLM-judged with this fil
 
 ## Detector mapping
 
-`scripts/check.mjs` deterministically catches: R1 (verbs in URLs), R2 (GET with side effects), R3
-(deep nesting), R5 (unversioned `/api/`), E1-ish (success wrappers), E4 (empty error bodies), E5
-(leaked internals), C1/C2 (unbounded page sizes, `SELECT *` without limit), E5/429 (missing
-Retry-After), P1-ish (dates as untyped strings), P4 (mixed casing), P5-ish (hardcoded credentials),
-L1 (no spec file). The rest are LLM-judged — keep this file loaded when auditing or reviewing.
+`scripts/check.mjs` deterministically catches, with these rule ids: `verb-in-url` (R1),
+`get-with-side-effects` (R2), `deep-resource-nesting` (R3), `unversioned-api` (R5),
+`success-wrapper` (E3), `empty-error-body` (E4), `leaked-internals` (E5), `unbounded-page-size`
+(C2), `select-star` (C1), `no-retry-after` (E5/429), `date-as-string` (P2), `mixed-field-casing`
+(P4), `hardcoded-credential` (S1), `minor-version-in-path` (R5), `no-spec-file` (L1). The rest
+are LLM-judged — keep this file loaded when auditing or reviewing.

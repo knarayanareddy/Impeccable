@@ -37,6 +37,10 @@ into "effectively once" behavior.
   delivery is the promise — consumers must be ready to dedupe, and the event id is how.
 - **Callbacks:** a callback the API makes to the consumer carries the same `event_id` as the original
   event — end-to-end dedupe.
+- **Webhook security is part of the contract:** sign every delivery (HMAC-SHA256 over the raw body
+  with a per-consumer secret, signature in a header like `X-Signature`), include the event's
+  timestamp, and reject deliveries outside a replay window. Consumers verify the signature before
+  trusting the payload — an unsigned webhook is an open write endpoint on the internet.
 
 ## Retry guidance to consumers
 
