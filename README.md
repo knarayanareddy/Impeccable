@@ -248,8 +248,23 @@ instead of judgment:
 **All 10 facets shipped** — the suite is complete. See [`RESEARCH.md`](RESEARCH.md) for the full
 research and the launch playbook.
 
-See [`RESEARCH.md`](RESEARCH.md) for the full market research: why Impeccable trended, the
-engineering-skill landscape, and the white-space analysis behind this suite.
+## Docs, demo & case studies
+
+- **[Docs site](docs/)** — the suite home, the [criterion guide](docs/criterion/), and the
+  [codecraft guide](docs/codecraft/) (remaining skills' pages land with their launch passes)
+- **[Demos](demos/)** — generic-AI before/after per facet with a runner that shows the checker
+  rejecting the before and passing the after:
+  `node demos/criterion/run-demo.mjs` · `node demos/codecraft/run-demo.mjs`
+- **[Case studies](docs/)** — [criterion](docs/criterion/case-study.md) ·
+  [codecraft](docs/codecraft/case-study.md) — measured both directions
+- **Browser extension** — [skill/criterion/extension/](skill/criterion/extension/): runs the
+  detector against any live page (Chrome/Edge/Brave, Load unpacked)
+- **Hook manager** — `node skill/codecraft/scripts/hooks.mjs on --apply`: wires the checker
+  into the harness's PostToolUse hook
+- **Live daemons** — `node skill/criterion/scripts/live.mjs` (visual variants) ·
+  `node skill/codecraft/scripts/live.mjs` (refactor variants)
+- **Behavioral evals** — `node scripts/run-evals.mjs`: 24 criterion + 24 codecraft pinned
+  scenarios (checkers, hooks, live protocols)
 
 ## License
 
