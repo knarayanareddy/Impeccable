@@ -85,6 +85,10 @@ scenario("HTML comment prose is not evidence", {
   files: [FIX("t.html", `<!-- this page uses pure black accents and transition:all in prose -->\n<div class="a">x</div>`)],
   exitCode: 0, notContains: ["pure-black", "transition-all"],
 });
+scenario("URL double-slashes are not comment starts (string evidence survives)", {
+  files: [FIX("t.js", `const s = "http://localhost:3000/transition: all 600ms";`)],
+  exitCode: 0, contains: ["transition-all", "slow-feedback"],
+});
 scenario("deprecated marquee flagged", {
   files: [FIX("t.html", `<marquee>ticker</marquee>`)],
   exitCode: 1, contains: ["deprecated-motion"],

@@ -36,6 +36,14 @@ DOM-only rules (`img-no-lazy`, `deprecated-motion`) use the same ids as the CLI.
   fact; treat notes as prompts to look.
 - Computed styles only: rules that need source-level signals (e.g., `SELECT *`) stay CLI-only.
 
+## Manual QA checklist (before a release)
+
+1. Load unpacked; on `before.html` in the demo, the popup shows `pure-black`,
+   `purple-blue-gradient`, `elastic-easing`, `banned-font`, `radius-too-large`.
+2. On `after.html`, the popup shows **Clean ✓**.
+3. On a chrome:// tab, the popup shows the "can't be scanned" message, no crash.
+4. A page with a same-origin iframe reports findings from inside the frame.
+
 ## Relationship to the CLI
 
 - The CLI (`scripts/check.mjs`) is the source-code checker (pre-merge, CI).

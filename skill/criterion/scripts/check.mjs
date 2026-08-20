@@ -249,8 +249,8 @@ function scan(file, strict) {
         if (end === -1) { inBlock = true; break; }
         out += " ".repeat(end + 2 - i);
         i = end + 2;
-      } else if (/\.(js|mjs|cjs|jsx|ts|tsx|vue|svelte)$/i.test(file) && line.startsWith("//", i)) {
-        break; // rest of the line is a comment
+      } else if (/\.(js|mjs|cjs|jsx|ts|tsx|vue|svelte)$/i.test(file) && line.startsWith("//", i) && (i === 0 || line[i - 1] !== ":")) {
+        break; // rest of the line is a comment (URLs keep their // — string evidence survives)
       } else if (/\.html?$/i.test(file) && line.startsWith("<!--", i)) {
         const end = line.indexOf("-->", i + 4);
         out += " ".repeat(end === -1 ? line.length - i : end + 3 - i);
