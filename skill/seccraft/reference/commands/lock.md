@@ -12,6 +12,8 @@ that removes the free attack surface — everything here is a default the attack
    - **Headers:** HSTS (with a sensible max-age), CSP (starting restrictive — `script-src
      'self'` — then loosened only with evidence), X-Content-Type-Options: nosniff,
      X-Frame-Options/frame-ancestors, Referrer-Policy. The standard set, everywhere.
+   - **Subresource Integrity:** every third-party `<script>`/`<link>` carries `integrity` +
+     `crossorigin` (SRI) — the CDN's compromise must not become yours.
    - **CORS:** an explicit origin allowlist; never `*` with credentials, never `*` on
      authenticated APIs (`anti-patterns.md` K2).
    - **Cookies:** `Secure` + `HttpOnly` + `SameSite` on every auth/session cookie; explicit

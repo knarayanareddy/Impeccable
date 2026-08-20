@@ -47,6 +47,14 @@ const rules = [
       if (/[<>{}]/.test(val)) return null; // a template placeholder, not a value
       return `${m[1]} = "<redacted>"`;
     },
+    testFallback(line) {
+      // .env-style unquoted form: `API_KEY=sk-abc123...`
+      const m = /^\s*((?:api[_-]?key|api[_-]?secret|secret[_-]?key|client[_-]?secret|password|passwd|access[_-]?token|auth[_-]?token|db[_-]?password|jwt[_-]?secret|signing[_-]?key))\s*=\s*([A-Za-z0-9_\-+./=]{8,})\s*$/i.exec(line);
+      if (!m) return null;
+      if (/^(changeme|password|secret|example|dummy|test|testing|x{8,}|12345678)$/i.test(m[2])) return null;
+      if (/[<>{}]/.test(m[2])) return null;
+      return `${m[1]} = "<redacted>"`;
+    },
   },
   {
     id: "committed-private-key",
@@ -63,6 +71,8 @@ const rules = [
     test(line) {
       if (/(f["']|`)\s*[A-Z\s]*\b(SELECT|INSERT|UPDATE|DELETE)\b/i.test(line) && /[{}$]/.test(line)) return "interpolated SQL";
       if (/(["'])\s*(SELECT|INSERT|UPDATE|DELETE)\b/i.test(line) && /\+\s*\w/.test(line)) return "concatenated SQL";
+      if (/["']\s*(SELECT|INSERT|UPDATE|DELETE)\b/i.test(line) && /\.format\s*\(/.test(line)) return "python .format() SQL";
+      if (/["']\s*(SELECT|INSERT|UPDATE|DELETE)\b[^"']*%s/.test(line) && /%\s*\(/.test(line)) return "python %-formatted SQL";
       return null;
     },
   },
@@ -84,6 +94,10 @@ const rules = [
     test(line) {
       if (/algorithm\s*:\s*["']none["']|alg\s*:\s*["']none["']/i.test(line)) return 'alg: "none"';
       const m = /(jwt\.sign\([^,]*,\s*["'][A-Za-z0-9_\-]{8,}["'])/i.exec(line);
+      if (!m) {
+        const m2 = /((?:jsonwebtoken\.)?sign\([^,]*,\s*["'][A-Za-z0-9_\-]{8,}["'])/i.exec(line);
+        if (m2 && !/^jwt\.sign/.test(m2[1])) return "hardcoded JWT secret";
+      }
       if (m) return "hardcoded JWT secret";
       return null;
     },
@@ -93,12 +107,11 @@ const rules = [
     severity: "error",
     message: "Dynamic code execution — eval/Function/document.write with input (I3). Never evaluate input; JSON.parse for data.",
     test(line) {
-      const m = /\beval\s*\(|\bnew\s+Function\s*\(|document\.write\s*\(/i.exec(line);
+      const m = /\beval\s*\(|\bnew\s+Function\s*\(|document\.write\s*\(|setTimeout\s*\(\s*["']/i.exec(line);
       if (!m) return null;
-      if (/[{}$]/.test(line) || /[\w]+\)?\s*\)?\s*$/.test(line.replace(m[0], "").trim()) === false) {
-        // dynamic payload present (template or concatenation) — flag
-        if (/[{}$]/.test(line) || /\+/.test(line)) return m[0].trim().replace(/\s*\(.*/, "(");
-      }
+      // setTimeout with a string payload is always string-eval — flag unconditionally
+      if (/setTimeout\s*\(\s*["']/i.test(m[0])) return "setTimeout(string)";
+      if (/[{}$]/.test(line) || /\+/.test(line)) return m[0].trim().replace(/\s*\(.*/, "(");
       return null;
     },
   },
@@ -216,7 +229,7 @@ function walk(dir, acc = []) {
       continue;
     }
     if (st.isDirectory()) walk(p, acc);
-    else if (st.isFile() && EXTS.has(extname(name).toLowerCase())) acc.push(p);
+    else if (st.isFile() && (EXTS.has(extname(name).toLowerCase()) || basename(name) === ".env")) acc.push(p);
   }
   return acc;
 }
@@ -233,7 +246,7 @@ function collect(paths) {
       process.exit(2);
     }
     if (st.isDirectory()) walk(abs, files);
-    else if (EXTS.has(extname(abs).toLowerCase())) files.push(abs);
+    else if (EXTS.has(extname(abs).toLowerCase()) || basename(abs) === ".env") files.push(abs);
   }
   return [...new Set(files)];
 }
@@ -254,7 +267,7 @@ function scan(file) {
 
   lines.forEach((raw, i) => {
     for (const rule of rules) {
-      const detail = rule.test(raw);
+      const detail = rule.test(raw) || (rule.testFallback ? rule.testFallback(raw) : null);
       if (detail) {
         findings.push({ file: basename(file), line: i + 1, rule: rule.id, severity: rule.severity, message: rule.message, detail });
       }

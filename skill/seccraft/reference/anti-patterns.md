@@ -1,5 +1,9 @@
 # Anti-patterns: the security-slop tells
 
+(CWE anchors: S1→CWE-798, A1→CWE-639/IDOR, A3→CWE-347, I1→CWE-89, I2→CWE-79, I3→CWE-95,
+I4→CWE-78, I6→CWE-330, C1→CWE-916/328, K2→CWE-942, K3→CWE-209. The shared vocabulary with
+OWASP ASVS/CWE Top 25 — cite these in findings so tickets speak the industry's language.)
+
 The fingerprints of software whose security was an afterthought — written by an agent (or a team)
 that shipped the demo defaults. Each is a defect: not always a breach today, always a breach
 invitation. Most have a deterministic rule in `scripts/check.mjs`; the rest are LLM-judged with
@@ -67,10 +71,9 @@ this file loaded.
 
 ## Detector mapping
 
-`scripts/check.mjs` deterministically catches: S1 (hardcoded credentials, redacted), S2 (private
-keys), A2 (auth-disabled decorators), A3 (none-alg JWTs + hardcoded JWT secrets), A5 (insecure
-cookies), I1 (interpolated SQL), I2 (innerHTML/dangerouslySetInnerHTML), I3 (eval/new Function/
-document.write), I4 (command concat), I6 (Math.random for security), C1 (MD5/SHA1 near password
-context), C5 (plain http URLs), K2 (permissive CORS), K3-ish (stack traces in responses), K4
-(no security config found project-wide). The rest are LLM-judged — keep this file loaded when
-auditing or threat-modeling.
+`scripts/check.mjs` deterministically catches, with these rule ids: `hardcoded-credential` (S1,
+redacted), `committed-private-key` (S2), `auth-disabled` (A2), `weak-jwt` (A3), `insecure-cookie`
+(A5), `interpolated-sql` (I1), `xss-dangerous` (I2), `code-injection` (I3), `command-injection`
+(I4), `math-random-token` (I6), `insecure-hash` (C1), `insecure-transport` (C5),
+`permissive-cors` (K2), `stack-trace-response` (K3), `no-security-config` (K4, project-wide).
+The rest are LLM-judged — keep this file loaded when auditing or threat-modeling.

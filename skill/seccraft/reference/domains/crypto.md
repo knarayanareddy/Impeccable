@@ -34,6 +34,9 @@ standard constructions — and know which ones are already dead.
 - **Nonce/IV discipline** — random per message, never reused, never sequential-guessable.
 - **Authenticated encryption only** — encrypt-then-MAC or an AEAD mode; plain CBC without a MAC
   is malleable.
+- **Verify signatures/MACs in constant time** (`timingSafeEqual`/`hash_equals`) — not just
+  passwords: HMAC verification of webhooks and API signatures is the same timing-attack class
+  (`apicraft`'s idempotency domain signs them; this domain verifies them).
 - **Version your crypto** — key versions and algorithm versions in the ciphertext metadata, so
   you can rotate without a flag day.
 - **Deprecation path exists** — when an algorithm dies (and they do), the migration is a

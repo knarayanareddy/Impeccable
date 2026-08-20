@@ -26,6 +26,19 @@ exactly nothing until authz cashes the check (`domains/authz.md`).
 - **Tokens never travel in URLs or logs** — they leak through referrers, proxies, and log
   aggregators.
 
+## CSRF (the cookie-auth companion)
+
+SameSite=Lax/Strict kills most CSRF by construction — but the explicit story is still required
+where cookies carry the session and state-changing requests accept them:
+
+- **Token or double-submit** on state-changing forms/endpoints for cookie-auth surfaces where
+  SameSite can't be Strict (cross-site embeds, OAuth flows).
+- **Origin/Referer checks** on cookie-authenticated state-changing APIs — the cheap
+  defense-in-depth layer.
+- SameSite is the baseline, not the whole answer: document per surface which of the three
+  mechanisms applies, or state why none is needed (token-auth APIs are immune — the browser
+  never sends the bearer).
+
 ## MFA and account security
 
 - **MFA on anything valuable**: admin, money, PII surfaces. TOTP/WebAuthn over SMS (phishing-
