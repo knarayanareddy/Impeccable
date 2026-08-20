@@ -157,7 +157,9 @@ const rules = [
       if (!s) return null;
       const codeStart = /^(const|let|var|function|def|class|import|export|if|for|while|return|public|private|func|fn|void|int|type|static)\b/.test(s);
       const codeShape = /[;{}]$/.test(s) || /[=(\[]/.test(s);
-      if (codeStart && (codeShape || /^return\b/.test(s))) return s.slice(0, 100);
+      // keyword-led code OR statement-shaped (ends in ;/}/) with code punctuation — catches
+      // commented-out calls like `// console.log("old");` without flagging prose
+      if (codeStart || (/[;{}]$/.test(s) && /[=(\[]/.test(s))) return s.slice(0, 100);
       return null;
     },
   },
@@ -242,7 +244,39 @@ function scan(file) {
     return findings;
   }
   const ext = extname(file).toLowerCase();
-  const lines = text.split("\n");
+  const rawLines = text.split("\n");
+
+  // Stateful comment stripping: comments are prose, not evidence. Multi-line blocks
+  // and line comments are blanked; URL double-slashes are never comment starts.
+  const lines = [];
+  let inBlock = false;
+  for (const raw of rawLines) {
+    let line = raw;
+    if (inBlock) {
+      const end = line.indexOf("*/");
+      if (end === -1) { lines.push(""); continue; }
+      line = " ".repeat(end + 2) + line.slice(end + 2);
+      inBlock = false;
+    }
+    let out = "";
+    let i = 0;
+    while (i < line.length) {
+      if (line.startsWith("/*", i)) {
+        const end = line.indexOf("*/", i + 2);
+        if (end === -1) { inBlock = true; break; }
+        out += " ".repeat(end + 2 - i);
+        i = end + 2;
+      } else if (/\.(js|mjs|cjs|jsx|ts|tsx|vue|svelte)$/i.test(file) && line.startsWith("//", i) && (i === 0 || line[i - 1] !== ":")) {
+        break; // rest of the line is a comment (URLs keep their // — string evidence survives)
+      } else if (/\.py$/i.test(file) && line.startsWith("#", i)) {
+        break;
+      } else {
+        out += line[i];
+        i += 1;
+      }
+    }
+    lines.push(out);
+  }
   let todos = 0;
 
   // Dominant indent unit: tabs=1 level, else gcd of positive indents clamped to {2,4}
@@ -268,8 +302,9 @@ function scan(file) {
   let lastDeepLine = -2; // dedupe consecutive deep-nesting lines (one finding per block)
   let pendingCatch = -1; // js-like: `catch (e) {` awaiting its single-statement body
 
-  lines.forEach((raw, i) => {
+  rawLines.forEach((raw, i) => {
     // Windowed multi-line catch bodies: comment-only, bare return, return-null
+    // (walks the RAW lines — comments are the evidence this pass exists for)
     if (pendingCatch !== -1 && i - pendingCatch <= 3) {
       const trimmed = raw.trim();
       const isComment = /^\/\//.test(trimmed) || /^\/\*/.test(trimmed);
@@ -296,11 +331,14 @@ function scan(file) {
       }
     }
     if (/^\s*\}?\s*catch\s*\([^)]*\)\s*\{\s*$/.test(raw)) pendingCatch = i;
-    const line = stripStrings(raw);
-    todos += (line.match(TODO_RE) || []).length;
+    const line = stripStrings(lines[i]);          // comment-stripped, string-stripped
+    const rawLine = stripStrings(raw);            // comments intact (for comment-sensitive rules)
+    todos += (raw.match(TODO_RE) || []).length;   // TODOs live in comments — count raw
     for (const rule of rules) {
       if (rule.applies && !rule.applies(ext)) continue;
-      const detail = rule.test(line);
+      // Suppressions and commented-out code are comment evidence — keep raw there.
+      const subject = rule.id === "commented-out-code" || rule.id === "suppression" ? rawLine : line;
+      const detail = rule.test(subject);
       if (detail) {
         findings.push({
           file: basename(file),

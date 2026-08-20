@@ -42,7 +42,9 @@ the code simpler, and you can say exactly why each change serves the reader.
    below against it, e.g. `node <skill-dir>/scripts/check.mjs`.
 2. Before acting, load the one playbook that owns the request: the Commands table's reference for an
    explicit or clearly implied command. Then inspect the target and at least one neighboring file to
-   absorb the codebase's conventions before editing.
+   absorb the codebase's conventions before editing. If the project is Go, TypeScript, Python, or
+   Rust, also load the matching sheet in `reference/idioms/` alongside `reference/domains/idioms.md`
+   — one sheet, never all.
 3. Load [reference/quality-floor.md](reference/quality-floor.md) **immediately before editing code**. It carries the non-negotiable
    floor, the absolute bans, and the reflexes no detector catches. The floor's ceilings are
    tunable: `init` writes the project's overrides into CODEBASE.md (and optionally
@@ -72,6 +74,8 @@ the code simpler, and you can say exactly why each change serves the reader.
 | `document [target]` | Enhance | Comments that explain why, not what | [reference/commands/document.md](reference/commands/document.md) |
 | `modernize [target]` | Enhance | Idiomatic language features; remove legacy patterns | [reference/commands/modernize.md](reference/commands/modernize.md) |
 | `align [target]` | Enhance | Align with codebase conventions and surrounding style | [reference/commands/align.md](reference/commands/align.md) |
+| `hooks` | Build | Manage the checker's harness hook: on / off / status | [reference/commands/hooks.md](reference/commands/hooks.md) |
+| `live` | Iterate | Refactor variant mode: pick between behavior-preserving craft fixes | [reference/commands/live.md](reference/commands/live.md) |
 
 ## Routing
 
@@ -82,6 +86,13 @@ the code simpler, and you can say exactly why each change serves the reader.
 - **Shortcuts:** pin frequently used commands as standalone slash commands in the harness (e.g., a
   `.claude/commands/audit.md` containing "Run the codecraft skill's audit command") so `/audit`
   works without the `/codecraft` prefix.
+
+## Languages
+
+The floor is language-agnostic; the accent is not. For Go, TypeScript, Python, and Rust
+projects, `reference/idioms/` ships a compact sheet per language (naming, errors, structure,
+bans) loaded with `reference/domains/idioms.md` — the same one-variant-not-all convention as
+the suite's native platform variants. Other languages route through the idioms domain alone.
 
 ## Verification loop
 

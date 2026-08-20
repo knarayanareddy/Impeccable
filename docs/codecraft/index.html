@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Codecraft — the craft skill for code quality</title>
+<style>
+  :root { --bg:#101418; --panel:#161c22; --text:#e8eaf0; --muted:#8b93a1; --line:#262e37; --accent:#4d7cfe; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.6 system-ui,-apple-system,sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 56px 24px 80px; }
+  h1 { font-size: 34px; line-height:1.15; letter-spacing:-0.02em; margin:0 0 12px; }
+  .lede { color: var(--muted); font-size: 18px; margin: 0 0 36px; }
+  h2 { font-size: 20px; margin: 40px 0 12px; letter-spacing:-0.01em; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; text-decoration:none; color:var(--text); }
+  .card:hover { border-color: var(--accent); }
+  .card b { display:block; }
+  .card span { color: var(--muted); font-size: 13px; }
+  code, pre { font-family: ui-monospace, monospace; }
+  pre { background: var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:13px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); }
+  .num { color:var(--accent); font-variant-numeric: tabular-nums; }
+  a { color: var(--accent); }
+  .back { color:var(--muted); text-decoration:none; font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="../">← the craft-skill suite</a>
+  <h1>Codecraft</h1>
+  <p class="lede">The craft skill for code that reads like a senior engineer wrote it — any language. <em>Code is read ten times more than it is written. Simplify or justify.</em></p>
+
+  <h2>Install</h2>
+  <pre>npx skills add knarayanareddy/Impeccable --skill codecraft</pre>
+  <p>Then <code>/codecraft review src/api</code>, <code>/codecraft simplify src/payment</code>, or any of the 17 commands.</p>
+
+  <h2>The commands <span class="num">17</span></h2>
+  <table>
+    <tr><th>Build</th><td>init · shape · extract · hooks</td></tr>
+    <tr><th>Evaluate</th><td>audit · review · measure</td></tr>
+    <tr><th>Refine</th><td>simplify · flatten · name · dedupe · abstract · harden</td></tr>
+    <tr><th>Enhance</th><td>document · modernize · align</td></tr>
+    <tr><th>Iterate</th><td>live (refactor variant mode)</td></tr>
+  </table>
+
+  <h2>The detector</h2>
+  <pre>node skill/codecraft/scripts/check.mjs --strict --target src/
+# ERROR swallowed-error    payment.js:15  catch {}
+# ERROR debug-statement    payment.js:16  console.log(
+# WARN  magic-number       payment.js:10  47
+# codecraft: 3 file(s) scanned · FAILED</pre>
+  <p>Zero dependencies, no LLM, no API key. Its behaviors are pinned by <a href="../../skill/codecraft/tests/scenarios.mjs">24 automated scenarios</a> — checker rules, exemptions, windowed detection, comment stripping, the hooks manager, and the live daemon.</p>
+
+  <h2>Harness hooks</h2>
+  <pre>node skill/codecraft/scripts/hooks.mjs on --apply   # wire the checker into PostToolUse
+node skill/codecraft/scripts/hooks.mjs status        # wired or not?</pre>
+
+  <h2>Refactor variant mode</h2>
+  <pre>node skill/codecraft/scripts/live.mjs --round simplify --options a.json b.json &amp;
+node skill/codecraft/scripts/live.mjs --round simplify --wait</pre>
+  <p>Present two behavior-preserving craft fixes, let the user pick, apply the recorded choice.</p>
+
+  <h2>Languages</h2>
+  <p>Language sheets for Go, TypeScript, Python, and Rust in <code>reference/idioms/</code>, loaded with the idioms domain.</p>
+
+  <h2>Evidence</h2>
+  <div class="grid">
+    <a class="card" href="case-study.md"><b>Case study</b><span>The generic AI code → the codecraft pass, measured both directions</span></a>
+    <a class="card" href="../../demos/codecraft/before.js"><b>Demo — before</b><span>Runs the checker's failure list</span></a>
+    <a class="card" href="../../demos/codecraft/after.js"><b>Demo — after</b><span>Passes clean</span></a>
+    <a class="card" href="../../REVIEWS/codecraft-round1.md"><b>Expert review</b><span>Two-round panel archive</span></a>
+  </div>
+</main>
+<footer style="max-width:860px;margin:0 auto;padding:0 24px 32px;color:var(--muted);font-size:12px;">Apache-2.0 · original work, not affiliated with pbakaus/impeccable</footer>
+</body>
+</html>
