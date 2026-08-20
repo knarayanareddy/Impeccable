@@ -47,12 +47,21 @@ try {
 }
 
 const gaps = [];
+let noAreas = false;
 
-// The honest gate: if no area is mapped at all, the adapter may be the gap.
+// The honest gate: if no area is mapped at all, the adapter may be the gap —
+// and the per-area checks are noise against an unmapped config.
 if (!config.headers && !config.cookies && !config.cors && !config.tls) {
+  noAreas = true;
   gaps.push({ area: "config", rule: "no-areas-mapped", message: "config maps no areas (headers/cookies/cors/tls all absent) — is the adapter wired, or is the surface unconfigured?" });
 }
 
+if (noAreas) {
+  // skip the area checks — the no-areas gap is the finding
+} else {
+checkAreas();
+}
+function checkAreas() {
 // ---- headers (the standard set — lock.md) ----
 const headers = config.headers || {};
 for (const h of ["csp", "hsts"]) {
@@ -87,6 +96,7 @@ if (tls.redirectHttp === false) gaps.push({ area: "tls", rule: "redirectHttp", m
 // ---- debug / production posture ----
 if (config.debug === true) gaps.push({ area: "production", rule: "debug", message: "debug mode on in production config (K1)" });
 if (config.stackTraces === true) gaps.push({ area: "production", rule: "stackTraces", message: "stack traces exposed to clients (K3)" });
+}
 
 if (json) {
   console.log(JSON.stringify({ config: configFile, gaps, gapCount: gaps.length }, null, 2));

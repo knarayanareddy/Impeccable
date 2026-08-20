@@ -144,6 +144,9 @@ async function lockScenario(name, config, { exitCode, contains = [], notContains
   }
 }
 
+await lockScenario("lock-check: unmapped config reports no-areas exclusively", {},
+  { exitCode: 1, contains: ["no-areas-mapped"], notContains: ["missing csp", "auth cookies"] });
+
 await lockScenario("lock-check: gap-ridden config fails with the checklist", {
   headers: {}, cookies: { secure: false }, cors: { origin: "*", credentials: true }, debug: true,
 }, { exitCode: 1, contains: ["missing csp", "auth cookies must be Secure", 'origin "*"', "debug mode on"] });
