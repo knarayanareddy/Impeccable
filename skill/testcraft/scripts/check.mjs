@@ -189,7 +189,40 @@ function scan(file) {
   } catch {
     return findings;
   }
-  const lines = text.split("\n");
+  const rawLines = text.split("\n");
+  // Stateful comment stripping: comments are prose, not evidence. Windowed
+  // catches (empty bodies) walk the raw lines — the comments ARE the evidence there.
+  const lines = [];
+  {
+    let inBlock = false;
+    for (const raw of rawLines) {
+      let line = raw;
+      if (inBlock) {
+        const end = line.indexOf("*/");
+        if (end === -1) { lines.push(""); continue; }
+        line = " ".repeat(end + 2) + line.slice(end + 2);
+        inBlock = false;
+      }
+      let out = "";
+      let i = 0;
+      while (i < line.length) {
+        if (line.startsWith("/*", i)) {
+          const end = line.indexOf("*/", i + 2);
+          if (end === -1) { inBlock = true; break; }
+          out += " ".repeat(end + 2 - i);
+          i = end + 2;
+        } else if (/\.(js|mjs|cjs|jsx|ts|tsx)$/i.test(file) && line.startsWith("//", i) && (i === 0 || line[i - 1] !== ":")) {
+          break;
+        } else if (/\.py$/i.test(file) && line.startsWith("#", i)) {
+          break;
+        } else {
+          out += line[i];
+          i += 1;
+        }
+      }
+      lines.push(out);
+    }
+  }
   let pendingPyTest = -1; // python: `def test_x():` awaiting a `pass` body
 
   lines.forEach((raw, i) => {

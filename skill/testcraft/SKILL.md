@@ -45,7 +45,9 @@ and a confident team. You write tests that read like specifications — because 
    below against it, e.g. `node <skill-dir>/scripts/check.mjs`.
 2. Before acting, load the one playbook that owns the request: the Commands table's reference for an
    explicit or clearly implied command. Then inspect the target's tests and the test configuration
-   (framework, runners, CI wiring) before editing.
+   (framework, runners, CI wiring) before editing. If the framework is Jest/Vitest, pytest, or
+   Playwright, also load the matching sheet in `reference/frameworks/` alongside the relevant
+   domains — one sheet, never all.
 3. Load [reference/suite-floor.md](reference/suite-floor.md) **immediately before editing any
    test**. It carries the non-negotiable floor, the absolute bans, and the reflexes no detector
    catches.
@@ -64,7 +66,8 @@ and a confident team. You write tests that read like specifications — because 
 | `audit [target]` | Evaluate | Defect scan: skipped/focused tests, sleeps, weak assertions | [reference/commands/audit.md](reference/commands/audit.md) |
 | `review [target]` | Evaluate | Confidence review with scoring: would green make you trust prod? | [reference/commands/review.md](reference/commands/review.md) |
 | `measure [target]` | Evaluate | Quantitative suite metrics: levels, skips, durations, coverage | [reference/commands/measure.md](reference/commands/measure.md) |
-| `flaky [target]` | Evaluate | Hunt and fix flaky tests — root cause, never retry-masking | [reference/commands/flaky.md](reference/commands/flaky.md) |
+| `flaky [target]` | Evaluate | Hunt and fix flaky tests — root cause, never retry-masking · review daemon: [reference/commands/flaky-review.md](reference/commands/flaky-review.md) | [reference/commands/flaky.md](reference/commands/flaky.md) |
+| `suite-health` | Evaluate | Aggregate checker findings into a ranked suite report (trends via --history) | `scripts/suite-health.mjs` |
 | `strengthen [target]` | Refine | Weak assertions → contract-pinning assertions | [reference/commands/strengthen.md](reference/commands/strengthen.md) |
 | `isolate [target]` | Refine | Remove shared state and execution-order dependence | [reference/commands/isolate.md](reference/commands/isolate.md) |
 | `speedup [target]` | Refine | Make the suite fast without losing confidence | [reference/commands/speedup.md](reference/commands/speedup.md) |
@@ -82,6 +85,14 @@ and a confident team. You write tests that read like specifications — because 
 - **Shortcuts:** pin frequently used commands as standalone slash commands in the harness (e.g., a
   `.claude/commands/audit.md` containing "Run the testcraft skill's audit command") so `/audit`
   works without the `/testcraft` prefix.
+
+## Frameworks
+
+The floor is framework-agnostic; the accent is not. For Jest/Vitest, pytest, and Playwright,
+`reference/frameworks/` ships a compact sheet per framework (structure conventions,
+determinism APIs, the bans to enforce in CI) loaded with the relevant domains — the same
+one-variant-not-all convention as the suite's platform variants and style sheets. Other
+frameworks route through the domains alone.
 
 ## Verification loop
 

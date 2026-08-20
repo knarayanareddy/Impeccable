@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Testcraft — the craft skill for testing</title>
+<style>
+  :root { --bg:#101418; --panel:#161c22; --text:#e8eaf0; --muted:#8b93a1; --line:#262e37; --accent:#4d7cfe; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.6 system-ui,-apple-system,sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 56px 24px 80px; }
+  h1 { font-size: 34px; line-height:1.15; letter-spacing:-0.02em; margin:0 0 12px; }
+  .lede { color: var(--muted); font-size: 18px; margin: 0 0 36px; }
+  h2 { font-size: 20px; margin: 40px 0 12px; letter-spacing:-0.01em; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; text-decoration:none; color:var(--text); }
+  .card:hover { border-color: var(--accent); }
+  .card b { display:block; }
+  .card span { color: var(--muted); font-size: 13px; }
+  code, pre { font-family: ui-monospace, monospace; }
+  pre { background: var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:13px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); }
+  .num { color:var(--accent); font-variant-numeric: tabular-nums; }
+  a { color: var(--accent); }
+  .back { color:var(--muted); text-decoration:none; font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="../">← the craft-skill suite</a>
+  <h1>Testcraft</h1>
+  <p class="lede">The craft skill for test suites that mean what they say. <em>Tests are executable specifications. Confidence, not numbers.</em></p>
+
+  <h2>Install</h2>
+  <pre>npx skills add knarayanareddy/Impeccable --skill testcraft</pre>
+  <p>Then <code>/testcraft flaky .</code>, <code>/testcraft strengthen src/cart</code>, or any of the 16 commands.</p>
+
+  <h2>The commands <span class="num">16</span></h2>
+  <table>
+    <tr><th>Build</th><td>init · shape · scaffold</td></tr>
+    <tr><th>Evaluate</th><td>audit · review · measure · flaky (· review daemon) · suite-health</td></tr>
+    <tr><th>Refine</th><td>strengthen · isolate · speedup · harden</td></tr>
+    <tr><th>Enhance</th><td>cover · name · prune</td></tr>
+  </table>
+
+  <h2>The checker</h2>
+  <pre>node skill/testcraft/scripts/check.mjs --strict --target src/
+# ERROR focused-test           checkout.test.ts:6   it.only(
+# ERROR tautological-assertion checkout.test.ts:7   expect(true) toBe true
+# WARN  skipped-test           checkout.test.ts:10  it.skip(
+# testcraft: 42 test file(s) scanned · FAILED</pre>
+  <p>Zero dependencies, no LLM, no API key. Behaviors pinned by <a href="../../skill/testcraft/tests/scenarios.mjs">19 automated scenarios</a>.</p>
+
+  <h2>Suite health — the aggregate view</h2>
+  <pre>node skill/testcraft/scripts/suite-health.mjs --target . --history history.json
+# Worst files: 4  src/checkout.test.ts · 2  src/feed.test.tsx
+# By rule: 3 focused-test · 2 retry-mask · 1 skipped-test</pre>
+  <p>Ranked report plus a trend record — the focus/skip/flake debt over time.</p>
+
+  <h2>Flake review daemon</h2>
+  <pre>node skill/testcraft/scripts/flake-review.mjs --flakes flakes.json --round r1 &amp;
+node skill/testcraft/scripts/flake-review.mjs --round r1 --wait</pre>
+  <p>Serve the flakiest tests as a triage page: fix now / quarantine + ticket / known external. Retry-masking is not on the menu.</p>
+
+  <h2>Frameworks</h2>
+  <p><code>reference/frameworks/</code> ships sheets for Jest/Vitest, pytest, and Playwright — one sheet, never all.</p>
+
+  <h2>Evidence</h2>
+  <div class="grid">
+    <a class="card" href="case-study.md"><b>Case study</b><span>The generic AI suite → the testcraft pass, measured both directions</span></a>
+    <a class="card" href="../../demos/testcraft/before.test.js"><b>Demo — before</b><span>Runs the checker's failure list</span></a>
+    <a class="card" href="../../demos/testcraft/after.test.js"><b>Demo — after</b><span>Passes clean</span></a>
+    <a class="card" href="../../REVIEWS/testcraft-round1.md"><b>Expert review</b><span>Two-round panel archive</span></a>
+  </div>
+</main>
+<footer style="max-width:860px;margin:0 auto;padding:0 24px 32px;color:var(--muted);font-size:12px;">Apache-2.0 · original work, not affiliated with pbakaus/impeccable</footer>
+</body>
+</html>
