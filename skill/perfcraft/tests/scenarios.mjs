@@ -207,7 +207,7 @@ await (async () => {
     { name: "batch the cart queries", rationale: "N+1 → 1", before: { p95: "480ms", tool: "trace" }, after: { p95: "210ms" }, complexity: "one batched query" },
     { name: "cache the config", rationale: "cold-path memoization", before: { hits: "0%" }, after: { hits: "94%" }, complexity: "bounded LRU" },
   ]));
-  const port = 8999;
+  const port = 8800 + (process.pid % 800); // unique per run — stale daemons must not poison this one
   const srv = spawn("node", [REVIEW, "--options", "options.json", "--round", "r1", "--port", String(port)], { cwd: dir });
   try {
     let up = false;

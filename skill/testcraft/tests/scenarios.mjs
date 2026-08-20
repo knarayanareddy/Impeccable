@@ -177,7 +177,7 @@ await (async () => {
     { test: "checkout > rejects expired card", file: "src/checkout.test.ts", failures: 4, suspected: "time" },
     { test: "feed > renders rows", file: "src/feed.test.tsx", failures: 2, suspected: "order" },
   ]));
-  const port = 8997;
+  const port = 8800 + (process.pid % 800); // unique per run — stale daemons must not poison this one
   const srv = spawn("node", [REVIEW, "--flakes", "flakes.json", "--round", "r1", "--port", String(port)], { cwd: dir });
   try {
     let up = false;

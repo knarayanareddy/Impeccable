@@ -258,7 +258,7 @@ await (async () => {
   const dir = TMP + "-review";
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, "s.yaml"), `paths:\n  /orders:\n    get:\n      operationId: listOrders\n      summary: returns <script>alert(1)</script> things\n      responses: { "200": { description: ok } }\n    post:\n      operationId: createOrder\n      responses: { "201": { description: created } }\n`);
-  const port = 8998;
+  const port = 8800 + (process.pid % 800); // unique per run — stale daemons must not poison this one
   const srv = spawn("node", [REVIEW, "--spec", "s.yaml", "--round", "r1", "--port", String(port)], { cwd: dir });
   try {
     let up = false;

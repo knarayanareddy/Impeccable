@@ -168,7 +168,7 @@ await (async () => {
     { boundary: "HTTP ingress", threat: "Tampering: order payload spoofed", stride: "T", likelihood: "high", impact: "high", control: "schema validation" },
     { boundary: "payment-api", threat: "Spoofing: forged webhook", stride: "S", likelihood: "med", impact: "high" },
   ]));
-  const port = 8995;
+  const port = 8800 + (process.pid % 800); // unique per run — stale daemons must not poison this one
   const srv = spawn("node", [REVIEW, "--threats", "threats.json", "--round", "r1", "--port", String(port)], { cwd: dir });
   try {
     let up = false;

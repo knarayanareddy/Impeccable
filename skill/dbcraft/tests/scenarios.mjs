@@ -209,7 +209,7 @@ await (async () => {
     { name: "001_add_currency", up: "ALTER TABLE orders ADD COLUMN currency CHAR(3)", down: "ALTER TABLE orders DROP COLUMN currency", reversible: true, lockImpact: "none" },
     { name: "002_drop_legacy", up: "DROP TABLE legacy;", down: "(none)", reversible: false, lockImpact: "exclusive" },
   ]));
-  const port = 8996;
+  const port = 8800 + (process.pid % 800); // unique per run — stale daemons must not poison this one
   const srv = spawn("node", [REVIEW, "--steps", "steps.json", "--round", "r1", "--port", String(port)], { cwd: dir });
   try {
     let up = false;

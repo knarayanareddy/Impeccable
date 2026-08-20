@@ -146,7 +146,7 @@ await (async () => {
     const tmpDir = TMP + "-live";
     mkdirSync(tmpDir, { recursive: true });
     writeFileSync(join(tmpDir, "a.json"), JSON.stringify({ name: "A", rationale: "r", css: "* {}" }));
-    const port = 8971;
+    const port = 8800 + (process.pid % 800); // unique per run — stale daemons must not poison this one
     const srv = spawn("node", [LIVE, "--round", "s1", "--port", String(port), "--options", "a.json"], { cwd: tmpDir });
     try {
       for (let i = 0; i < 20; i++) {
@@ -167,7 +167,7 @@ await (async () => {
     const tmpDir = TMP + "-live2";
     mkdirSync(tmpDir, { recursive: true });
     writeFileSync(join(tmpDir, "a.json"), JSON.stringify({ name: "A", rationale: "r", css: "* {}" }));
-    const port = 8972;
+    const port = 8800 + (process.pid % 800); // unique per run — stale daemons must not poison this one
     const srv = spawn("node", [LIVE, "--round", "s2", "--port", String(port), "--options", "a.json"], { cwd: tmpDir });
     try {
       for (let i = 0; i < 20; i++) {
