@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dbcraft — the craft skill for database/schema design</title>
+<style>
+  :root { --bg:#101418; --panel:#161c22; --text:#e8eaf0; --muted:#8b93a1; --line:#262e37; --accent:#4d7cfe; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.6 system-ui,-apple-system,sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 56px 24px 80px; }
+  h1 { font-size: 34px; line-height:1.15; letter-spacing:-0.02em; margin:0 0 12px; }
+  .lede { color: var(--muted); font-size: 18px; margin: 0 0 36px; }
+  h2 { font-size: 20px; margin: 40px 0 12px; letter-spacing:-0.01em; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; text-decoration:none; color:var(--text); }
+  .card:hover { border-color: var(--accent); }
+  .card b { display:block; }
+  .card span { color: var(--muted); font-size: 13px; }
+  code, pre { font-family: ui-monospace, monospace; }
+  pre { background: var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:13px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); }
+  .num { color:var(--accent); font-variant-numeric: tabular-nums; }
+  a { color: var(--accent); }
+  .back { color:var(--muted); text-decoration:none; font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="../">← the craft-skill suite</a>
+  <h1>Dbcraft</h1>
+  <p class="lede">The craft skill for schemas that stay true for a decade. <em>Data outlives code. The schema is the longest-lived interface in the system.</em></p>
+
+  <h2>Install</h2>
+  <pre>npx skills add knarayanareddy/Impeccable --skill dbcraft</pre>
+  <p>Then <code>/dbcraft constrain .</code>, <code>/dbcraft migrate</code>, or any of the 16 commands.</p>
+
+  <h2>The commands <span class="num">16</span></h2>
+  <table>
+    <tr><th>Build</th><td>init · shape · migrate (· review daemon)</td></tr>
+    <tr><th>Evaluate</th><td>audit · review · measure · schema-diff</td></tr>
+    <tr><th>Refine</th><td>normalize · constrain · index · denormalize · harden</td></tr>
+    <tr><th>Enhance</th><td>document · align · modernize</td></tr>
+  </table>
+
+  <h2>The checker</h2>
+  <pre>node skill/dbcraft/scripts/check.mjs --strict --target migrations/
+# ERROR missing-primary-key   users.sql — identity and integrity require one
+# ERROR float-for-money      balance FLOAT — binary floats cannot represent decimal money
+# WARN  varchar-255-sprawl   4 × VARCHAR(255) — a habit, not a decision
+# dbcraft: 14 file(s) scanned · FAILED</pre>
+  <p>With CREATE TABLE block parsing. Zero dependencies, no LLM, no API key. Behaviors pinned by <a href="../../skill/dbcraft/tests/scenarios.mjs">30 automated scenarios</a>.</p>
+
+  <h2>Schema-diff — destructive migrations, mechanically</h2>
+  <pre>node skill/dbcraft/scripts/schema-diff.mjs v1.sql v2.sql
+# BREAKING dropped-column      orders.legacy  add, dual-write, switch, drop later
+# BREAKING changed-column-type orders.total    BIGINT → DOUBLE PRECISION
+# schema-diff: 2 breaking change(s)</pre>
+  <p>The floor's cardinal sin — destructive migrations — made visible by a machine, CI-ready.</p>
+
+  <h2>Migration review daemon</h2>
+  <pre>node skill/dbcraft/scripts/migration-review.mjs --steps steps.json --round r1 &amp;
+node skill/dbcraft/scripts/migration-review.mjs --round r1 --wait</pre>
+  <p>Serve a migration's steps as a review page; the human verdicts each against the migration checklist.</p>
+
+  <h2>Engines</h2>
+  <p><code>reference/engines/</code> ships sheets for PostgreSQL, MySQL, and SQLite — one sheet, never all.</p>
+
+  <h2>Evidence</h2>
+  <div class="grid">
+    <a class="card" href="case-study.md"><b>Case study</b><span>The generic AI schema → the dbcraft pass, plus the migration's measured cost</span></a>
+    <a class="card" href="../../demos/dbcraft/before.sql"><b>Demo — before</b><span>Runs the checker's failure list</span></a>
+    <a class="card" href="../../demos/dbcraft/after.sql"><b>Demo — after</b><span>Passes clean</span></a>
+    <a class="card" href="../../REVIEWS/dbcraft-round1.md"><b>Expert review</b><span>Two-round panel archive</span></a>
+  </div>
+</main>
+<footer style="max-width:860px;margin:0 auto;padding:0 24px 32px;color:var(--muted);font-size:12px;">Apache-2.0 · original work, not affiliated with pbakaus/impeccable</footer>
+</body>
+</html>

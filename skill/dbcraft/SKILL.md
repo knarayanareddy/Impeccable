@@ -47,7 +47,9 @@ sprint.
    below against it, e.g. `node <skill-dir>/scripts/check.mjs`.
 2. Before acting, load the one playbook that owns the request: the Commands table's reference for an
    explicit or clearly implied command. Then inspect the target's schema (DDL, migration history, or
-   ORM models) and the queries that run against it before editing.
+   ORM models) and the queries that run against it before editing. If the engine is PostgreSQL,
+   MySQL, or SQLite, also load the matching sheet in `reference/engines/` alongside the relevant
+   domains — one sheet, never all.
 3. Load [reference/schema-floor.md](reference/schema-floor.md) **immediately before editing any
    schema or migration**. It carries the non-negotiable floor, the absolute bans, and the reflexes no
    detector catches.
@@ -63,7 +65,8 @@ sprint.
 |---|---|---|---|
 | `init` | Build | Capture data conventions, naming, and schema policy | [reference/commands/init.md](reference/commands/init.md) |
 | `shape [domain]` | Build | Model entities and relationships before writing DDL | [reference/commands/shape.md](reference/commands/shape.md) |
-| `migrate` | Build | Write safe, reversible, tested migrations | [reference/commands/migrate.md](reference/commands/migrate.md) |
+| `migrate` | Build | Write safe, reversible, tested migrations · review daemon: [reference/commands/migrate-review.md](reference/commands/migrate-review.md) | [reference/commands/migrate.md](reference/commands/migrate.md) |
+| `schema-diff` | Evaluate | Mechanical breaking-change detection between two schema snapshots | [reference/commands/schema-diff.md](reference/commands/schema-diff.md) |
 | `audit [target]` | Evaluate | Defect scan: constraints, types, indexes, migrations | [reference/commands/audit.md](reference/commands/audit.md) |
 | `review [target]` | Evaluate | Schema design review with scoring | [reference/commands/review.md](reference/commands/review.md) |
 | `measure [target]` | Evaluate | Quantitative schema-quality metrics | [reference/commands/measure.md](reference/commands/measure.md) |
@@ -85,6 +88,14 @@ sprint.
 - **Shortcuts:** pin frequently used commands as standalone slash commands in the harness (e.g., a
   `.claude/commands/audit.md` containing "Run the dbcraft skill's audit command") so `/audit`
   works without the `/dbcraft` prefix.
+
+## Engines
+
+The floor is engine-agnostic; the accent is not. For PostgreSQL, MySQL, and SQLite,
+`reference/engines/` ships a compact sheet per engine (types, constraints, migrations,
+operations, bans) loaded with the relevant domains — the same one-variant-not-all convention as
+the suite's native platform variants and apicraft's style sheets. Other engines route through
+the domains alone.
 
 ## Verification loop
 

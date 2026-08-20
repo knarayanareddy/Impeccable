@@ -56,11 +56,13 @@ const lineRules = [
     message: "Time column without timezone semantics — prefer timestamptz / a documented UTC policy (T3).",
     test(line) {
       // column-first (Postgres: `created_at TIMESTAMP [WITH TIME ZONE]`; MySQL: `created_at DATETIME`)
-      const colFirst = /([a-z_]+)\s+(TIMESTAMP(?:\s*\(\d+\))?|DATETIME(?:\s*\(\d+\))?)\s*(?:WITH(?:OUT)?\s+TIME\s+ZONE)?\s*[,)\n]/i.exec(line);
+      // Zone clause captured per column — a sibling timestamptz must not mask a tz-less one.
+      const colFirst = /([a-z_]+)\s+(TIMESTAMP(?:\s*\(\d+\))?|DATETIME(?:\s*\(\d+\))?)(\s+WITH(?:OUT)?\s+TIME\s+ZONE)?\s*[,)\n]/i.exec(line);
       if (colFirst) {
         const col = colFirst[1];
         const type = colFirst[2];
-        const tzOk = /WITH\s+TIME\s+ZONE/i.test(line) || /timestamptz/i.test(line);
+        const zoneClause = colFirst[3] || "";
+        const tzOk = /WITH\s+TIME\s+ZONE/i.test(zoneClause) && !/WITHOUT/i.test(zoneClause);
         const timeCol = /(created_at|updated_at|deleted_at|expires_at|due_at|scheduled_at|published_at|occurred_at|sent_at|received_at|confirmed_at)/i.test(col);
         const isTs = /^TIMESTAMP/i.test(type);
         // Postgres TIMESTAMP without tz syntax on any column; DATETIME flagged only on time-named columns
@@ -161,9 +163,36 @@ const BLOCK_RE = /CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?[`"[]?([\w.]+)[`"\]]
 
 const COL_START = /^\s*(?!CONSTRAINT|PRIMARY|FOREIGN|UNIQUE|CHECK|KEY|INDEX|EXCLUDE)[`"]?([a-z_][a-z0-9_]*)[`"]?/i;
 
+// Split a CREATE TABLE body into column-ish fragments: newlines and commas,
+// but commas inside parentheses (NUMERIC(10,2), CHECK (...)) stay intact.
+function splitColumns(block) {
+  const out = [];
+  let depth = 0;
+  let cur = "";
+  for (const ch of block) {
+    if (ch === "(") depth += 1;
+    if (ch === ")") depth = Math.max(0, depth - 1);
+    if ((ch === "\n" || ch === ",") && depth === 0) {
+      if (cur.trim()) out.push(cur.trim());
+      cur = "";
+    } else {
+      cur += ch;
+    }
+  }
+  if (cur.trim()) out.push(cur.trim());
+  // comment-only fragments (-- or /* */) belong to the preceding column —
+  // the documented-null exemption reads the comment, not a stray fragment
+  const merged = [];
+  for (const frag of out) {
+    if (/^(--|\/\*)/.test(frag) && merged.length) merged[merged.length - 1] += " " + frag;
+    else merged.push(frag);
+  }
+  return merged;
+}
+
 function blockRules(block, table, file) {
   const findings = [];
-  const lines = block.split("\n").filter((l) => l.trim());
+  const lines = splitColumns(block);
 
   // Primary key presence
   if (!/PRIMARY\s+KEY/i.test(block)) {
@@ -283,12 +312,51 @@ function scan(file) {
   const ext = extname(file).toLowerCase();
   const isCode = CODE_EXTS.has(ext);
   const isSql = SQL_EXTS.has(ext);
-  const lines = text.split("\n");
+
+  // Stateful comment stripping: comments are prose, not evidence. Line rules
+  // read the stripped lines; CREATE TABLE block parsing reads the raw text
+  // (column comments feed the documented-null exemption).
+  const lineComment = isSql
+    ? (l, i) => l.startsWith("--", i) || l.startsWith("#", i)
+    : /\.(js|mjs|cjs|jsx|ts|tsx)$/i.test(file)
+      ? (l, i) => l.startsWith("//", i) && (i === 0 || l[i - 1] !== ":")
+      : /\.py$/i.test(file)
+        ? (l, i) => l.startsWith("#", i)
+        : null;
+  const lines = [];
+  {
+    let inBlock = false;
+    for (const rawLine of text.split("\n")) {
+      let line = rawLine;
+      if (inBlock) {
+        const end = line.indexOf("*/");
+        if (end === -1) { lines.push(""); continue; }
+        line = " ".repeat(end + 2) + line.slice(end + 2);
+        inBlock = false;
+      }
+      let out = "";
+      let i = 0;
+      while (i < line.length) {
+        if (line.startsWith("/*", i)) {
+          const end = line.indexOf("*/", i + 2);
+          if (end === -1) { inBlock = true; break; }
+          out += " ".repeat(end + 2 - i);
+          i = end + 2;
+        } else if (lineComment && lineComment(line, i)) {
+          break;
+        } else {
+          out += line[i];
+          i += 1;
+        }
+      }
+      lines.push(out);
+    }
+  }
 
   lines.forEach((raw, i) => {
     for (const rule of lineRules) {
       if (rule.codeOnly && !isCode) continue;
-      const detail = rule.test(raw) || (rule.opensDelete ? null : null);
+      const detail = rule.test(raw);
       if (detail) {
         findings.push({ file: basename(file), line: i + 1, rule: rule.id, severity: rule.severity, message: rule.message, detail });
       }
