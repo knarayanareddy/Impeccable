@@ -19,6 +19,21 @@ one-line install.**
 | **[`apicraft`](skill/apicraft/SKILL.md)** | API design (REST, GraphQL, gRPC, webhooks) | *An API is a promise, not an endpoint. Judge from the consumer's code.* |
 | **[`dbcraft`](skill/dbcraft/SKILL.md)** | Database & schema (SQL + ORM-managed) | *Data outlives code. The schema is the longest-lived interface in the system.* |
 | **[`testcraft`](skill/testcraft/SKILL.md)** | Testing (unit, integration, E2E) | *Tests are executable specifications. Confidence, not numbers.* |
+| **[`perfcraft`](skill/perfcraft/SKILL.md)** | Performance (web, backend, data, delivery) | *Measure before you optimize. The user's clock is the only clock.* |
+
+### perfcraft — the Impeccable of performance
+
+- **15 commands** — a shared vocabulary: `profile`, `benchmark`, `optimize`, `cache`, `defer`,
+  `parallelize`, `budget`, `harden`, `monitor`, `prune`, `audit`, `review`, `measure`…
+- **8 domain references** — measurement (the differentiator: percentiles, methodology, flame-graph
+  attribution), web, latency, caching, concurrency, data, memory, delivery
+- **A perf floor** — every optimization has a number, percentiles not averages, budgets in CI,
+  correctness survives optimization
+- **20 perf-slop anti-patterns** — optimization theater, N+1s, sync I/O, benchmark theater,
+  cache-everything, vendor bloat, retry storms… each with the fix
+- **A deterministic checker** — `scripts/check.mjs`: N+1 patterns, sync I/O, `SELECT *`, unbounded
+  loads, busy retry loops, layout/DOM thrash, deep clones, string-concat loops, images > 1MB,
+  missing budget gates — zero dependencies, no LLM, no API key
 
 ### testcraft — the Impeccable of testing
 
@@ -92,6 +107,7 @@ npx skills add knarayanareddy/Impeccable --skill criterion
 npx skills add knarayanareddy/Impeccable --skill apicraft
 npx skills add knarayanareddy/Impeccable --skill dbcraft
 npx skills add knarayanareddy/Impeccable --skill testcraft
+npx skills add knarayanareddy/Impeccable --skill perfcraft
 
 # Claude Code (plugin marketplace)
 /plugin marketplace add knarayanareddy/Impeccable
@@ -109,6 +125,8 @@ Then, in your AI coding tool:
 /dbcraft migrate                 # write safe, reversible, tested migrations
 /testcraft flaky .               # hunt and fix flaky tests — root cause, never retries
 /testcraft strengthen src/cart   # weak assertions → contract-pinning assertions
+/perfcraft profile src/checkout  # measure where time actually goes (flame graph/trace)
+/perfcraft budget .              # performance budgets as code + CI regression gates
 ```
 
 Manual install: copy a skill folder (`skill/codecraft/`, `skill/criterion/`) into your agent's
@@ -137,7 +155,7 @@ instead of judgment:
 | **API design** (REST/GraphQL/RPC) | ✅ **shipped as `apicraft`** | Endpoints that lie, pagination that breaks, errors that leak — contract-first + deterministic checker |
 | **Database & schema** | ✅ **shipped as `dbcraft`** | Nullable-everything, no constraints, floats for money, destructive migrations — schema floor + checker |
 | **Testing** | ✅ **shipped as `testcraft`** | `.only` left in, sleeps, tautological asserts, retry masks — suite floor + checker |
-| **Performance** | planned | Optimize-without-measuring, N+1s, jank — profile-first discipline |
+| **Performance** | ✅ **shipped as `perfcraft`** | Optimize-without-measuring, N+1s, benchmark theater — perf floor + checker |
 | **Security** | planned | Complements tool-based scanners: authn/authz judgment, threat-model habits |
 | **Observability** | planned | Logs that lie, metrics without meaning — what to record and why |
 | **DevOps / CI-CD** | planned | Pipeline slop: unreviewable workflows, deploy fear — the craft of shipping |

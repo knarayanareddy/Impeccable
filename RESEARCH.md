@@ -281,6 +281,18 @@ SKILL.md + reference/ + scripts/ + plugin.json + README row + before/after demo.
   specifications, and a test that can't fail when behavior breaks is a lie wearing a test's
   clothes.
 
+## 12d. Performance facet notes (shipped as `perfcraft`)
+
+- **The landscape:** performance skills are platform-bound (Vercel's React-specific rules) or
+  buried in suites (addyosmani's performance-optimization inside 24 skills). No standalone
+  category-defining *perf-craft* skill owns the measured-optimization discipline.
+- **The differentiators:** the measurement-first floor (no number, no optimization — the facet's
+  cardinal sin), the profile→fix→re-measure loop as the signature command, budgets-as-code with
+  CI gates, and a deterministic checker aimed at the accidental-slop tells (N+1 windows, sync I/O,
+  unbounded loads, busy retries, layout/DOM thrash, heavy images, missing gates).
+- **The facet's "second hour" insight:** *the user's clock is the only clock* — measured, tail-
+  aware, budgeted performance is a product feature, not a cleanup phase.
+
 ## 13. Sources (engineering landscape)
 
 - [addyosmani/agent-skills — comparison doc](https://github.com/addyosmani/agent-skills/blob/main/docs/comparison.md)
