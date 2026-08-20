@@ -1,7 +1,7 @@
 {
-  "name": "criterion",
-  "description": "The design skill for interfaces that do work: dashboards, admin panels, internal tools, data tables, charts, and forms. 18 commands (/criterion audit, /criterion densify, /criterion measure, ...), 8 domain references, and a deterministic anti-pattern checker for product UI.",
-  "version": "0.1.0",
+  "name": "impeccable-craft-skills",
+  "description": "Craft skills for AI coding agents: criterion (data-dense product UI — 18 commands, 8 domains, anti-pattern checker) and codecraft (code quality — 15 commands, 8 domains, deterministic code-slop checker).",
+  "version": "0.2.0",
   "author": {
     "name": "knarayanareddy",
     "url": "https://github.com/knarayanareddy"

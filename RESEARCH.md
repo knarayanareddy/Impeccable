@@ -181,3 +181,72 @@ has different physics — density is a feature, decoration is a liability, and q
 - [agensi.io — 7 AI Agent Skills Marketplaces in 2026](https://www.agensi.io/learn/best-ai-agent-skills-marketplaces-2026)
 - [silenceper.com — What GitHub Trending Says About AI Agents](https://silenceper.com/en/article/2026-05-27-github-trending-agent-skills-engineering/)
 - [vercel-labs skills CLI guides](https://www.jacklandrin.com/ai%20agent/2026/03/14/skills-cli-guide-using-npx-skills-to-supercharge-your-ai-agents.html), [nvidia/skills](https://github.com/nvidia/skills)
+
+---
+
+# PART II — The same play for engineering facets (Aug 2026)
+
+## 8. Scope correction & new objective
+
+The original brief ("a skill like Impeccable") was scoped to UI/UX. The clarified objective: **apply
+the Impeccable pattern to the other facets of app/software building** — code quality, APIs, data,
+testing, performance, security, observability, DevOps, debugging. This part of the research maps that
+landscape and picks the first facet. Result shipped: **`codecraft`** (code quality), with a roadmap
+for the rest.
+
+## 9. The engineering-skills landscape
+
+**The crowded zone — process/workflow skills** (they sell *methodology*, not *taste*):
+
+| Skill | Stars (approx.) | What it is |
+|---|---|---|
+| obra/superpowers | ~217k | Full dev methodology: brainstorm→plan→TDD→subagents→review |
+| mattpocock's skills | ~116k | Daily loop: /grill-me, /tdd, bug triage — requirements + TDD heavy |
+| addyosmani/agent-skills | ~24 skills | Full SDLC as 24 skills (incl. api-and-interface-design, code-simplification, performance) |
+| awesome-skills/code-review-skill | n/a | 21k-line review checklist, 20+ languages, severity labels |
+| trail-of-bits security | ~5.5k | 40 security plugins, CodeQL/Semgrep — tool-based detection |
+| vercel/react-best-practices | ~27.5k | 57 React/Next performance rules |
+
+**The white space — "quality taste" skills** (the Impeccable-shaped gap):
+
+1. **Code quality/craft.** The exact analog of Impeccable for code: a fuzzy expert-judgment domain
+   (readability, maintainability) with visible AI "slop tells" (magic numbers, god functions,
+   swallowed exceptions, `any`, over-commenting, commented-out code) and a deterministic detector.
+   Existing code-review skills are *process* (severity labeling, workflows) — nobody owns the
+   baseline-taste redistribution for code. → **shipped as `codecraft`.**
+2. **API design.** api-and-interface-design exists inside addyosmani's 24-skill suite, but no
+   standalone trending skill with command vocabulary + deterministic checks. White space.
+3. **Database/schema design.** Supabase's skill is vendor-specific; no vendor-neutral
+   schema-craft skill (constraints, nullability, EAV, indexing judgment). White space.
+4. **Testing quality.** TDD skills cover the *process*; no skill owns the *quality* of tests
+   (assertions that mean something, no sleeps, implementation-coupled tests). White space.
+5. **Performance engineering.** Vercel's is React-only; general profile-first perf discipline is in
+   suite skills only. White space.
+6. **Observability, DevOps/CI-CD, debugging.** Scattered checklists; no category-defining skill yet.
+
+## 10. Why codecraft first
+
+- **Directest port of the proven mechanic.** Impeccable's magic = anti-pattern bans + deterministic
+  checker + command vocabulary for a fuzzy quality domain. Code has the richest, most demoable
+  "slop tells" of any engineering facet, and the checker is buildable with zero dependencies.
+- **The pain is universal.** Every AI agent emits the same code tells; every reviewer fights the
+  same battles. A "before/after" (sloppy agent code → codecraft pass) demo is dramatic and
+  screenshot-able like Impeccable's.
+- **Differentiated from the crowded zone.** It is a *taste* skill, not another workflow/checklist —
+  it competes with the design skills' category, not with superpowers/TDD.
+
+## 11. The facet playbook (replicable per domain)
+
+For each facet: (1) pick the register and the "second hour" insight; (2) define the command
+vocabulary (evaluate/refine/enhance/build); (3) write 8 domain references with a differentiator
+domain; (4) catalog 20 anti-pattern tells; (5) build the deterministic checker; (6) same packaging:
+SKILL.md + reference/ + scripts/ + plugin.json + README row + before/after demo.
+
+## 12. Sources (engineering landscape)
+
+- [addyosmani/agent-skills — comparison doc](https://github.com/addyosmani/agent-skills/blob/main/docs/comparison.md)
+- [pinggy.io — Top 14 AI Agent Skills 2026](https://pinggy.io/blog/ai_agent_skills/)
+- [firecrawl.dev — Best Claude Code Skills 2026](https://www.firecrawl.dev/blog/best-claude-code-skills) / [Antigravity skills](https://www.firecrawl.dev/blog/antigravity-skills)
+- [agensi.io — Best Code Review Skills](https://www.agensi.io/skills/code-review)
+- [awesome-skills/code-review-skill](https://github.com/awesome-skills/code-review-skill)
+- [GetBindu/awesome-claude-code-and-skills](https://github.com/GetBindu/awesome-claude-code-and-skills)
