@@ -23,6 +23,25 @@ one-line install.**
 | **[`seccraft`](skill/seccraft/SKILL.md)** | Security (threat modeling, authn/authz, injection, secrets) | *Security is the design of failure, not a final scan. Trust is explicit.* |
 | **[`obscraft`](skill/obscraft/SKILL.md)** | Observability (logs, metrics, traces, alerts, SLOs) | *Logs that lie are worse than no logs. Every page wakes a human who can act.* |
 | **[`shipcraft`](skill/shipcraft/SKILL.md)** | DevOps / CI-CD (pipelines, deploys, environments, IaC) | *The pipeline's job is to make shipping boring. A deploy is a promise you keep in production.* |
+| **[`bugcraft`](skill/bugcraft/SKILL.md)** | Debugging (root-cause analysis, repros, fixes, pins) | *Every bug is found by evidence, not by luck. Reproduce, bisect, pin.* |
+
+### bugcraft — the Impeccable of debugging
+
+- **15 commands** — a shared vocabulary: `repro` (signature: the bug isn't real until it
+  reproduces), `bisect`, `diagnose` (one hypothesis, one prediction, falsify cheap), `trace`,
+  `minimize`, `fix`, `pin`, `cleanup`, `postmortem`, `document`, `audit`, `review`, `measure`…
+- **8 domain references** — **evidence** (the differentiator: the claim-your-rung ladder from
+  observation to verified fix), reproduction, diagnosis, bisection, fixes, errors, tooling,
+  learning
+- **An evidence floor** — reproduce before fixing, one change at a time, root cause not
+  symptom, every fix pinned, every bug closes a class
+- **20 debugging-slop anti-patterns** — fixes without repros, shotgun changes, symptom patches,
+  swallowed errors, log-and-swallow, shipped debug markers, "works now" without explanation…
+  each with the fix
+- **A deterministic checker** — `scripts/check.mjs`: debug markers (`console.log("here")`,
+  `debugger;`), log-and-swallow (incl. Python windowed), swallowed exceptions, silent catch
+  returns, disabled code blocks, commented-out debug lines, uncertainty markers — zero
+  dependencies, no LLM, no API key
 
 ### shipcraft — the Impeccable of DevOps/CI-CD
 
@@ -164,6 +183,7 @@ npx skills add knarayanareddy/Impeccable --skill perfcraft
 npx skills add knarayanareddy/Impeccable --skill seccraft
 npx skills add knarayanareddy/Impeccable --skill obscraft
 npx skills add knarayanareddy/Impeccable --skill shipcraft
+npx skills add knarayanareddy/Impeccable --skill bugcraft
 
 # Claude Code (plugin marketplace)
 /plugin marketplace add knarayanareddy/Impeccable
@@ -189,6 +209,8 @@ Then, in your AI coding tool:
 /obscraft alert .                # every page actionable, no fatigue
 /shipcraft pipeline .            # CI/CD workflows with truthful gates
 /shipcraft rollback .            # make rollback real — automated and rehearsed
+/bugcraft repro payment-zero     # make the bug fail on demand — the bug isn't real until it reproduces
+/bugcraft diagnose payment-zero  # one hypothesis, one prediction, falsify cheap
 ```
 
 Manual install: copy a skill folder (`skill/codecraft/`, `skill/criterion/`) into your agent's
@@ -221,7 +243,10 @@ instead of judgment:
 | **Security** | ✅ **shipped as `seccraft`** | Complements tool-based scanners: trust-model judgment, authn-vs-authz, secure defaults — floor + checker |
 | **Observability** | ✅ **shipped as `obscraft`** | Logs that lie, pages nobody can act on, unlinked pillars — signal floor + checker |
 | **DevOps / CI-CD** | ✅ **shipped as `shipcraft`** | Red masks, curl\|sh, drift-by-memory, untested rollbacks — ship floor + checker |
-| **Debugging** | planned | Print-debugging, shotgun fixes — root-cause discipline (`repro`, `bisect`, `hypothesis`) |
+| **Debugging** | ✅ **shipped as `bugcraft`** | Fixes without repros, shotgun changes, swallowed errors, symptom patches — evidence floor + checker |
+
+**All 10 facets shipped** — the suite is complete. See [`RESEARCH.md`](RESEARCH.md) for the full
+research and the launch playbook.
 
 See [`RESEARCH.md`](RESEARCH.md) for the full market research: why Impeccable trended, the
 engineering-skill landscape, and the white-space analysis behind this suite.

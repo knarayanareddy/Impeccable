@@ -335,7 +335,29 @@ SKILL.md + reference/ + scripts/ + plugin.json + README row + before/after demo.
   fear is a design smell, and every gate that notifies instead of blocks is a lie with a
   webhook.
 
-## 13. Sources (engineering landscape)
+## 12h. Debugging facet notes (shipped as `bugcraft`)
+
+- **The landscape:** debugging skills are process-shaped (obra/superpowers' systematic-debugging
+  loop, mattpocock's /diagnosing-bugs) or tool-shaped; none own the *evidence* doctrine — the
+  claim-your-rung discipline from observation to verified fix.
+- **The differentiators:** the evidence domain (the ladder: observation → reproduction →
+  minimal repro → confirmed hypothesis → verified fix — every claim cites its rung), `repro`
+  as the signature command (the bug isn't real until it reproduces), and a deterministic
+  checker for the evidence-destruction tells (debug markers, log-and-swallow, silent catch
+  returns, disabled code, uncertainty markers).
+- **The facet's "second hour" insight:** *every bug is found by evidence, not by luck* — fixes
+  without reproductions are guesses with commits, and a bug fixed without understanding why is
+  a bug that escaped.
+
+## 13. Suite completion
+
+With `bugcraft`, all ten planned facets ship: criterion · codecraft · apicraft · dbcraft ·
+testcraft · perfcraft · seccraft · obscraft · shipcraft · bugcraft — one pattern (commands +
+domains + floor + anti-patterns + deterministic checker) applied across the full software
+lifecycle, from the first pixel to the last bug. Remaining work is the launch phase: demos,
+release, and marketplace submission (see §6).
+
+## 14. Sources (engineering landscape)
 
 - [addyosmani/agent-skills — comparison doc](https://github.com/addyosmani/agent-skills/blob/main/docs/comparison.md)
 - [pinggy.io — Top 14 AI Agent Skills 2026](https://pinggy.io/blog/ai_agent_skills/)

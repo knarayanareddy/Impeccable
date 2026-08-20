@@ -1,7 +1,7 @@
 {
   "name": "impeccable-craft-skills",
-  "description": "Craft skills for AI coding agents: criterion (data-dense product UI), codecraft (code quality), apicraft (API design), dbcraft (database/schema), testcraft (testing), perfcraft (performance), seccraft (security), obscraft (observability), shipcraft (DevOps/CI-CD) — each with commands, domain references, anti-pattern bans, and a deterministic checker.",
-  "version": "0.9.0",
+  "description": "Craft skills for AI coding agents: criterion (UI/UX), codecraft (code quality), apicraft (API design), dbcraft (database), testcraft (testing), perfcraft (performance), seccraft (security), obscraft (observability), shipcraft (DevOps/CI-CD), bugcraft (debugging) — each with commands, domain references, anti-pattern bans, and a deterministic checker.",
+  "version": "1.0.0",
   "author": {
     "name": "knarayanareddy",
     "url": "https://github.com/knarayanareddy"
