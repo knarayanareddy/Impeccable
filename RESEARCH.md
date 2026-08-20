@@ -320,6 +320,21 @@ SKILL.md + reference/ + scripts/ + plugin.json + README row + before/after demo.
   answers no question, pages nobody can act on, and pillars that never link is noise with a
   subscription fee.
 
+## 12g. DevOps / CI-CD facet notes (shipped as `shipcraft`)
+
+- **The landscape:** DevOps skills are scattered (platform-specific CI skills, vendor deploy
+  tools) or folded into process suites (superpowers' workflow, addyosmani's ci-cd-and-automation
+  inside 24 skills). No standalone category-defining *delivery-craft* skill owns the
+  truth-and-boringness doctrine.
+- **The differentiators:** the ship floor (every deploy reversible, gates block, red never
+  masked), `rollback` as the signature command (the rehearsed revert path — rollback is a
+  feature, not a document), `autom` (flaky-pipeline root-causing, ported from testcraft's
+  determinism taxonomy), and a deterministic checker for the delivery tells (secret echoes,
+  curl|sh, masked failures, unpinned installs, deploy steps without rollback references).
+- **The facet's "second hour" insight:** *the pipeline's job is to make shipping boring* — deploy
+  fear is a design smell, and every gate that notifies instead of blocks is a lie with a
+  webhook.
+
 ## 13. Sources (engineering landscape)
 
 - [addyosmani/agent-skills — comparison doc](https://github.com/addyosmani/agent-skills/blob/main/docs/comparison.md)

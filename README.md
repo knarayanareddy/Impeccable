@@ -22,6 +22,23 @@ one-line install.**
 | **[`perfcraft`](skill/perfcraft/SKILL.md)** | Performance (web, backend, data, delivery) | *Measure before you optimize. The user's clock is the only clock.* |
 | **[`seccraft`](skill/seccraft/SKILL.md)** | Security (threat modeling, authn/authz, injection, secrets) | *Security is the design of failure, not a final scan. Trust is explicit.* |
 | **[`obscraft`](skill/obscraft/SKILL.md)** | Observability (logs, metrics, traces, alerts, SLOs) | *Logs that lie are worse than no logs. Every page wakes a human who can act.* |
+| **[`shipcraft`](skill/shipcraft/SKILL.md)** | DevOps / CI-CD (pipelines, deploys, environments, IaC) | *The pipeline's job is to make shipping boring. A deploy is a promise you keep in production.* |
+
+### shipcraft — the Impeccable of DevOps/CI-CD
+
+- **15 commands** — a shared vocabulary: `pipeline`, `deploy`, `rollback` (signature: the
+  rehearsed revert path), `autom` (flaky-pipeline root-causing), `env` (kill the drift), `gate`,
+  `config`, `monitor`, `respond`, `prune`, `audit`, `review`, `measure`…
+- **8 domain references** — **pipelines** (the differentiator: the truth-and-boringness
+  doctrine), environments, builds, deploys, config, gates, recovery, infra
+- **A ship floor** — every deploy reversible, gates block, red never masked, deterministic
+  builds, one source of truth per environment
+- **20 delivery-slop anti-patterns** — red masks, curl\|sh, unpinned installs, `:latest` tags,
+  snowflake servers, untested rollbacks, drift-by-memory… each with the fix
+- **A deterministic checker** — `scripts/check.mjs`: secret echoes, curl\|sh, masked failures,
+  pipeline retries on tests, unpinned installs, latest tags, force flags, destructive ops,
+  deploy steps without rollback references, missing CI config, missing lockfiles — zero
+  dependencies, no LLM, no API key
 
 ### obscraft — the Impeccable of observability
 
@@ -146,6 +163,7 @@ npx skills add knarayanareddy/Impeccable --skill testcraft
 npx skills add knarayanareddy/Impeccable --skill perfcraft
 npx skills add knarayanareddy/Impeccable --skill seccraft
 npx skills add knarayanareddy/Impeccable --skill obscraft
+npx skills add knarayanareddy/Impeccable --skill shipcraft
 
 # Claude Code (plugin marketplace)
 /plugin marketplace add knarayanareddy/Impeccable
@@ -169,6 +187,8 @@ Then, in your AI coding tool:
 /seccraft authz src/api          # object-level authorization: fix the IDOR class
 /obscraft slo checkout           # SLOs and error budgets from the user journey
 /obscraft alert .                # every page actionable, no fatigue
+/shipcraft pipeline .            # CI/CD workflows with truthful gates
+/shipcraft rollback .            # make rollback real — automated and rehearsed
 ```
 
 Manual install: copy a skill folder (`skill/codecraft/`, `skill/criterion/`) into your agent's
@@ -200,7 +220,7 @@ instead of judgment:
 | **Performance** | ✅ **shipped as `perfcraft`** | Optimize-without-measuring, N+1s, benchmark theater — perf floor + checker |
 | **Security** | ✅ **shipped as `seccraft`** | Complements tool-based scanners: trust-model judgment, authn-vs-authz, secure defaults — floor + checker |
 | **Observability** | ✅ **shipped as `obscraft`** | Logs that lie, pages nobody can act on, unlinked pillars — signal floor + checker |
-| **DevOps / CI-CD** | planned | Pipeline slop: unreviewable workflows, deploy fear — the craft of shipping |
+| **DevOps / CI-CD** | ✅ **shipped as `shipcraft`** | Red masks, curl\|sh, drift-by-memory, untested rollbacks — ship floor + checker |
 | **Debugging** | planned | Print-debugging, shotgun fixes — root-cause discipline (`repro`, `bisect`, `hypothesis`) |
 
 See [`RESEARCH.md`](RESEARCH.md) for the full market research: why Impeccable trended, the
