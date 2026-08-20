@@ -4,6 +4,10 @@ Refactor variant mode: present two behavior-preserving craft fixes side by side 
 user pick — iteration on *code*, in the medium the user reads. The code-facet adaptation of
 the decision-page pattern; bounded rounds, same as every other command.
 
+The daemon is a per-skill copy of the decision-page pattern: each skill ships its own
+(`scripts/live.mjs`) so a standalone install (`npx skills add --skill codecraft`) carries the
+whole feature — the protocol is shared by design, the file is local by design.
+
 ## The protocol (daemon)
 
 1. Write the two variants as option files — each names the move and shows the result:

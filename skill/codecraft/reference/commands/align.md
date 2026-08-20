@@ -7,7 +7,8 @@ and one of the most valuable: consistency is a reader accelerator.
 
 1. Establish the local truth: read CODEBASE.md (if present), the formatter/linter config, and 2–3
    neighboring files in the same layer. The convention is what the codebase *does*, not what a style
-   guide *says*.
+   guide *says*. For Go, TypeScript, Python, or Rust, the matching `reference/idioms/` sheet is the
+   language baseline that the codebase may deviate from.
 2. Inventory the target's deviations:
    - Naming: two words for one concept, one word for two (`naming.md`).
    - Structure: file/module layout differing from siblings (`structure.md`).

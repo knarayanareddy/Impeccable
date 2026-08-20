@@ -104,7 +104,7 @@ function serveMode() {
     if (!o.name) usage("every option needs a name");
   }
 
-  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
   const page = () => `<!doctype html>
 <html>

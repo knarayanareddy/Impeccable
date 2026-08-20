@@ -169,6 +169,58 @@ await (async () => {
     }
   });
 
+  await protoScenario("hooks: refuses to overwrite an unparseable settings file", async () => {
+    const dir = TMP + "-hooks3";
+    mkdirSync(dir, { recursive: true });
+    try {
+      mkdirSync(join(dir, ".claude"), { recursive: true });
+      writeFileSync(join(dir, ".claude", "settings.json"), "{ not valid json");
+      let refused = false;
+      try { execFileSync("node", [HOOKS, "on", "--apply"], { cwd: dir, stdio: "pipe" }); }
+      catch (e) { refused = e.status === 2; }
+      if (!refused) throw new Error("did not refuse to overwrite corrupt settings");
+      if (readFileSync(join(dir, ".claude", "settings.json"), "utf8") !== "{ not valid json") throw new Error("corrupt file was modified");
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  await protoScenario("hooks: double on --apply stays idempotent (one entry)", async () => {
+    const dir = TMP + "-hooks4";
+    mkdirSync(dir, { recursive: true });
+    try {
+      execFileSync("node", [HOOKS, "on", "--apply"], { cwd: dir, stdio: "pipe" });
+      execFileSync("node", [HOOKS, "on", "--apply"], { cwd: dir, stdio: "pipe" });
+      const settings = JSON.parse(readFileSync(join(dir, ".claude", "settings.json"), "utf8"));
+      const entries = (settings.hooks.PostToolUse || []).filter((e) => JSON.stringify(e).includes("codecraft"));
+      if (entries.length !== 1) throw new Error(`expected 1 codecraft entry, got ${entries.length}`);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  await protoScenario("live: option names are escaped on the decision page", async () => {
+    const dir = TMP + "-live3";
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(join(dir, "a.json"), JSON.stringify({ name: "<script>alert(1)</script>", rationale: "r", code: "x()" }));
+    const port = 8993;
+    const srv = spawn("node", [LIVE, "--round", "s3", "--port", String(port), "--options", "a.json"], { cwd: dir });
+    try {
+      let up = false;
+      for (let i = 0; i < 20; i++) {
+        try { if ((await fetch(`http://localhost:${port}/beat`)).status === 204) { up = true; break; } } catch {}
+        await wait(150);
+      }
+      if (!up) throw new Error("daemon did not come up");
+      const html = await (await fetch(`http://localhost:${port}/`)).text();
+      if (html.includes("<script>alert(1)")) throw new Error("option name not escaped");
+      if (!html.includes("&lt;script&gt;")) throw new Error("escaped name missing");
+    } finally {
+      srv.kill();
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   await protoScenario("live: serve → choose → --wait resolves the recorded choice", async () => {
     const dir = TMP + "-live";
     mkdirSync(dir, { recursive: true });

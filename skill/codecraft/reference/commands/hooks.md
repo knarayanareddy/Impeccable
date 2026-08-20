@@ -13,6 +13,10 @@ node <skill-dir>/scripts/hooks.mjs on --apply      # wire the PostToolUse hook
 node <skill-dir>/scripts/hooks.mjs off --apply     # remove it
 ```
 
+The generated hook command scans `<path>` — substitute the real changed path in your
+harness's hook payload (most harnesses provide the path variable; wire that in place of the
+placeholder).
+
 ## The doctrine
 
 - The hook **surfaces** findings (`|| true` deliberately — it never blocks the agent); the

@@ -35,6 +35,7 @@ deterministic detector rule in `scripts/check.mjs` — see the rule ids.
 | S5 | Three-line empty space around a two-column table | Structure not doing work | Fill the viewport with the job, not the frame |
 | S6 | Center-aligned data or labels | Columns miscompare; labels orphan from controls | Left text, right numbers |
 | S7 | Long, unbounded tables with no sticky header/columns | Scrolling loses the header = loses meaning | Sticky header; frozen key column; column priority |
+| S8 | Commented-out CSS blocks left in the file | Dead weight + ambiguity: is it coming back? | Delete — git remembers |
 
 ## Data tells
 
@@ -73,5 +74,5 @@ deterministic detector rule in `scripts/check.mjs` — see the rule ids.
 `scripts/check.mjs` deterministically catches, with these rule ids: `banned-font` (T1),
 `purple-blue-gradient` (C1), `pure-black` (C3), `pure-gray-text` (C2), `gray-on-color` (C2),
 `radius-too-large` (S3), `elastic-easing` (I1), `transition-all` (I2), `slow-feedback` (I2),
-`deprecated-motion` (blink/marquee). The rest are LLM-judged — keep this file loaded when
-auditing.
+`deprecated-motion` (blink/marquee), `commented-out-code` (S8, raw-line). The rest are
+LLM-judged — keep this file loaded when auditing.

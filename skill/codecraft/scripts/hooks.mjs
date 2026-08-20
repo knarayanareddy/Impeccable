@@ -25,11 +25,15 @@ const SETTINGS = join(process.cwd(), ".claude", "settings.json");
 const mode = process.argv[2];
 const apply = process.argv.includes("--apply");
 
-function readSettings() {
+function readSettings({ strict = false } = {}) {
   if (!existsSync(SETTINGS)) return {};
   try {
     return JSON.parse(readFileSync(SETTINGS, "utf8"));
   } catch {
+    if (strict) {
+      console.error(`hooks: ${SETTINGS} exists but is not valid JSON — refusing to overwrite. Fix it by hand, then re-run.`);
+      process.exit(2);
+    }
     return {};
   }
 }
@@ -92,7 +96,7 @@ if (mode === "status") {
 }
 
 if (mode === "on") {
-  const next = applyOn(readSettings());
+  const next = applyOn(readSettings({ strict: apply }));
   if (apply) {
     write(next);
     console.log("codecraft hook: enabled in .claude/settings.json (PostToolUse → Edit|Write)");
@@ -104,7 +108,7 @@ if (mode === "on") {
 }
 
 if (mode === "off") {
-  const next = applyOff(readSettings());
+  const next = applyOff(readSettings({ strict: apply }));
   if (apply) {
     write(next);
     console.log("codecraft hook: removed from .claude/settings.json");

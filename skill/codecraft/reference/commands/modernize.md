@@ -6,7 +6,9 @@ recommend (`domains/idioms.md` is the authority).
 ## Steps
 
 1. Determine the platform baseline: the language version the project targets (from config/CODEBASE.md
-   — never modernize past what the toolchain supports).
+   — never modernize past what the toolchain supports). If the project is Go, TypeScript, Python,
+   or Rust, load the matching `reference/idioms/` sheet — it is the language authority for this
+   command.
 2. Inventory legacy patterns in the target, e.g.:
    - JS/TS: `var` → `const`/`let`, `==` → `===`, callbacks → async/await, `for` loops → iterator
      methods where clearer, `function` → arrow where context fits.

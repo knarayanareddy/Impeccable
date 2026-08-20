@@ -89,6 +89,18 @@ scenario("URL double-slashes are not comment starts (string evidence survives)",
   files: [FIX("t.js", `const s = "http://localhost:3000/transition: all 600ms";`)],
   exitCode: 0, contains: ["transition-all", "slow-feedback"],
 });
+scenario("commented-out CSS block flagged (cross-skill parity with codecraft)", {
+  files: [FIX("t.css", `/* .old-card {\n  border-radius: 12px;\n} */\n.a { color: #1a1d21; }`)],
+  exitCode: 0, contains: ["commented-out-code"],
+});
+scenario("prose-led multi-line block hiding CSS flagged", {
+  files: [FIX("t.css", `/*\nold design, kept for reference\n.old-card {\n  border-radius: 12px;\n}\n*/\n.a { color: #1a1d21; }`)],
+  exitCode: 0, contains: ["commented-out-code"],
+});
+scenario("comment prose is not commented-out code", {
+  files: [FIX("t.css", `/* the old design used larger radii for everything */\n.a { color: #1a1d21; }`)],
+  exitCode: 0, notContains: ["commented-out-code"],
+});
 scenario("deprecated marquee flagged", {
   files: [FIX("t.html", `<marquee>ticker</marquee>`)],
   exitCode: 1, contains: ["deprecated-motion"],

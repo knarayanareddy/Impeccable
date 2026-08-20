@@ -172,7 +172,25 @@ const rules = [
       return /<\/?(?:blink|marquee)\b/i.test(line) ? line.trim().slice(0, 120) : null;
     },
   },
+  {
+    id: "commented-out-code",
+    severity: "warning",
+    message: "Commented-out code — git remembers, the file must not. Delete the block.",
+    // HTML comments stay line-based; /* */ blocks are handled by the file-level pass below.
+    test(line) {
+      const m = /^\s*<!--\s?(.*)$/.exec(line);
+      if (!m) return null;
+      const s = m[1].trim().replace(/-->\s*$/, "").trim();
+      if (!s) return null;
+      if (/[{][^}]*[}]/.test(s) || /[a-z-]+\s*:\s*[^;]+;/.test(s) || /^[.#a-z][\w.#-]*\s*[{,]/i.test(s)) {
+        return s.slice(0, 100);
+      }
+      return null;
+    },
+  },
 ];
+
+const CSS_SHAPE = /[{][^}]*[}]|[a-z-]+\s*:\s*[^;]+;|^[.#a-z][\w.#-]*\s*[{,]/im;
 
 // ---------------------------------------------------------------------------
 // File discovery
@@ -264,8 +282,10 @@ function scan(file, strict) {
   }
   lines.forEach((rawLine, i) => {
     const line = rawLine;
+    const raw = rawLines[i];
     for (const rule of rules) {
-      const detail = rule.test(line);
+      const subject = rule.id === "commented-out-code" ? raw : line;
+      const detail = rule.test(subject);
       if (detail) {
         findings.push({
           file: basename(file),
@@ -278,6 +298,24 @@ function scan(file, strict) {
       }
     }
   });
+  // Block comments: prose-led multi-line blocks hide CSS shapes the line rule can't see
+  if (/\.(css|scss|sass|less|html?|vue|svelte|astro)$/i.test(file)) {
+    const re = /\/\*([\s\S]*?)\*\//g;
+    let m;
+    while ((m = re.exec(text))) {
+      const s = m[1].trim();
+      if (!s || s.length < 3) continue;
+      if (CSS_SHAPE.test(s)) {
+        const lineNo = text.slice(0, m.index).split("\n").length;
+        findings.push({
+          file: basename(file), line: lineNo, rule: "commented-out-code", severity: "warning",
+          message: "Commented-out code — git remembers, the file must not. Delete the block.",
+          detail: s.slice(0, 100),
+        });
+      }
+    }
+  }
+
   return findings;
 }
 

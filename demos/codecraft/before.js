@@ -1,6 +1,7 @@
 // OpsBoard checkout — before (generic AI code)
 // The tells: god function, vague names, magic numbers, deep nesting,
-// loose equality, swallowed errors, debug markers, commented-out dead code, TODO sprawl.
+// loose equality, swallowed errors, debug markers, commented-out dead
+// code, and a pile of unfinished to-do markers.
 
 var userName = "data";
 
