@@ -153,6 +153,9 @@ if (metricsFile) {
     const label = metric.name || `#${i + 1}`;
     if (!metric.name) gaps.push({ file: metricsFile, kind: "metric", entry: label, rule: "missing-name", message: "metric entry has no name" });
     if (!metric.type) gaps.push({ file: metricsFile, kind: "metric", entry: label, rule: "missing-type", message: `metric "${label}" has no type (counter/gauge/histogram — metrics.md)` });
+    else if (!["counter", "gauge", "histogram", "summary"].includes(String(metric.type).toLowerCase())) {
+      gaps.push({ file: metricsFile, kind: "metric", entry: label, rule: "unknown-type", message: `metric "${label}" has unknown type "${metric.type}" — the vocabulary is counter/gauge/histogram/summary (metrics.md)` });
+    }
     if (!metric.question) gaps.push({ file: metricsFile, kind: "metric", entry: label, rule: "missing-question", message: `metric "${label}" has no question — a metric must name the question it answers (telemetry.md)` });
   }
 }

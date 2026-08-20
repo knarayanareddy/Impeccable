@@ -129,6 +129,9 @@ await tcheckScenario("telemetry-check: empty file refuses (no silent valid)", { 
 await tcheckScenario("telemetry-check: metric without question flagged", { "metrics.json": `[{"name":"m","type":"counter"}]` },
   [["--metrics", "metrics.json"]], { exitCode: 1, contains: ["missing-question"] });
 
+await tcheckScenario("telemetry-check: unknown metric type flagged", { "metrics.json": `[{"name":"m","type":"guage","question":"q"}]` },
+  [["--metrics", "metrics.json"]], { exitCode: 1, contains: ["unknown-type"] });
+
 // ---- slo-review daemon protocol ----
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 await (async () => {

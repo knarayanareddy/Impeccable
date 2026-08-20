@@ -24,6 +24,13 @@ input is required; each parses JSON natively or a YAML-subset block shape
 - **Metrics**: the vocabulary — `name`, `type` (counter/gauge/histogram), and `question`
   (`telemetry.md`: a metric must name the question it answers).
 
+## Accepted shapes
+
+- **YAML (subset)**: `slo:` blocks (key: value pairs under it) and `alerts:` lists
+  (`- name:` items with key: value pairs) — indentation-aware; `#` comments are prose.
+- **JSON**: native — either a top-level array or an object with an `entries` array.
+- Metrics accept both forms (`[ {...} ]` or `{ "entries": [...] }`).
+
 ## Honesty rules
 
 - A file that parses to **zero** entries exits 2 — "no gaps found" on an empty parse is a lie.
