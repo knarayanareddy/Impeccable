@@ -20,6 +20,23 @@ one-line install.**
 | **[`dbcraft`](skill/dbcraft/SKILL.md)** | Database & schema (SQL + ORM-managed) | *Data outlives code. The schema is the longest-lived interface in the system.* |
 | **[`testcraft`](skill/testcraft/SKILL.md)** | Testing (unit, integration, E2E) | *Tests are executable specifications. Confidence, not numbers.* |
 | **[`perfcraft`](skill/perfcraft/SKILL.md)** | Performance (web, backend, data, delivery) | *Measure before you optimize. The user's clock is the only clock.* |
+| **[`seccraft`](skill/seccraft/SKILL.md)** | Security (threat modeling, authn/authz, injection, secrets) | *Security is the design of failure, not a final scan. Trust is explicit.* |
+
+### seccraft — the Impeccable of security
+
+- **14 commands** — a shared vocabulary: `threatmodel` (signature: trust boundaries → threats →
+  tickets), `authz` (fix the IDOR class), `sanitize`, `secrets`, `lock`, `harden`, `depend`,
+  `monitor`, `respond`, `audit`, `review`, `measure`…
+- **8 domain references** — **trust** (the differentiator: boundaries, least privilege, fail
+  closed), authn, authz, injection, secrets, crypto, data, abuse
+- **A security floor** — every input untrusted, object-level authz everywhere, default-deny,
+  boring current crypto, secrets managed
+- **20 security-slop anti-patterns** — hardcoded credentials, authn-without-authz, `alg: none`
+  JWTs, innerHTML-with-data, demo defaults, MD5-for-passwords… each with the fix
+- **A deterministic checker** — `scripts/check.mjs`: hardcoded credentials (redacted), private
+  keys, interpolated SQL, insecure hashes, weak JWTs, eval/Function/document.write, XSS sinks,
+  command injection, Math.random tokens, http URLs, permissive CORS, auth-disabled routes,
+  insecure cookies, stack traces in responses — zero dependencies, no LLM, no API key
 
 ### perfcraft — the Impeccable of performance
 
@@ -108,6 +125,7 @@ npx skills add knarayanareddy/Impeccable --skill apicraft
 npx skills add knarayanareddy/Impeccable --skill dbcraft
 npx skills add knarayanareddy/Impeccable --skill testcraft
 npx skills add knarayanareddy/Impeccable --skill perfcraft
+npx skills add knarayanareddy/Impeccable --skill seccraft
 
 # Claude Code (plugin marketplace)
 /plugin marketplace add knarayanareddy/Impeccable
@@ -127,6 +145,8 @@ Then, in your AI coding tool:
 /testcraft strengthen src/cart   # weak assertions → contract-pinning assertions
 /perfcraft profile src/checkout  # measure where time actually goes (flame graph/trace)
 /perfcraft budget .              # performance budgets as code + CI regression gates
+/seccraft threatmodel orders     # trust boundaries → threats → tickets
+/seccraft authz src/api          # object-level authorization: fix the IDOR class
 ```
 
 Manual install: copy a skill folder (`skill/codecraft/`, `skill/criterion/`) into your agent's
@@ -156,7 +176,7 @@ instead of judgment:
 | **Database & schema** | ✅ **shipped as `dbcraft`** | Nullable-everything, no constraints, floats for money, destructive migrations — schema floor + checker |
 | **Testing** | ✅ **shipped as `testcraft`** | `.only` left in, sleeps, tautological asserts, retry masks — suite floor + checker |
 | **Performance** | ✅ **shipped as `perfcraft`** | Optimize-without-measuring, N+1s, benchmark theater — perf floor + checker |
-| **Security** | planned | Complements tool-based scanners: authn/authz judgment, threat-model habits |
+| **Security** | ✅ **shipped as `seccraft`** | Complements tool-based scanners: trust-model judgment, authn-vs-authz, secure defaults — floor + checker |
 | **Observability** | planned | Logs that lie, metrics without meaning — what to record and why |
 | **DevOps / CI-CD** | planned | Pipeline slop: unreviewable workflows, deploy fear — the craft of shipping |
 | **Debugging** | planned | Print-debugging, shotgun fixes — root-cause discipline (`repro`, `bisect`, `hypothesis`) |

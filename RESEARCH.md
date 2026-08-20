@@ -293,6 +293,19 @@ SKILL.md + reference/ + scripts/ + plugin.json + README row + before/after demo.
 - **The facet's "second hour" insight:** *the user's clock is the only clock* — measured, tail-
   aware, budgeted performance is a product feature, not a cleanup phase.
 
+## 12e. Security facet notes (shipped as `seccraft`)
+
+- **The landscape:** security skills are tool-driven (Trail of Bits' 40 plugins, CodeQL/Semgrep
+  scanners). The tools find the mechanical; nothing owns the *judgment* layer: trust modeling,
+  authn-vs-authz reasoning, secure defaults, and design-time threat habits.
+- **The differentiators:** the trust domain (boundaries, least privilege, fail-closed) as the
+  foundation, `threatmodel` as the signature command (boundaries → threats → tickets), `authz`
+  as the IDOR-class fix, and a deterministic checker for tells scanners need context to catch
+  (hardcoded credentials redacted, `alg: none` JWTs, Math.random tokens, auth-disabled routes).
+- **The facet's "second hour" insight:** *security is the design of failure, not a final scan* —
+  attacks exploit defaults, missing checks, and the moment someone said "we'll harden it
+  later."
+
 ## 13. Sources (engineering landscape)
 
 - [addyosmani/agent-skills — comparison doc](https://github.com/addyosmani/agent-skills/blob/main/docs/comparison.md)
