@@ -28,8 +28,10 @@ const SKIP_DIRS = new Set([
   ".next", ".nuxt", ".output", "vendor", ".venv", "__pycache__",
 ]);
 
-// Debug marker: the "here"/"xxx"/"debug" family — literal evidence of print-debugging
-const DEBUG_MARKER = /(?:console\.(log|debug|info)\s*\(\s*["'](?:here|here[0-9]*|xxx+|debug|debugging|test[0-9]*|wat|why|asdf|foo|bar|hello|there|print me)["']|debugger\s*;|print\s*\(\s*["'](?:here|xxx+|DEBUG|debug|HERE)["'])/i;
+// Debug marker: the "here"/"xxx"/"debug" family — literal evidence of print-debugging.
+// Quote class covers backticks (JS template literals) and Python f-strings;
+// `debugger` needs no semicolon (ASI) and must not be a property key.
+const DEBUG_MARKER = /(?:console\.(log|debug|info)\s*\(\s*[`"'](?:here|here[0-9]*|xxx+|debug|debugging|test[0-9]*|wat|why|asdf|foo|bar|hello|there|print me)[`"']|debugger\s*(?!\s*[:=])|print\s*\(\s*(?:f|rf|r)?[`"'](?:here|xxx+|DEBUG|debug|HERE)[`"'])/i;
 
 const UNCERTAINTY = /\b(?:hack|workaround|temporary fix|temp fix|don'?t (?:touch|change|ask)|why does this work|works on my machine|magic|voodoo|kludge|because reasons|idk|i don'?t know why)\b/i;
 
@@ -55,9 +57,9 @@ const rules = [
     severity: "error",
     message: "Log-and-swallow — the error is printed and dropped (S2). Handle, translate, or propagate it.",
     test(line) {
-      const m = /catch\s*\([^)]*\)\s*\{\s*console\.(log|error|warn|debug)\s*\([^)]*\)\s*;?\s*\}/i.exec(line);
+      const m = /catch\s*\([^)]*\)\s*\{\s*(?:console\.(log|error|warn|debug)|log(?:ger)?\.(error|warn|exception))\s*\([^)]*\)\s*;?\s*\}/i.exec(line);
       if (m) return "catch { console.log(err) }";
-      const py = /except[^:]*:\s*print\s*\([^)]*\)\s*(#.*)?$/i.exec(line);
+      const py = /except[^:]*:\s*(?:print|log(?:ger)?\.(?:error|warn|exception))\s*\([^)]*\)\s*(#.*)?$/i.exec(line);
       if (py) return "except: print(e)";
       return null;
     },
@@ -238,7 +240,7 @@ function scan(file) {
     const raw = rawLines[i];
     // JS multi-line catch with a single-statement body: console.log / return null
     if (pendingCatch !== -1 && i - pendingCatch <= 2) {
-      if (/^\s*console\.(log|error|warn|debug)\s*\([^)]*\)\s*;?\s*$/.test(raw)) {
+      if (/^\s*(?:console\.(log|error|warn|debug)|log(?:ger)?\.(error|warn|exception))\s*\([^)]*\)\s*;?\s*$/.test(raw)) {
         findings.push({ file: basename(file), line: pendingCatch + 1, rule: "log-and-swallow", severity: "error",
           message: "Log-and-swallow — the error is printed and dropped (S2). Handle, translate, or propagate it.",
           detail: "catch { console.log(e) }" });
@@ -269,7 +271,7 @@ function scan(file) {
     // Python multi-line silent catch bodies: `except:` then `pass`/`return None`/`print(e)`
     if (ext === ".py") {
       if (pendingExcept !== -1) {
-        const body = /^\s*(pass|return\s+(?:None|-1|False)|print\s*\([^)]*\))\s*(#.*)?$/.exec(raw);
+        const body = /^\s*(pass|return\s+(?:None|-1|False)|(?:print|log(?:ger)?\.(?:error|warn|exception))\s*\([^)]*\))\s*(#.*)?$/.exec(raw);
         if (body) {
           const kind = /pass/.test(body[1]) ? "pass" : /return/.test(body[1]) ? "return None" : "print(e)";
           const ruleId = kind === "print(e)" ? "log-and-swallow" : kind === "return None" ? "silent-catch-return" : "swallowed-exception";

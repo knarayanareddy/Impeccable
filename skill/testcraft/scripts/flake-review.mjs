@@ -46,6 +46,7 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) usage("--port must be a
 
 if (has("--wait") || has("--result")) {
   const timeout = parseInt(get("--timeout") || "600", 10) * 1000;
+  if (!Number.isFinite(timeout) || timeout <= 0) usage("--timeout must be a positive number of seconds");
   const deadline = Date.now() + timeout;
   const readResult = () => {
     if (!existsSync(RESULT_FILE)) return null;

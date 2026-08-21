@@ -277,7 +277,7 @@ research and the launch playbook.
   into the harness's PostToolUse hook
 - **Live daemons** — `node skill/criterion/scripts/live.mjs` (visual variants) ·
   `node skill/codecraft/scripts/live.mjs` (refactor variants)
-- **Behavioral evals** — `node scripts/run-evals.mjs`: 302 pinned scenarios across ten
+- **Behavioral evals** — `node scripts/run-evals.mjs`: 306 pinned scenarios across ten
   harnesses (checkers, gates, daemon protocols, port-collision behavior)
 
 ## License

@@ -39,6 +39,18 @@ scenario("debug-marker: debugger; statement flagged", {
   files: [FIX("t.js", `function f() { debugger; }\n`)],
   exitCode: 1, contains: ["debug-marker"],
 });
+scenario("debug-marker: backtick template literal and ASI debugger flagged", {
+  files: [FIX("t.js", "console.log(`here`);\nfunction f() {\n  debugger\n}\n")],
+  exitCode: 1, contains: ["debug-marker"],
+});
+scenario("debug-marker: python f-string print flagged", {
+  files: [FIX("t.py", `print(f"here")\n`)],
+  exitCode: 1, contains: ["debug-marker"],
+});
+scenario("log-and-swallow: logger.error single-statement catch flagged", {
+  files: [FIX("t.js", `try { x(); } catch (e) { logger.error("op", e); }\n`)],
+  exitCode: 1, contains: ["log-and-swallow"],
+});
 scenario("log-and-swallow: single-line catch flagged (error)", {
   files: [FIX("t.js", `try { x(); } catch (e) { console.log(e); }\n`)],
   exitCode: 1, contains: ["log-and-swallow"],
@@ -273,6 +285,13 @@ await (async () => {
     } catch (e) {
       if (e.status !== 2 || !((e.stderr || "") + (e.stdout || "")).includes("1-65535")) { console.log("✗ bug-review: invalid port should exit 2 with a usage message"); fail++; }
       else { console.log("✓ bug-review: non-numeric port is a clean usage error"); pass++; }
+    }
+    try {
+      execFileSync("node", [REVIEW, "--round", "r1", "--wait", "--timeout", "abc"], { cwd: dir, encoding: "utf8", timeout: 5000 });
+      console.log("✗ bug-review: invalid --timeout not refused"); fail++;
+    } catch (e) {
+      if (e.status !== 2 || !((e.stderr || "") + (e.stdout || "")).includes("positive number")) { console.log("✗ bug-review: invalid --timeout should exit 2 with a usage message"); fail++; }
+      else { console.log("✓ bug-review: non-numeric --timeout is a clean usage error (no infinite wait)"); pass++; }
     }
   } finally {
     rmSync(dir, { recursive: true, force: true });
