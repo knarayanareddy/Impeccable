@@ -213,7 +213,14 @@ function cmdFind(argv) {
     const i = argv.indexOf(flag);
     return i === -1 ? null : argv[i + 1];
   };
-  const top = Math.min(50, parseInt(get("--top") || "8", 10) || 8);
+  // --top: a real number is used as given (0 → zero results + the no-match
+  // note); garbage falls back to the 8 default; the ceiling is 50
+  const topArg = get("--top");
+  let top = 8;
+  if (topArg !== null) {
+    const n = parseInt(topArg, 10);
+    if (Number.isFinite(n)) top = Math.max(0, Math.min(50, n));
+  }
   const json = argv.includes("--json");
   const docs = buildCorpus();
   const ranked = rankDocs(docs, query, { top });

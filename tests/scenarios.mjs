@@ -128,6 +128,9 @@ run("impc find: routes the flaky-pipeline request to the autom playbook", node, 
 run("impc find: nonsense query is honest about no match", node, [IMPC, "find", "flibbertigibbet wobblebong"], {
   cwd: ROOT, expect: 0, contains: ["no strong match"],
 });
+run("impc find: --top 0 means zero results, not the default", node, [IMPC, "find", "rollback", "--top", "0"], {
+  cwd: ROOT, expect: 0, contains: ["no strong match"], notContains: ["Command:"],
+});
 const fj = run("impc find: --json output is machine-readable", node, [IMPC, "find", "rollback", "--json"], {
   cwd: ROOT, expect: 0, contains: ['"results"'],
 });
