@@ -1,5 +1,10 @@
 # Capstone review: the suite vs the reference Impeccable skill
 
+> **Superseded (2026-08-22)** by [experts-rating-2026-08.md](experts-rating-2026-08.md) — the
+> three-way panel rating against both pbakaus/impeccable and UI/UX Pro Max, written after the
+> ten facet launches, the suite tools, and the security red-team. Kept for its playbook-by-
+> playbook mapping, which the new rating builds on.
+
 **Panel:** Reference Keeper (pbakaus/impeccable expert) · Suite Architect · Domain Principal
 (across 10 facets) · Benchmark Methodologist.
 **Basis of comparison:** pbakaus/impeccable at v4.x, August 2026 — 61.1k stars, 3.7k forks,

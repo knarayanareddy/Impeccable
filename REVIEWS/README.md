@@ -10,6 +10,14 @@ round is archived per skill; accepted findings were implemented and re-verified.
 - Round 2: Reference Keeper (verification) · Second Domain Principal (fresh sub-specialty) ·
   Adversary (checker red-team) · Practitioner (re-check)
 
+**Ratings & comparisons**
+
+| Document | Scope | Result |
+|---|---|---|
+| [reference-comparison.md](reference-comparison.md) | two-way capstone vs pbakaus/impeccable (pre-launch) | 8.8/10 — superseded |
+| [experts-rating-2026-08.md](experts-rating-2026-08.md) | **three-way panel rating** vs pbakaus/impeccable and UI/UX Pro Max (post-launch, post-security-red-team) | **8.1/10** vs 7.0 and 7.2 — with a prioritized improvement ledger (P0–P2) |
+| [ui-ux-pro-max-deep-dive.md](../RESEARCH/ui-ux-pro-max-deep-dive.md) | hands-on anatomy of the 119k-star skill (in RESEARCH/) | why it won distribution |
+
 **Archive**
 
 | Facet | Round 1 | Round 2 | Outcome |
