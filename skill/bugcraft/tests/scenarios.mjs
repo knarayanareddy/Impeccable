@@ -146,9 +146,10 @@ async function rcScenario(name, fileContent, { exitCode, contains = [], notConta
   mkdirSync(dir, { recursive: true });
   const fname = "bugs.yaml";
   writeFileSync(join(dir, fname), fileContent);
+  const args = [RCHECK, "--bugs", join(dir, fname), ...(json ? ["--json"] : [])];
   try {
     try {
-      const out = execFileSync("node", [RCHECK, "--bugs", join(dir, fname)], { encoding: "utf8" });
+      const out = execFileSync("node", args, { encoding: "utf8" });
       if (exitCode !== 0) { console.log(`✗ ${name} — expected exit ${exitCode}, got 0`); fail++; return; }
       const misses = [...contains.filter((c) => !out.includes(c)), ...notContains.filter((c) => out.includes(c))];
       if (misses.length) { console.log(`✗ ${name} — ${misses.join(", ")}`); fail++; return; }
@@ -204,6 +205,14 @@ await rcScenario("repro-check: JSON array shape accepted", `[{"id":"J1","observe
 
 await rcScenario("repro-check: wrong-shape JSON refuses", `"just a string"`, {
   exitCode: 2, contains: ["not a bug-record shape"],
+});
+
+await rcScenario("repro-check: folded observed block is read; empty fold is a gap", `bugs:\n  - id: F-1\n    observed: |\n      hangs for 30 seconds\n    expected: fast\n    steps: run it\n    environment: ci\n    status: open\n    evidence-level: 1\n  - id: F-2\n    observed: |\n    expected: fast\n    steps: run it\n    environment: ci\n    status: open\n    evidence-level: 1\n`, {
+  exitCode: 1, contains: ["missing-observed"],
+});
+
+await rcScenario("repro-check: --json gap output is machine-readable", `bugs:\n  - id: G-1\n    status: fixed\n`, {
+  exitCode: 1, json: true, contains: ["missing-pin"],
 });
 
 // ---- bug-review daemon protocol ----

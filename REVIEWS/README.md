@@ -25,6 +25,28 @@ round is archived per skill; accepted findings were implemented and re-verified.
 | shipcraft (DevOps) | [shipcraft-round1.md](shipcraft-round1.md) | [shipcraft-round2.md](shipcraft-round2.md) | 10 findings fixed: workflow assets, branch protection, set +e, untagged images |
 | bugcraft (debugging) | [bugcraft-round1.md](bugcraft-round1.md) | [bugcraft-round2.md](bugcraft-round2.md) | 7 findings fixed: record/replay, bisect run, inline uncertainty, if(0) |
 
+**Launch reviews (per facet — five-agent build, then two expert rounds)**
+
+Each facet's launch pass (gate tool, review daemon, platform/specialist sheets, behavioral
+eval harness, docs/demo/case study) went through the same two-round panel before closing.
+
+| Facet | Launch round 1 | Launch round 2 | Outcome |
+|---|---|---|---|
+| criterion (UI/UX) | [criterion-launch-round1.md](criterion-launch-round1.md) | [criterion-launch-round2.md](criterion-launch-round2.md) | review-clean after two rounds |
+| codecraft (code) | [codecraft-launch-round1.md](codecraft-launch-round1.md) | [codecraft-launch-round2.md](codecraft-launch-round2.md) | review-clean after two rounds |
+| apicraft (API) | [apicraft-launch-round1.md](apicraft-launch-round1.md) | [apicraft-launch-round2.md](apicraft-launch-round2.md) | review-clean after two rounds |
+| dbcraft (database) | [dbcraft-launch-round1.md](dbcraft-launch-round1.md) | [dbcraft-launch-round2.md](dbcraft-launch-round2.md) | review-clean after two rounds |
+| testcraft (testing) | [testcraft-launch-round1.md](testcraft-launch-round1.md) | [testcraft-launch-round2.md](testcraft-launch-round2.md) | review-clean after two rounds |
+| perfcraft (performance) | [perfcraft-launch-round1.md](perfcraft-launch-round1.md) | [perfcraft-launch-round2.md](perfcraft-launch-round2.md) | review-clean after two rounds |
+| seccraft (security) | [seccraft-launch-round1.md](seccraft-launch-round1.md) | [seccraft-launch-round2.md](seccraft-launch-round2.md) | review-clean after two rounds |
+| obscraft (observability) | [obscraft-launch-round1.md](obscraft-launch-round1.md) | [obscraft-launch-round2.md](obscraft-launch-round2.md) | review-clean after two rounds |
+| shipcraft (DevOps) | [shipcraft-launch-round1.md](shipcraft-launch-round1.md) | [shipcraft-launch-round2.md](shipcraft-launch-round2.md) | review-clean after two rounds |
+| bugcraft (debugging) | [bugcraft-launch-round1.md](bugcraft-launch-round1.md) | [bugcraft-launch-round2.md](bugcraft-launch-round2.md) | review-clean after two rounds |
+
+Launch-round cross-suite fixes landed for the whole family: ten-daemon `--port` validation,
+ten-daemon `--timeout` validation, EADDRINUSE message interpolation, comment stripping with
+comment-evidence subject selection, symlink-cycle-safe walks, and escaping pinned per daemon.
+
 **Cross-skill findings routed between reviews**
 
 - apicraft A2-2 (Python format/%-SQL) → implemented in dbcraft + seccraft checkers (SEC-A2-2).

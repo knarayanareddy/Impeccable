@@ -91,7 +91,15 @@ function parseBugs(text) {
     }
     const pair = isPair(line);
     if (pair) {
-      if (current && indent > currentIndent) current[pair[1]] = pair[2].trim();
+      if (current && indent > currentIndent) {
+        current[pair[1]] = pair[2].trim();
+        // a folded block (`key: |` / `key: >`) opens a container: deeper lines
+        // are its content — an empty fold must read as absent, not as present
+        if (pair[2].trim() === "|" || pair[2].trim() === ">") {
+          current[pair[1]] = "";
+          containers[pair[1]] = indent;
+        }
+      }
       continue;
     }
     // plain deeper line — a bullet of an open container (e.g. steps:)
