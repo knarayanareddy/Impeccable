@@ -189,4 +189,17 @@ after the P0 ledger ships.*
 - [x] **P0-2 — countable-inventory hero**: README hero rewritten — badge row (10 skills ·
   160 commands · 341 pinned checks · 10 daemons · 365 checksummed files) + count strip +
   npm/git/repo install lines; "Roadmap" section reframed as "all shipped".
-- [ ] P0-3 bilingual README · P0-4 public benchmark evidence · P0-5 live-model evals · P0-6 website
+- [x] **P0-4 — public benchmark evidence**: `scripts/benchmark.mjs` ran all ten checkers
+  (`--strict --json`) across six public repos (express, requests, flask, fastify, lodash,
+  ora) at recorded commits — results + per-rule findings committed in `benchmark/`,
+  rendered at docs/benchmark.html. Found a real cross-suite bug while doing it (large
+  `--json` outputs truncated when piped — all 18 checkers/gates now end via
+  `process.exitCode`; pinned in the harness).
+- [x] **P0-5 — live-model evals**: `scripts/live-model-evals.mjs` + 4 scenarios — the
+  skill-behavior suite for real models (OpenAI-compatible protocol, checker-scored,
+  unchanged-detection, latency, results file). Harness verified offline (fixture model
+  4/4) and pinned; a real-model run is one `EVALS_API_KEY` command away (docs/evals.html).
+- [x] **P0-6 — website**: `scripts/site.mjs` (zero-dep static server for docs/) +
+  `scripts/build-site.mjs` (benchmark + evals pages) + docs-home cards. GitHub Pages
+  enable path documented (repo Settings → Pages → /docs); not enabled in this environment.
+- [ ] P0-3 bilingual README

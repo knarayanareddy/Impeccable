@@ -280,6 +280,11 @@ research and the launch playbook.
 
 - **[Suite tools](docs/installer.md)** — `impc` (installer + router), the corpus-integrity
   gate (`data-quality`), and the routing evals (`evaluate-relevance`)
+- **Public evidence** — [the benchmark](benchmark/summary.md): all ten checkers on six
+  public repositories ([page](docs/benchmark.html)) · [live-model evals](docs/evals.html):
+  the skill-behavior harness for real models (`node scripts/live-model-evals.mjs`)
+- **Website** — `node scripts/site.mjs` serves the docs site (static, zero dependencies);
+  the same files host anywhere (GitHub Pages: repo → Settings → Pages → branch main, /docs)
 - **[Docs site](docs/)** — the suite home and the per-skill guides: [criterion](docs/criterion/),
   [codecraft](docs/codecraft/), [apicraft](docs/apicraft/), [dbcraft](docs/dbcraft/),
   [testcraft](docs/testcraft/), [perfcraft](docs/perfcraft/), [seccraft](docs/seccraft/),

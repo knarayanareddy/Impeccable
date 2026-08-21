@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Benchmark — checker runs on public repositories</title>
+<style>
+  :root { --bg:#101418; --panel:#161c22; --text:#e8eaf0; --muted:#8b93a1; --line:#262e37; --accent:#4d7cfe; --ok:#2f9e6a; --flag:#e5a94f; --risk:#f4606c; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.6 system-ui,-apple-system,sans-serif; }
+  main { max-width: 960px; margin: 0 auto; padding: 48px 24px 72px; }
+  h1 { font-size: 28px; letter-spacing:-0.02em; margin:0 0 8px; }
+  .lede { color:var(--muted); margin:0 0 32px; }
+  h2 { font-size:19px; margin:36px 0 10px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); }
+  th { color:var(--muted); font-weight:600; }
+  td.num { font-variant-numeric: tabular-nums; text-align:right; }
+  .err { color:var(--risk); } .warn { color:var(--flag); }
+  code, pre { font-family:ui-monospace,monospace; }
+  pre { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:13px; }
+  a { color:var(--accent); }
+  .back { color:var(--muted); text-decoration:none; font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="./">← the craft-skill suite</a>
+  <h1>The benchmark</h1>
+  <p class="lede">All ten facet checkers, run with --strict --json against six public repositories at their recorded commits. Cells are errors/warnings; n/a = no files of that facet. Errors are the signal; heuristic warnings are the documented worklist.</p>
+
+  <table><tr><th>Repository</th><th title="criterion">crit</th><th title="codecraft">code</th><th title="apicraft">apic</th><th title="dbcraft">dbcr</th><th title="testcraft">test</th><th title="perfcraft">perf</th><th title="seccraft">secc</th><th title="obscraft">obsc</th><th title="shipcraft">ship</th><th title="bugcraft">bugc</th></tr>
+<tr><td><a href="https://github.com/expressjs/express">expressjs/express</a><br><span style="color:var(--muted);font-size:11px"><code>a3714473</code> · 2026-08-21</span></td><td class="num err">1<span class="warn">/w0</span></td><td class="num err">37<span class="warn">/w3252</span></td><td class="num err">5<span class="warn">/w70</span></td><td class="num err">1<span class="warn">/w0</span></td><td class="num err">3<span class="warn">/w6</span></td><td class="num ">0<span class="warn">/w8</span></td><td class="num err">3<span class="warn">/w40</span></td><td class="num ">0<span class="warn">/w18</span></td><td class="num ">0<span class="warn">/w3</span></td><td class="num err">1<span class="warn">/w2</span></td></tr>
+<tr><td><a href="https://github.com/fastify/fastify">fastify/fastify</a><br><span style="color:var(--muted);font-size:11px"><code>83e69762</code> · 2026-08-21</span></td><td class="num ">0<span class="warn">/w0</span></td><td class="num err">44<span class="warn">/w2856</span></td><td class="num err">38<span class="warn">/w43</span></td><td class="num ">0<span class="warn">/w0</span></td><td class="num err">86<span class="warn">/w599</span></td><td class="num err">23<span class="warn">/w21</span></td><td class="num err">1<span class="warn">/w81</span></td><td class="num ">0<span class="warn">/w117</span></td><td class="num err">1<span class="warn">/w5</span></td><td class="num err">2<span class="warn">/w1</span></td></tr>
+<tr><td><a href="https://github.com/lodash/lodash">lodash/lodash</a><br><span style="color:var(--muted);font-size:11px"><code>a666ba59</code> · 2026-08-21</span></td><td class="num ">0<span class="warn">/w1</span></td><td class="num err">78<span class="warn">/w5913</span></td><td class="num ">0<span class="warn">/w2</span></td><td class="num err">1<span class="warn">/w7</span></td><td class="num err">52<span class="warn">/w1</span></td><td class="num err">5<span class="warn">/w19</span></td><td class="num err">19<span class="warn">/w1</span></td><td class="num ">0<span class="warn">/w30</span></td><td class="num ">0<span class="warn">/w9</span></td><td class="num err">68<span class="warn">/w0</span></td></tr>
+<tr><td><a href="https://github.com/pallets/flask">pallets/flask</a><br><span style="color:var(--muted);font-size:11px"><code>d318b683</code> · 2026-08-21</span></td><td class="num ">0<span class="warn">/w0</span></td><td class="num err">21<span class="warn">/w684</span></td><td class="num err">35<span class="warn">/w21</span></td><td class="num ">0<span class="warn">/w8</span></td><td class="num err">5<span class="warn">/w0</span></td><td class="num ">0<span class="warn">/w6</span></td><td class="num err">1<span class="warn">/w26</span></td><td class="num ">0<span class="warn">/w36</span></td><td class="num ">0<span class="warn">/w3</span></td><td class="num err">25<span class="warn">/w1</span></td></tr>
+<tr><td><a href="https://github.com/psf/requests">psf/requests</a><br><span style="color:var(--muted);font-size:11px"><code>8f8b212d</code> · 2026-08-21</span></td><td class="num ">0<span class="warn">/w0</span></td><td class="num err">10<span class="warn">/w225</span></td><td class="num err">4<span class="warn">/w6</span></td><td class="num ">0<span class="warn">/w0</span></td><td class="num err">3<span class="warn">/w18</span></td><td class="num ">0<span class="warn">/w7</span></td><td class="num err">3<span class="warn">/w105</span></td><td class="num ">0<span class="warn">/w5</span></td><td class="num ">0<span class="warn">/w11</span></td><td class="num err">7<span class="warn">/w9</span></td></tr>
+<tr><td><a href="https://github.com/sindresorhus/ora">sindresorhus/ora</a><br><span style="color:var(--muted);font-size:11px"><code>86403dcc</code> · 2026-08-21</span></td><td class="num err">2<span class="warn">/w0</span></td><td class="num err">25<span class="warn">/w103</span></td><td class="num ">0<span class="warn">/w0</span></td><td class="num err">1<span class="warn">/w3</span></td><td class="num ">0<span class="warn">/w0</span></td><td class="num ">0<span class="warn">/w3</span></td><td class="num err">1<span class="warn">/w1</span></td><td class="num ">0<span class="warn">/w12</span></td><td class="num ">0<span class="warn">/w2</span></td><td class="num ">0<span class="warn">/w3</span></td></tr>
+  </table>
+  <h2>Reading the results</h2>
+  <p>Errors are deterministic bans (debug markers, swallowed exceptions, masks, secret echoes…).
+  Some warning classes are deliberately heuristic and fire on mature code
+  (<code>magic-number</code>, <code>legacy-var</code>, URL mentions under <code>insecure-transport</code>);
+  that over-approximation is documented per rule in each skill's anti-patterns reference, and it
+  is why warnings never fail a run without <code>--strict</code>. The errors column is the signal;
+  the warnings column is the worklist.</p>
+  <h2>Reproduce it</h2>
+  <pre>node scripts/benchmark.mjs --refresh   # re-clone the six repos and re-run all 60 checker invocations
+node scripts/build-site.mjs           # regenerate this page</pre>
+  <p>Full per-rule findings: <code>benchmark/results/*.json</code>.</p>
+</main>
+</body>
+</html>
