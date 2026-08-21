@@ -7,7 +7,8 @@ against production data that people depend on. Treat them with more ceremony tha
 
 1. **Additive-first.** The default migration adds: new tables, new columns (nullable or with a
    default), new indexes. Nothing existing changes.
-2. **Expand/contract for breaking changes.** Never `DROP COLUMN` or change a type in one step:
+2. **Expand/contract for breaking changes (drops, type changes, column renames).** Never
+   `DROP COLUMN` or change a type in one step:
    - *Expand:* add the new column (nullable), dual-write both, backfill, switch reads, verify.
    - *Contract:* after the old column is fully unused, drop it — in a later release.
    Renames are the same dance (add `new_name`, backfill, switch, drop `old_name`).

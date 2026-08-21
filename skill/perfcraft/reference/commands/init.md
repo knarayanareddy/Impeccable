@@ -12,7 +12,7 @@ setup per project.
    - The risk areas: which interactions are revenue/retention-critical (the budgeted ones)?
    - Tooling: profilers in use, APM/tracing, RUM, load-test harness.
    - The gate policy: which budgets block CI, and who owns perf regressions.
-3. Write `PERF.md` at the project root (or `.perfcraft/PERF.md` if the root is crowded):
+3. Write `PERF.md` at the project root (or `.perfcraft/PERF.md` if the root is crowded) — start from the template `assets/PERF.example.md`:
    - Targets per tracked interaction (with the percentile and the environment they're measured in)
    - The hot paths: the 5–10 requests/interactions that must stay budgeted
    - Tooling: profilers, tracing, RUM, load-test setup (and how to run each)

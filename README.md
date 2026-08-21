@@ -177,7 +177,11 @@ one-line install.**
 ## Quick start
 
 ```bash
-# From your project root — auto-detects your agent (Claude Code, Cursor, Codex, …)
+# One command for the whole suite — impc installs into any harness's skills dir
+node scripts/impc.mjs init --ai claude            # all ten into .claude/skills/
+node scripts/impc.mjs init --ai all --skill shipcraft   # one skill everywhere
+node scripts/impc.mjs init --ai universal --global # Agent Skills standard (~/.agents/skills)
+# …or per skill (auto-detects your agent: Claude Code, Cursor, Codex, …)
 npx skills add knarayanareddy/Impeccable --skill codecraft
 npx skills add knarayanareddy/Impeccable --skill criterion
 npx skills add knarayanareddy/Impeccable --skill apicraft
@@ -254,6 +258,8 @@ research and the launch playbook.
 
 ## Docs, demo & case studies
 
+- **[Suite tools](docs/installer.md)** — `impc` (installer + router), the corpus-integrity
+  gate (`data-quality`), and the routing evals (`evaluate-relevance`)
 - **[Docs site](docs/)** — the suite home and the per-skill guides: [criterion](docs/criterion/),
   [codecraft](docs/codecraft/), [apicraft](docs/apicraft/), [dbcraft](docs/dbcraft/),
   [testcraft](docs/testcraft/), [perfcraft](docs/perfcraft/), [seccraft](docs/seccraft/),
@@ -277,8 +283,9 @@ research and the launch playbook.
   into the harness's PostToolUse hook
 - **Live daemons** — `node skill/criterion/scripts/live.mjs` (visual variants) ·
   `node skill/codecraft/scripts/live.mjs` (refactor variants)
-- **Behavioral evals** — `node scripts/run-evals.mjs`: 308 pinned scenarios across ten
-  harnesses (checkers, gates, daemon protocols, port-collision behavior)
+- **Behavioral evals** — `node scripts/run-evals.mjs`: 333 pinned scenarios across ten skill
+  harnesses plus the suite-tools harness (checkers, gates, daemon protocols, installer
+  idempotency, corpus integrity, routing accuracy)
 
 ## License
 

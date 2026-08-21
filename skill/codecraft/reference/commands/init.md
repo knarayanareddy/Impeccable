@@ -9,7 +9,7 @@ One-time setup per project.
    representative files per layer, and the docs (README/CONTRIBUTING/ADRs). Extract the *facts*.
 2. Ask the user only what the code can't answer: quality policy (what's non-negotiable here?), the
    team's review culture, known pain points, and any legacy conventions that are frozen.
-3. Write `CODEBASE.md` at the project root (or `.codecraft/CODEBASE.md` if the root is crowded):
+3. Write `CODEBASE.md` at the project root (or `.codecraft/CODEBASE.md` if the root is crowded) — start from the template `assets/CODEBASE.example.md`:
    - Stack and tooling (language versions, formatter/linter, build, test commands)
    - Conventions: naming, structure, error model, async style, module layout
    - Idioms in use, incl. any that deviate from language defaults

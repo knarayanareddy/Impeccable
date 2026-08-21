@@ -1,0 +1,1 @@
+{"thresholds":{"calibration":{"top1":0,"top3":0},"heldOut":{"top1":0,"top3":0}},"calibration":[{"query":"x","skill":"criterion","file":"reference/commands/ghost.md"}],"heldOut":[{"query":"y","skill":"criterion","file":"SKILL.md"}]}

@@ -69,7 +69,7 @@ and never let anyone call a bet a win.
 | `profile [target]` | Evaluate | Measure where time actually goes: profilers, flame graphs, traces | [reference/commands/profile.md](reference/commands/profile.md) |
 | `measure [target]` | Evaluate | Quantitative metrics: vitals, percentiles, sizes, memory | [reference/commands/measure.md](reference/commands/measure.md) |
 | `review [target]` | Evaluate | Judgment review: would you believe the performance story? | [reference/commands/review.md](reference/commands/review.md) |
-| `optimize [target]` | Refine | The bounded loop: measure → fix one thing → verify → stop | [reference/commands/optimize.md](reference/commands/optimize.md) |
+| `optimize [target]` | Refine | The bounded loop: measure → fix one thing → verify → stop · review daemon: [reference/commands/optimize-review.md](reference/commands/optimize-review.md) | [reference/commands/optimize.md](reference/commands/optimize.md) |
 | `cache [target]` | Refine | Caching where it pays, with invalidation contracts | [reference/commands/cache.md](reference/commands/cache.md) |
 | `defer [target]` | Refine | Perceived performance: lazy, async, skeleton, streaming | [reference/commands/defer.md](reference/commands/defer.md) |
 | `parallelize [target]` | Refine | Concurrency where it pays, with correctness guards | [reference/commands/parallelize.md](reference/commands/parallelize.md) |

@@ -1,0 +1,28 @@
+{
+  "name": "impeccable-suite",
+  "version": "1.0.0",
+  "description": "Ten craft skills for AI coding agents — criterion, codecraft, apicraft, dbcraft, testcraft, perfcraft, seccraft, obscraft, shipcraft, bugcraft — with a deterministic installer, corpus-integrity gate, and routing evals.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "impc": "scripts/impc.mjs"
+  },
+  "files": [
+    "skill/",
+    "scripts/impc.mjs",
+    "scripts/lib/",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "quality": "node scripts/data-quality.mjs",
+    "relevance": "node scripts/evaluate-relevance.mjs",
+    "test": "node scripts/run-evals.mjs",
+    "prepublishOnly": "node scripts/data-quality.mjs && node scripts/evaluate-relevance.mjs && node tests/scenarios.mjs"
+  },
+  "keywords": [
+    "ai-skills", "agent-skills", "claude", "claude-code", "codex", "cursor",
+    "craft", "ui", "api", "database", "testing", "performance", "security",
+    "observability", "devops", "debugging"
+  ]
+}

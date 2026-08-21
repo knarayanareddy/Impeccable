@@ -14,7 +14,7 @@ setup per project (or per service).
    - The on-call reality: shift size, page volume, what a tolerable shift looks like.
    - Policy: log levels per environment, retention tiers, privacy constraints on telemetry.
 3. Write `OBSERVABILITY.md` at the project root (or `.obscraft/OBSERVABILITY.md` if the root is
-   crowded):
+   crowded) — start from the template `assets/OBSERVABILITY.example.md`:
    - The journeys and their SLOs (or the gap)
    - The stack: logging/metrics/tracing/alerting tooling and where each lives
    - Log-level contract, metric vocabulary conventions, sampling strategy

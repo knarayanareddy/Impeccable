@@ -6,6 +6,8 @@ system and defending a rumor of one.
 
 ## Steps
 
+0. If the work starts from a blank model, use `assets/threat-model.example.md` as the shape.
+
 1. Scope the component: the data it handles (by class — `domains/data.md`), the callers it
    serves, the dependencies it trusts. If the surface is a web application, an API/service, or
    a mobile app, the matching `reference/surfaces/` sheet is this command's attack-surface

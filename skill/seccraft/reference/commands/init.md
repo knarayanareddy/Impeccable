@@ -14,7 +14,7 @@ setup per project.
    - The threat context: public-facing or internal? multi-tenant? money or health data?
    - The security tooling in use: SAST, dependency audit, secret scanning — and where they run.
    - The incident path: who gets paged, and what's the escalation (`respond`)?
-3. Write `SECURITY.md` at the project root (or `.seccraft/SECURITY.md` if the root is crowded):
+3. Write `SECURITY.md` at the project root (or `.seccraft/SECURITY.md` if the root is crowded) — start from the template `assets/SECURITY.example.md`:
    - Data classification per field class and the policy each class triggers
    - Auth model: authn scheme, session/token policy, the authz model (RBAC/ABAC) and where the
      single authorization layer lives

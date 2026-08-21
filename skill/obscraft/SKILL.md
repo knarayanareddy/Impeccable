@@ -74,7 +74,7 @@ journey backward: the question first, the signal second, the dashboard last.
 | `metric [target]` | Refine | Metric craft: names, percentiles, cardinality | [reference/commands/metric.md](reference/commands/metric.md) |
 | `trace [target]` | Refine | Distributed tracing: spans, propagation, sampling | [reference/commands/trace.md](reference/commands/trace.md) |
 | `correlate [target]` | Refine | Link the pillars: correlation IDs, exemplars, one vocabulary | [reference/commands/correlate.md](reference/commands/correlate.md) |
-| `slo [journey]` | Enhance | SLOs and error budgets from user journeys · review daemon: `scripts/slo-review.mjs` | [reference/commands/slo.md](reference/commands/slo.md) |
+| `slo [journey]` | Enhance | SLOs and error budgets from user journeys · review daemon: [reference/commands/slo-review.md](reference/commands/slo-review.md) | [reference/commands/slo.md](reference/commands/slo.md) |
 | `alert [target]` | Enhance | Alert design: actionability, burn rates, no fatigue · shape gate: [reference/commands/telemetry-check.md](reference/commands/telemetry-check.md) | [reference/commands/alert.md](reference/commands/alert.md) |
 | `dashboard [target]` | Enhance | Dashboards that answer questions | [reference/commands/dashboard.md](reference/commands/dashboard.md) |
 | `monitor [target]` | Enhance | Wiring: collectors, exporters, storage, retention | [reference/commands/monitor.md](reference/commands/monitor.md) |

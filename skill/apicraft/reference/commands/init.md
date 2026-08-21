@@ -12,7 +12,7 @@ per API (or per team).
    - Style: REST / GraphQL / gRPC / webhooks — one primary style.
    - Consumers' ecosystems (JS? Python? mobile?) — drives casing and SDK priorities.
    - Compatibility policy: how long is N-1 supported? Deprecation window?
-3. Write `API.md` at the project root (or `.apicraft/API.md` if the root is crowded):
+3. Write `API.md` at the project root (or `.apicraft/API.md` if the root is crowded) — start from the template `assets/API.example.md`:
    - Audience and style
    - Conventions: field casing, date format, error envelope, pagination style, ID strategy
    - Vocabulary: domain terms and their canonical field/path names (frozen list)

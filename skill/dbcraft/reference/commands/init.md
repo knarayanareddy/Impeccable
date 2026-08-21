@@ -13,7 +13,7 @@ setup per project (or per database).
    - The naming convention, if not inferable from the existing schema
    - Policy questions: soft deletes? multi-tenancy? data retention? backup/RPO expectations?
    - Frozen zones: tables owned by another team or legacy systems that must not be touched
-3. Write `DATA.md` at the project root (or `.dbcraft/DATA.md` if the root is crowded):
+3. Write `DATA.md` at the project root (or `.dbcraft/DATA.md` if the root is crowded) — start from the template `assets/DATA.example.md`:
    - Engine, version, and migration tooling (and where migrations live)
    - Naming conventions: tables plural, columns snake_case, FK = `{table}_id`
    - Key strategy: BIGINT identity / UUID / ULID — and where each applies

@@ -2,9 +2,10 @@
 /**
  * Suite evals runner.
  *
- * Discovers and runs every skill's behavioral scenarios — skill/<name>/tests/scenarios.mjs.
- * Skills without a harness yet are reported, not failed — each facet ships its
- * scenarios in its launch pass.
+ * Discovers and runs every skill's behavioral scenarios — skill/<name>/tests/scenarios.mjs
+ * — plus the repo-level suite-tools harness (tests/scenarios.mjs: impc,
+ * data-quality, evaluate-relevance). Skills without a harness yet are
+ * reported, not failed — each facet ships its scenarios in its launch pass.
  *
  * Run:  node scripts/run-evals.mjs
  * Exit: 0 all harnesses green · 1 any scenario failed
@@ -36,5 +37,16 @@ for (const s of skills) {
     failures += 1;
   }
 }
-console.log(`\nrun-evals: ${failures ? failures + " skill(s) failed" : "all harnesses green"}`);
+// repo-level suite-tools harness (installer, corpus gate, routing evals)
+const suiteTools = join(here, "..", "tests", "scenarios.mjs");
+if (existsSync(suiteTools)) {
+  process.stdout.write("\n=== suite-tools ===\n");
+  try {
+    execFileSync("node", [suiteTools], { stdio: "inherit" });
+  } catch (e) {
+    failures += 1;
+  }
+}
+
+console.log(`\nrun-evals: ${failures ? failures + " harness(s) failed" : "all harnesses green"}`);
 process.exit(failures ? 1 : 0);

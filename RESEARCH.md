@@ -103,6 +103,10 @@ skill-name/            # folder name == frontmatter `name`
 | oso95/**scroll-world** | ~7.2k | Scroll-driven 3D brand worlds | Novelty | Narrow; experiential marketing only |
 
 **Deep dive (2026-08-21):** see [RESEARCH/ui-ux-pro-max-deep-dive.md](RESEARCH/ui-ux-pro-max-deep-dive.md) —
+adoption status: items 2 and 4 of its steal-list shipped the same day — the `impc` installer/router
+(`scripts/impc.mjs`, npm-publish-ready) and the relevance evals (`scripts/evaluate-relevance.mjs` +
+`tests/relevance-dataset.json`, calibration/held-out floors), plus the corpus-integrity gate
+(`scripts/data-quality.mjs`), all pinned by a 25-scenario suite-tools harness —
 end-to-end hands-on analysis of why UI/UX Pro Max overtook Impeccable (119.3k★ vs 61.4k★) and the
 head-to-head verdict.
 

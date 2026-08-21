@@ -13,7 +13,7 @@ One-time setup per project.
    - The pyramid policy: unit/integration/E2E budgets, suite duration targets.
    - Coverage policy per tier (floor percentages, mutation-testing cadence).
    - Flakiness policy: how flakes are tracked, quarantined, and who owns them.
-3. Write `TESTS.md` at the project root (or `.testcraft/TESTS.md` if the root is crowded):
+3. Write `TESTS.md` at the project root (or `.testcraft/TESTS.md` if the root is crowded) — start from the template `assets/TESTS.example.md`:
    - Frameworks and commands (unit, integration, E2E, coverage)
    - Directory conventions and file naming
    - The pyramid policy: what lives at each level, duration budgets

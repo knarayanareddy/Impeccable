@@ -14,7 +14,7 @@ setup per project.
    - The debugging tooling: debuggers, profilers, trace access — and who has access.
    - The bug-tracker and the postmortem culture: where do bugs live, and do postmortems exist?
    - Known fragile zones: the components the team considers haunted.
-3. Write `DEBUG.md` at the project root (or `.bugcraft/DEBUG.md` if the root is crowded):
+3. Write `DEBUG.md` at the project root (or `.bugcraft/DEBUG.md` if the root is crowded) — start from the template `assets/DEBUG.example.md`:
    - How to run, how to repro (the one-command repro path per environment)
    - Error reporting, logging, and trace access
    - Tooling: debugger/profiler setup, test commands

@@ -1,7 +1,8 @@
 # Command: name
 
-Rename for clarity against the naming rules (`domains/naming.md` is the authority). Renaming is the
-cheapest behavior-preserving edit there is — and the most underused.
+Rename for clarity against the naming rules (`domains/naming.md` is the authority): a good name
+matches the codebase's conventions and says what the thing does. Renaming is the cheapest
+behavior-preserving edit there is — and the most underused.
 
 ## Steps
 
