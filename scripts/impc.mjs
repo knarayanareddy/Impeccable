@@ -24,7 +24,7 @@
  * Exit codes: 0 · 1 install/find failures (e.g. skipped conflicts) · 2 usage error
  */
 
-import { existsSync, readFileSync, readdirSync, statSync, cpSync, rmSync, symlinkSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync, lstatSync, realpathSync, cpSync, rmSync, symlinkSync, mkdirSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { join, dirname, resolve, relative, basename } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -48,9 +48,10 @@ const TARGETS = {
 
 function usage(msg) {
   if (msg) console.error(`impc: ${msg}`);
-  console.error("usage: impc init --ai <claude|codex|cursor|gemini|universal|all> [--skill <name|all>] [--global] [--link] [--force] [--dry-run]");
+  console.error("usage: impc init --ai <claude|codex|cursor|gemini|universal|all> [--skill <name|all>] [--global] [--link] [--force] [--dry-run] [--skip-verify]");
   console.error("       impc list [--json]");
   console.error('       impc find "<query>" [--top n] [--json]');
+  console.error("       impc checksums --write");
   console.error("       impc version | impc help");
   process.exit(2);
 }
@@ -85,7 +86,66 @@ function manifestOf(dir) {
   return m.sort().join("\n");
 }
 
-function installTarget(targetDir, skills, { link, force, dryRun }) {
+const CHECKSUMS_FILE = join(SUITE_ROOT, "skill", "CHECKSUMS.json");
+
+/** Verify a skill's shipped files against skill/CHECKSUMS.json. An escaping
+ * symlink or a checksum mismatch refuses the skill — the install only moves
+ * bytes the release itself pinned. Returns null or an error string. */
+function verifySource(skill, { skipVerify }) {
+  const dir = join(SUITE_ROOT, "skill", skill);
+  let sums = null;
+  if (existsSync(CHECKSUMS_FILE)) {
+    try {
+      sums = JSON.parse(readFileSync(CHECKSUMS_FILE, "utf8"));
+    } catch (e) {
+      return `CHECKSUMS.json does not parse: ${e.message}`;
+    }
+  }
+  const pinned = sums && sums[skill];
+  if (!pinned && !skipVerify) {
+    return `no checksums entry for ${skill} — run \`impc checksums --write\` after any edit, or pass --skip-verify for a dev install`;
+  }
+  for (const f of walkFiles(dir)) {
+    const rel = relative(dir, f).replaceAll("\\", "/");
+    if (rel.split("/").includes("tests") || rel === "CHECKSUMS.json") continue;
+    let lst;
+    try {
+      lst = lstatSync(f);
+    } catch {
+      continue;
+    }
+    if (lst.isSymbolicLink()) {
+      let target;
+      try {
+        target = realpathSync(f);
+      } catch {
+        return `symlink ${rel} does not resolve`;
+      }
+      if (!target.startsWith(realpathSync(dir) + "/")) {
+        return `symlink ${rel} escapes the skill directory — refusing to install`;
+      }
+    }
+    if (!skipVerify && pinned) {
+      const hash = createHash("sha256").update(readFileSync(f, "utf8")).digest("hex");
+      if (pinned[rel] !== hash) {
+        return `checksum mismatch for ${rel} — the source changed since \`impc checksums --write\` (or the file is corrupted); re-pin deliberately, or pass --skip-verify for a dev install`;
+      }
+    }
+  }
+  if (!skipVerify && pinned) {
+    for (const [rel, hash] of Object.entries(pinned)) {
+      const abs = join(dir, rel);
+      if (!existsSync(abs)) {
+        return `checksums pin ${rel} which no longer exists — run \`impc checksums --write\` after the deletion, or pass --skip-verify`;
+      }
+      const got = createHash("sha256").update(readFileSync(abs, "utf8")).digest("hex");
+      if (got !== hash) return `checksum mismatch for ${rel}`;
+    }
+  }
+  return null;
+}
+
+function installTarget(targetDir, skills, { link, force, dryRun, skipVerify }) {
   const report = { installed: [], unchanged: [], skipped: [], failed: [] };
   for (const skill of skills) {
     const src = join(SUITE_ROOT, "skill", skill);
@@ -93,6 +153,12 @@ function installTarget(targetDir, skills, { link, force, dryRun }) {
     const invalid = validateSkill(skill);
     if (invalid) {
       console.error(`impc: refusing ${skill}: ${invalid}`);
+      report.failed.push(skill);
+      continue;
+    }
+    const supply = verifySource(skill, { skipVerify });
+    if (supply) {
+      console.error(`impc: refusing ${skill}: ${supply}`);
       report.failed.push(skill);
       continue;
     }
@@ -148,6 +214,7 @@ function cmdInit(argv) {
   const link = argv.includes("--link");
   const force = argv.includes("--force");
   const dryRun = argv.includes("--dry-run");
+  const skipVerify = argv.includes("--skip-verify");
   const base = global ? homedir() : process.cwd();
 
   let failures = 0;
@@ -155,7 +222,7 @@ function cmdInit(argv) {
     const target = TARGETS[key];
     const dir = join(base, target.dir);
     console.log(`\n${target.label}: ${dir}${dryRun ? " (dry run — nothing written)" : ""}`);
-    const report = installTarget(dir, skills, { link, force, dryRun });
+    const report = installTarget(dir, skills, { link, force, dryRun, skipVerify });
     failures += report.skipped.length + report.failed.length;
   }
   if (failures) {
@@ -247,6 +314,28 @@ function cmdFind(argv) {
   process.exit(0);
 }
 
+function cmdChecksums(argv) {
+  if (!argv.includes("--write")) usage('checksums takes --write: impc checksums --write');
+  const out = {};
+  for (const skill of CANONICAL_SKILLS) {
+    const dir = join(SUITE_ROOT, "skill", skill);
+    const map = {};
+    for (const f of walkFiles(dir)) {
+      const rel = relative(dir, f).replaceAll("\\", "/");
+      if (rel.split("/").includes("tests") || rel === "CHECKSUMS.json") continue;
+      if (lstatSync(f).isSymbolicLink()) {
+        console.error(`impc: refusing to pin symlink ${skill}/${rel} — resolve or remove it`);
+        process.exit(2);
+      }
+      map[rel] = createHash("sha256").update(readFileSync(f, "utf8")).digest("hex");
+    }
+    out[skill] = map;
+  }
+  writeFileSync(CHECKSUMS_FILE, JSON.stringify(out, null, 2) + "\n");
+  console.log(`impc: pinned ${Object.values(out).reduce((a, m) => a + Object.keys(m).length, 0)} files across ${CANONICAL_SKILLS.length} skills → skill/CHECKSUMS.json`);
+  process.exit(0);
+}
+
 function cmdVersion() {
   let v = "1.0.0";
   try {
@@ -269,6 +358,9 @@ switch (sub) {
     break;
   case "find":
     cmdFind(rest);
+    break;
+  case "checksums":
+    cmdChecksums(rest);
     break;
   case "version":
   case "--version":

@@ -283,9 +283,14 @@ research and the launch playbook.
   into the harness's PostToolUse hook
 - **Live daemons** — `node skill/criterion/scripts/live.mjs` (visual variants) ·
   `node skill/codecraft/scripts/live.mjs` (refactor variants)
-- **Behavioral evals** — `node scripts/run-evals.mjs`: 334 pinned scenarios across ten skill
+- **Behavioral evals** — `node scripts/run-evals.mjs`: 341 pinned scenarios across ten skill
   harnesses plus the suite-tools harness (checkers, gates, daemon protocols, installer
-  idempotency, corpus integrity, routing accuracy)
+  idempotency, corpus integrity, routing accuracy, supply-chain verification, daemon
+  hardening)
+- **Security posture** — SHA-256-pinned installs (`skill/CHECKSUMS.json`, verified by
+  `impc init`), 64 KB daemon body caps with 413s, security headers on every daemon page,
+  trust-boundary clauses in every skill, and deep-input refusals in the tools — see
+  [docs/installer.md](docs/installer.md) and `REVIEWS/security-redteam-round1.md`
 
 ## License
 

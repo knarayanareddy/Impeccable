@@ -10,7 +10,7 @@
  * Exit: 0 all pass · 1 failures
  */
 
-import { execFileSync, spawnSync } from "node:child_process";
+import { execFileSync, spawnSync, spawn } from "node:child_process";
 import { writeFileSync, mkdirSync, rmSync, existsSync, readFileSync, symlinkSync, lstatSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -135,6 +135,86 @@ const fj = run("impc find: --json output is machine-readable", node, [IMPC, "fin
   cwd: ROOT, expect: 0, contains: ['"results"'],
 });
 try { JSON.parse(fj); console.log("✓ impc find: --json parses"); pass++; } catch { console.log("✗ impc find: --json not parseable"); fail++; }
+
+// ---------------------------------------------------------------------------
+// Security red-team: supply chain, daemon hardening, deep-nesting refusal
+// ---------------------------------------------------------------------------
+
+// checksum verification: a tampered skill file refuses the install
+const critSk = join(ROOT, "skill", "criterion", "SKILL.md");
+const original = readFileSync(critSk, "utf8");
+try {
+  writeFileSync(critSk, original + "\n# tampered\n");
+  run("security: tampered source refused by checksum verification", node, [IMPC, "init", "--ai", "claude", "--skill", "criterion"], {
+    cwd: proj, expect: 1, contains: ["checksum mismatch"],
+  });
+  const skipDir = TMP + "-skipverify";
+  mkdirSync(skipDir, { recursive: true });
+  run("security: --skip-verify is the documented dev escape", node, [IMPC, "init", "--ai", "claude", "--skill", "criterion", "--skip-verify"], {
+    cwd: skipDir, expect: 0, contains: ["done"],
+  });
+} finally {
+  writeFileSync(critSk, original);
+}
+
+// escaping symlink inside a skill refuses the install
+const escapeLink = join(ROOT, "skill", "criterion", "reference", "escape.md");
+try {
+  symlinkSync("/etc/hostname", escapeLink);
+  run("security: symlink escaping the skill dir refused", node, [IMPC, "init", "--ai", "claude", "--skill", "criterion"], {
+    cwd: proj, expect: 1, contains: ["escapes the skill"],
+  });
+} finally {
+  rmSync(escapeLink, { force: true });
+}
+
+// daemon: oversize POST body -> 413; security headers on the page
+await (async () => {
+  const dir = TMP + "-sec";
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(join(dir, "bugs.json"), JSON.stringify([{ id: "a", repro: "r" }]));
+  const port = 8500 + (process.pid % 900);
+  const srv = spawn("node", [join(ROOT, "skill", "bugcraft", "scripts", "bug-review.mjs"), "--bugs", "bugs.json", "--round", "s1", "--port", String(port)], { cwd: dir });
+  try {
+    let up = false;
+    for (let i = 0; i < 20; i++) {
+      try { if ((await fetch(`http://localhost:${port}/beat`)).status === 204) { up = true; break; } } catch {}
+      await new Promise((r) => setTimeout(r, 150));
+    }
+    if (!up) { console.log("✗ security: daemon did not come up"); fail++; }
+    else {
+      const page = await fetch(`http://localhost:${port}/`);
+      if (page.headers.get("x-content-type-options") !== "nosniff") { console.log("✗ security: page missing nosniff header"); fail++; }
+      else { console.log("✓ security: daemon page carries nosniff + no-store headers"); pass++; }
+      const big = "x".repeat(70000);
+      const r413 = await fetch(`http://localhost:${port}/submit`, {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ verdicts: { a: "ship", [big]: "flag" } }),
+      });
+      if (r413.status !== 413) { console.log(`✗ security: oversize POST should be 413, got ${r413.status}`); fail++; }
+      else { console.log("✓ security: oversize POST body rejected with 413"); pass++; }
+    }
+  } finally {
+    srv.kill();
+    rmSync(dir, { recursive: true, force: true });
+  }
+})();
+
+// ci-check: deeply-nested JSON is a refusal, not a stack overflow
+const deep = TMP + "-deep.json";
+try {
+  let d = '{"steps":';
+  for (let i = 0; i < 5000; i++) d += "[{\"x\":";
+  d += "1";
+  for (let i = 0; i < 5000; i++) d += "}]";
+  d += "}";
+  writeFileSync(deep, d);
+  run("security: deeply-nested pipeline JSON refused (no stack overflow)", node, [join(ROOT, "skill", "shipcraft", "scripts", "ci-check.mjs"), "--pipeline", deep], {
+    cwd: ROOT, expect: 2, contains: ["nests deeper"],
+  });
+} finally {
+  rmSync(deep, { force: true });
+}
 
 // ---------------------------------------------------------------------------
 // data-quality — corpus-integrity gate

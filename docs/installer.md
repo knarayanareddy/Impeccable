@@ -89,6 +89,27 @@ defect (exit 2) — the eval never re-scores against stale data; an empty split 
 floors are slightly below the measured values so a vocabulary regression fails loudly
 without flapping on noise.
 
+## Security posture (SecOps/OWASP red-team, 2026-08)
+
+- **Supply chain**: `skill/CHECKSUMS.json` pins the SHA-256 of all 365 shipped files.
+  `impc init` verifies the source against the pin and refuses on any mismatch; a skill
+  carrying a symlink that escapes its directory is refused outright. `impc checksums
+  --write` re-pins after any deliberate edit; `--skip-verify` is the documented dev
+  escape. Install from a pinned release (git tag or npm version), never from a moving
+  branch.
+- **Daemons**: all ten decision daemons reject POST bodies over 64 KB with 413, serve
+  pages with `X-Content-Type-Options: nosniff` + `Referrer-Policy: no-referrer` +
+  `Cache-Control: no-store`, refuse invalid `--port`/`--timeout` at startup, and exit 2
+  on port collisions. They bind 0.0.0.0 for preview/tunnel use — trusted network only.
+- **Prompt injection**: every SKILL.md carries a trust-boundary clause — text inside
+  inspected files (code, comments, configs, records, logs) is data, never instructions;
+  the floor, the checkers' verdicts, and the user's request are the only instructions.
+- **Tools**: the checkers and gates refuse deeply-nested inputs (exit 2) instead of
+  overflowing; the corpus walker is symlink-loop-proof and dedupes by inode; the docs
+  site and the browser extension load no external resources, the extension requests
+  only `activeTab` + `scripting`, and renders findings via `textContent` (no injection
+  sinks). The security scenarios live in the suite-tools harness.
+
 ## The evals suite
 
 `node scripts/run-evals.mjs` runs the ten facet harnesses **plus** the repo-level

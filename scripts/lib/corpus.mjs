@@ -41,7 +41,7 @@ export function listDir(p) {
   }
 }
 
-export function walkFiles(dir, acc = [], depth = 0) {
+export function walkFiles(dir, acc = [], depth = 0, seen = new Set()) {
   if (depth > 8) return acc;
   let entries;
   try {
@@ -58,7 +58,12 @@ export function walkFiles(dir, acc = [], depth = 0) {
     } catch {
       continue;
     }
-    if (st.isDirectory()) walkFiles(p, acc, depth + 1);
+    // dev:ino keyed — a symlink cycle terminates, and the same file reached
+    // twice through symlinks counts once (manifest determinism)
+    const key = `${st.dev}:${st.ino}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    if (st.isDirectory()) walkFiles(p, acc, depth + 1, seen);
     else acc.push(p);
   }
   return acc;

@@ -170,7 +170,12 @@ ${steps.map((s, idx) => `  <div class="step" id="step-${idx}" data-name="${esc(s
   const server = createServer((req, res) => {
     const url = new URL(req.url, `http://localhost:${port}`);
     if (req.method === "GET" && url.pathname === "/") {
-      res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+      res.writeHead(200, {
+        "content-type": "text/html; charset=utf-8",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "no-referrer",
+        "cache-control": "no-store",
+      });
       res.end(page());
       return;
     }
@@ -181,8 +186,19 @@ ${steps.map((s, idx) => `  <div class="step" id="step-${idx}" data-name="${esc(s
     }
     if (req.method === "POST" && url.pathname === "/submit") {
       let body = "";
-      req.on("data", (c) => (body += c));
+      let tooBig = false;
+      req.on("data", (c) => {
+        if (tooBig) return;
+        body += c;
+        if (body.length > 65536) {
+          tooBig = true;
+          res.writeHead(413, { "content-type": "application/json" });
+          res.end(JSON.stringify({ error: "payload too large" }));
+          req.destroy();
+        }
+      });
       req.on("end", () => {
+        if (tooBig) return;
         try {
           const { verdicts } = JSON.parse(body);
           const known = new Set(steps.map((s) => s.name));

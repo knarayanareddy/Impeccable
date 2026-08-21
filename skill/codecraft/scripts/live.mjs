@@ -167,7 +167,12 @@ ${options.map((o) => `    <div class="card" data-name="${esc(o.name)}">
   const server = createServer((req, res) => {
     const url = new URL(req.url, `http://localhost:${port}`);
     if (req.method === "GET" && url.pathname === "/") {
-      res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+      res.writeHead(200, {
+        "content-type": "text/html; charset=utf-8",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "no-referrer",
+        "cache-control": "no-store",
+      });
       res.end(page());
       return;
     }
@@ -178,8 +183,19 @@ ${options.map((o) => `    <div class="card" data-name="${esc(o.name)}">
     }
     if (req.method === "POST" && url.pathname === "/choose") {
       let body = "";
-      req.on("data", (c) => (body += c));
+      let tooBig = false;
+      req.on("data", (c) => {
+        if (tooBig) return;
+        body += c;
+        if (body.length > 65536) {
+          tooBig = true;
+          res.writeHead(413, { "content-type": "application/json" });
+          res.end(JSON.stringify({ error: "payload too large" }));
+          req.destroy();
+        }
+      });
       req.on("end", () => {
+        if (tooBig) return;
         try {
           const { option } = JSON.parse(body);
           if (!options.some((o) => o.name === option)) {

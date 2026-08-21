@@ -187,7 +187,12 @@ ${options.map((o) => `    <div class="card" data-name="${esc(o.name)}">
 const server = createServer((req, res) => {
   const url = new URL(req.url, `http://localhost:${port}`);
   if (req.method === "GET" && url.pathname === "/") {
-    res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    res.writeHead(200, {
+        "content-type": "text/html; charset=utf-8",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "no-referrer",
+        "cache-control": "no-store",
+      });
     res.end(page());
     return;
   }

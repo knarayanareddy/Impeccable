@@ -137,11 +137,12 @@ function parseWorkflow(text) {
 // Parsing: JSON pipeline walk
 // ---------------------------------------------------------------------------
 
-function jsonSteps(node, out = []) {
+function jsonSteps(node, out = [], depth = 0) {
+  if (depth > 64) throw new RangeError("nested too deep");
   if (Array.isArray(node)) {
     for (const v of node) {
       if (typeof v === "string") out.push({ label: "", cmd: v });
-      else jsonSteps(v, out);
+      else jsonSteps(v, out, depth + 1);
     }
     return out;
   }
@@ -159,7 +160,7 @@ function jsonSteps(node, out = []) {
     }
     for (const k of Object.keys(node)) {
       if (["run", "script", "command", "commands"].includes(k)) continue;
-      jsonSteps(node[k], out);
+      jsonSteps(node[k], out, depth + 1);
     }
   }
   return out;
@@ -185,7 +186,15 @@ if (/^\s*[\{\[\"]/.test(text) || /\.json$/i.test(pipelineFile)) {
     process.exit(2);
   }
   mode = "json";
-  steps = jsonSteps(parsed);
+  try {
+    steps = jsonSteps(parsed);
+  } catch (e) {
+    if (e instanceof RangeError) {
+      console.error(`ci-check: ${pipelineFile} nests deeper than 64 levels — refusing to claim the gate holds (resource-exhaustion input)`);
+      process.exit(2);
+    }
+    throw e;
+  }
   if (!steps.length) {
     console.error(`ci-check: ${pipelineFile} parsed to zero steps — refusing to claim the gate holds (is the pipeline keyed by run/script/command?)`);
     process.exit(2);
