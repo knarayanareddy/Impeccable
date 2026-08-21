@@ -8,7 +8,12 @@
     "impc": "scripts/impc.mjs"
   },
   "files": [
-    "skill/",
+    "skill/*/SKILL.md",
+    "skill/*/reference/",
+    "skill/*/scripts/",
+    "skill/*/assets/",
+    "skill/criterion/extension/",
+    "skill/CHECKSUMS.json",
     "scripts/impc.mjs",
     "scripts/lib/",
     "LICENSE",
