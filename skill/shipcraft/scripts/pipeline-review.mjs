@@ -1,33 +1,38 @@
 #!/usr/bin/env node
 /**
- * Obscraft slo-review daemon.
+ * Shipcraft pipeline-review daemon.
  *
- * Serves the SLO and alert definitions as a decision page: the human
- * verdicts each — approve / flag / n-a — against the actionability and
- * SLI-quality contracts. The daemon mode of the slo + alert commands:
- * flagged entries become the worklist.
+ * Serves the deploy pipeline's steps as a decision page: the human verdicts
+ * each step — ship / flag / n-a — against the recovery and risk contracts.
+ * The daemon mode of the `review` + `deploy` commands: flagged steps become
+ * the worklist, and the Friday question ("would you ship from this pipeline
+ * at 4:55 p.m.?") gets an auditable answer.
  *
  * Usage:
- *   node slo-review.mjs --review review.json --round r1 [--port 8796]
- *   node slo-review.mjs --round r1 --wait [--timeout S]
- *   node slo-review.mjs --round r1 --result
+ *   node pipeline-review.mjs --steps steps.json --round r1 [--port 8797]
+ *   node pipeline-review.mjs --round r1 --wait [--timeout S]
+ *   node pipeline-review.mjs --round r1 --result
  *
- * Review file shape (JSON):
- *   [ { "kind": "slo", "name": "checkout-availability",
- *       "facts": "99.9% complete < 3s over 30d", "owner": "payments-team" },
- *     { "kind": "alert", "name": "CheckoutFastBurn",
- *       "facts": "burn rate 2%/1h", "owner": "payments-team",
- *       "runbook": "runbooks/checkout-burn.md" } ]
+ * Steps file shape (JSON) — agent-written step inventory:
+ *   [ { "name": "deploy-prod", "job": "deploy", "run": "./deploy.sh",
+ *       "risk": "high", "rollback": "./rollback.sh --previous-image",
+ *       "approval": "env prod requires maintainer review" },
+ *     { "name": "load-test", "job": "verify", "risk": "low" } ]
  *
- * State: writes `slo-review-result.json` in the cwd.
+ * Red gap callouts: a step with no `rollback` reference shows "gap: no
+ * rollback reference"; a `risk: high` step with no `approval` reference
+ * shows "gap: high-risk without approval reference".
+ *
+ * State: writes `pipeline-review-result.json` in the cwd.
  * Exit codes: 0 · 1 no result within timeout · 2 usage error
+ * Bind note: serves on 0.0.0.0 — run only on a trusted network.
  */
 
 import { readFileSync, writeFileSync, existsSync, statSync } from "node:fs";
 import { createServer } from "node:http";
 import { join, resolve } from "node:path";
 
-const RESULT_FILE = join(process.cwd(), "slo-review-result.json");
+const RESULT_FILE = join(process.cwd(), "pipeline-review-result.json");
 const argv = process.argv.slice(2);
 const get = (flag) => {
   const i = argv.indexOf(flag);
@@ -35,12 +40,12 @@ const get = (flag) => {
 };
 const has = (flag) => argv.includes(flag);
 const round = get("--round");
-const port = parseInt(get("--port") || "8796", 10);
-const reviewFile = get("--review");
+const port = parseInt(get("--port") || "8797", 10);
+const stepsFile = get("--steps");
 
 function usage(msg) {
-  console.error("slo-review: " + msg);
-  console.error("usage: node slo-review.mjs --review <review.json> --round <name> [--port n] | --round <name> --wait | --round <name> --result");
+  console.error("pipeline-review: " + msg);
+  console.error("usage: node pipeline-review.mjs --steps <steps.json> --round <name> [--port n] | --round <name> --wait | --round <name> --result");
   process.exit(2);
 }
 if (!round) usage("--round is required");
@@ -64,7 +69,7 @@ if (has("--wait") || has("--result")) {
   if (has("--result")) {
     const r = readResult();
     if (!r) {
-      console.error(`slo-review: no recorded verdicts for round "${round}"`);
+      console.error(`pipeline-review: no recorded verdicts for round "${round}"`);
       process.exit(1);
     }
     emit(r);
@@ -77,7 +82,7 @@ if (has("--wait") || has("--result")) {
       if (mtime > waitStart) emit(r);
     }
     if (Date.now() > deadline) {
-      console.error(`slo-review: no verdicts recorded for round "${round}" within ${timeout / 1000}s`);
+      console.error(`pipeline-review: no verdicts recorded for round "${round}" within ${timeout / 1000}s`);
       process.exit(1);
     }
     setTimeout(tick, 250);
@@ -88,26 +93,34 @@ if (has("--wait") || has("--result")) {
 }
 
 function serveMode() {
-  if (!reviewFile) usage("--review <review.json> is required in serve mode");
+  if (!stepsFile) usage("--steps <steps.json> is required in serve mode");
   let entries;
   try {
-    entries = JSON.parse(readFileSync(resolve(reviewFile), "utf8"));
+    entries = JSON.parse(readFileSync(resolve(stepsFile), "utf8"));
   } catch (e) {
-    usage(`cannot read review ${reviewFile}: ${e.message}`);
+    usage(`cannot read steps ${stepsFile}: ${e.message}`);
   }
-  if (!Array.isArray(entries) || !entries.length) usage("review.json must be a non-empty array");
+  if (!Array.isArray(entries) || !entries.length) usage("steps.json must be a non-empty array");
   for (const e of entries) {
-    if (!e.name) usage("every entry needs a name");
-    if (!e.kind || !["slo", "alert"].includes(e.kind)) usage(`entry "${e.name}" needs kind slo|alert`);
+    if (!e.name) usage("every step needs a name");
+    if (e.risk !== undefined && !["low", "medium", "high"].includes(String(e.risk).toLowerCase())) {
+      usage(`step "${e.name}" has risk "${e.risk}" — expected low|medium|high`);
+    }
   }
 
+  const gapsOf = (e) => {
+    const gaps = [];
+    if (!e.rollback) gaps.push("no rollback reference");
+    if (String(e.risk).toLowerCase() === "high" && !e.approval) gaps.push("high-risk without approval reference");
+    return gaps;
+  };
   const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
   const page = () => `<!doctype html>
 <html>
 <head>
 <meta charset="utf-8">
-<title>Obscraft — SLO/alert review (${esc(round)})</title>
+<title>Shipcraft — pipeline review (${esc(round)})</title>
 <style>
   :root { --bg:#101418; --panel:#161c22; --text:#e8eaf0; --muted:#8b93a1; --line:#262e37; --accent:#4d7cfe; --ok:#2f9e6a; --flag:#e5a94f; --risk:#f4606c; }
   * { box-sizing: border-box; }
@@ -117,11 +130,15 @@ function serveMode() {
   .entry { background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:12px 14px; margin-bottom:10px; }
   .entry .head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
   .entry .name { font-weight:600; flex:1; }
-  .entry .kind { font-size:10px; padding:1px 6px; border-radius:4px; text-transform:uppercase; letter-spacing:0.04em; background:#1d2735; color:#7fb2ff; }
-  .entry .facts { color:var(--muted); font-size:12px; font-family:ui-monospace,monospace; margin-top:4px; }
+  .entry .job { font-size:10px; padding:1px 6px; border-radius:4px; text-transform:uppercase; letter-spacing:0.04em; background:#1d2735; color:#7fb2ff; }
+  .entry .risk { font-size:10px; padding:1px 6px; border-radius:4px; text-transform:uppercase; letter-spacing:0.04em; }
+  .risk.low { background:#16301f; color:var(--ok); }
+  .risk.medium { background:#33260f; color:var(--flag); }
+  .risk.high { background:#3a1620; color:var(--risk); }
+  .entry .run { color:var(--muted); font-size:12px; font-family:ui-monospace,monospace; margin-top:4px; }
   .entry .gap { color:var(--risk); font-size:12px; margin-top:4px; }
   .entry button { border:0; border-radius:5px; padding:4px 10px; font-size:11.5px; font-weight:600; cursor:pointer; }
-  .approve { background:#16301f; color:var(--ok); }
+  .ship { background:#16301f; color:var(--ok); }
   .flag { background:#33260f; color:var(--flag); }
   .na { background:#1d2735; color:#7fb2ff; }
   .entry.done { border-color:var(--ok); }
@@ -132,30 +149,27 @@ function serveMode() {
 </style>
 </head>
 <body>
-  <h1>SLO / alert review — round “${esc(round)}”</h1>
-  <div class="sub">Verdict each definition against its contract: the SLO's quartet, the alert's actionability. Gaps are shown in red.</div>
+  <h1>Pipeline review — round “${esc(round)}”</h1>
+  <div class="sub">Verdict each deploy step: ship it, flag it, or n/a. Steps missing their rollback (or a high-risk step missing its approval reference) are called out in red.</div>
 ${entries.map((e, idx) => {
-    const gaps = [];
-    if (e.kind === "slo") {
-      if (!e.owner) gaps.push("no owner");
-    } else {
-      if (!e.owner) gaps.push("no owner");
-      if (!e.runbook) gaps.push("no runbook");
-    }
+    const gaps = gapsOf(e);
     return `  <div class="entry" id="e-${idx}" data-name="${esc(e.name)}">
     <div class="head">
-      <span class="kind">${e.kind}</span>
+      ${e.job ? `<span class="job">${esc(e.job)}</span>` : ""}
       <span class="name">${esc(e.name)}</span>
-      <button class="approve" onclick="verdict(${idx}, 'approve')">Approve</button>
+      ${e.risk ? `<span class="risk ${esc(String(e.risk).toLowerCase())}">${esc(e.risk)}</span>` : ""}
+      <button class="ship" onclick="verdict(${idx}, 'ship')">Ship</button>
       <button class="flag" onclick="verdict(${idx}, 'flag')">Flag</button>
       <button class="na" onclick="verdict(${idx}, 'n/a')">N/A</button>
     </div>
-    ${e.facts ? `<div class="facts">${esc(e.facts)}</div>` : ""}
-    ${gaps.length ? `<div class="gap">gap: ${esc(gaps.join(", "))}</div>` : ""}
+    ${e.run ? `<div class="run">${esc(e.run)}</div>` : ""}
+    ${e.rollback ? `<div class="run">rollback: ${esc(e.rollback)}</div>` : ""}
+    ${e.approval ? `<div class="run">approval: ${esc(e.approval)}</div>` : ""}
+    ${gaps.length ? `<div class="gap">gap: ${esc(gaps.join("; "))}</div>` : ""}
   </div>`;
   }).join("\n")}
   <button id="submit" disabled onclick="submitAll()">Record verdicts</button>
-  <div class="status" id="status">review every entry, then record</div>
+  <div class="status" id="status">review every step, then record</div>
 <script>
   const verdicts = {};
   function verdict(idx, v) {
@@ -202,11 +216,11 @@ ${entries.map((e, idx) => {
           const known = new Set(entries.map((e) => e.name));
           const valid = {};
           for (const [name, v] of Object.entries(verdicts)) {
-            if (known.has(name) && ["approve", "flag", "n/a"].includes(v)) valid[name] = v;
+            if (known.has(name) && ["ship", "flag", "n/a"].includes(v)) valid[name] = v;
           }
           if (Object.keys(valid).length !== entries.length) {
             res.writeHead(400, { "content-type": "application/json" });
-            res.end(JSON.stringify({ error: "every entry needs a verdict" }));
+            res.end(JSON.stringify({ error: "every step needs a verdict" }));
             return;
           }
           const result = {
@@ -229,11 +243,11 @@ ${entries.map((e, idx) => {
   });
 
   server.on("error", (e) => {
-    console.error(`slo-review: cannot bind port ${port} — ${e.message} (is another daemon running?)`);
+    console.error(`pipeline-review: cannot bind port ${port} — ${e.message} (is another daemon running?)`);
     process.exit(2);
   });
   server.listen(port, "0.0.0.0", () => {
-    console.log(`slo-review: round "${round}" · ${entries.length} entr${entries.length === 1 ? "y" : "ies"} · http://localhost:${port}`);
-    console.log("slo-review: verdict each entry; the result lands in slo-review-result.json");
+    console.log(`pipeline-review: round "${round}" · ${entries.length} step${entries.length === 1 ? "" : "s"} · http://localhost:${port} (trusted network only)`);
+    console.log("pipeline-review: verdict each step; the result lands in pipeline-review-result.json");
   });
 }

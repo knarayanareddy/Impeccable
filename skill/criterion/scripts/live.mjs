@@ -227,7 +227,7 @@ const server = createServer((req, res) => {
 
 server.on("error", (e) => {
 
-  console.error("live: cannot bind port ${port} — ${e.message} (is another daemon running?)");
+  console.error(`live: cannot bind port ${port} — ${e.message} (is another daemon running?)`);
 
   process.exit(2);
 

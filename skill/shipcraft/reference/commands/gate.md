@@ -19,7 +19,9 @@ the pipeline's green mean something again — and kills the lies with webhooks.
 3. Wire the approval gate where policy demands (prod deploys, destructive ops) — recorded in
    the deploy log (`domains/gates.md`).
 4. Verify: a deliberately-bad change fails the right gate with an explanatory log; a good change
-   passes clean; gate pass rate and duration recorded (`monitor`).
+   passes clean; gate pass rate and duration recorded (`monitor`). The gate in tool form is
+   `node <skill-dir>/scripts/ci-check.mjs --pipeline <file> --strict` (`reference/commands/ci-check.md`)
+   — wire it into the pipeline so the gates gate themselves.
 
 ## Exit criteria
 

@@ -212,7 +212,7 @@ ${endpoints.map((e, idx) => `  <div class="row" id="row-${idx}" data-ep="${esc(e
 
   server.on("error", (e) => {
 
-    console.error("review: cannot bind port ${port} — ${e.message} (is another daemon running?)");
+    console.error(`review: cannot bind port ${port} — ${e.message} (is another daemon running?)`);
 
     process.exit(2);
 

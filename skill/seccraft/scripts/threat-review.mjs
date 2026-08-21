@@ -221,7 +221,7 @@ ${threats.map((t, idx) => `  <div class="threat" id="t-${idx}" data-name="${esc(
 
   server.on("error", (e) => {
 
-    console.error("threat-review: cannot bind port ${port} — ${e.message} (is another daemon running?)");
+    console.error(`threat-review: cannot bind port ${port} — ${e.message} (is another daemon running?)`);
 
     process.exit(2);
 

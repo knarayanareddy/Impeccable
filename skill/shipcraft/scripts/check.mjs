@@ -3,7 +3,10 @@
  * Shipcraft deterministic checker.
  *
  * Scans pipeline, deploy, and infra configs for the delivery-slop
- * anti-patterns in reference/anti-patterns.md.
+ * anti-patterns in reference/anti-patterns.md. The rule vocabulary is shared
+ * with scripts/ci-check.mjs via scripts/lib/pipeline-rules.mjs so the repo
+ * scanner and the per-pipeline gate can never drift.
+ *
  * Zero dependencies, no LLM, no API key.
  *
  * Usage:
@@ -17,6 +20,7 @@
 
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, resolve, relative, extname, basename } from "node:path";
+import { RULES, stripComments } from "./lib/pipeline-rules.mjs";
 
 const CODE_EXTS = new Set([".yml", ".yaml", ".json", ".toml", ".sh", ".bash", ".makefile", ".mk"]);
 const EXTS = new Set([...CODE_EXTS]);
@@ -33,102 +37,12 @@ const CI_FILES = [
 ];
 const CI_DIRS = [".github/workflows", ".buildkite", ".circleci", ".github/actions"];
 
-const SECRET_NAME = /\b(password|passwd|secrets?|api[_-]?key|access[_-]?token|auth[_-]?token|private[_-]?key|credential|client[_-]?secret|signing[_-]?key|jwt[_-]?secret)\w*/i;
-
 function isCiFile(p) {
   const rel = p.replaceAll("\\", "/");
   const base = basename(rel).toLowerCase();
   if (CI_FILES.includes(base)) return true;
   return CI_DIRS.some((d) => rel.includes(d + "/"));
 }
-
-// ---------------------------------------------------------------------------
-// Line rules (applied to CI files only; code exts get a conservative subset)
-// ---------------------------------------------------------------------------
-
-const rules = [
-  {
-    id: "secret-echo",
-    severity: "error",
-    message: "Secret echoed in a pipeline step — the build log becomes a credential store (S1). Reference by name, never print.",
-    test(line) {
-      if (!SECRET_NAME.test(line)) return null;
-      const isEcho = /\b(echo|printf)\b/i.test(line) || /\bprintenv\b/i.test(line) || /\benv\b/i.test(line) && !/env\s*:/i.test(line);
-      if (!isEcho) return null;
-      return "secret in log output";
-    },
-  },
-  {
-    id: "pipe-to-shell",
-    severity: "warning",
-    message: "curl/wget piped to shell — executing the internet with CI's permissions (H4). Use pinned, checksummed installers.",
-    test(line) {
-      const m = /\b(curl|wget)\b[^|]*\|\s*(?:sudo\s+)?(?:ba)?sh\b/i.exec(line);
-      if (m) return "curl | sh";
-      // to-file-then-execute form: curl -o install.sh URL && bash install.sh
-      if (/\b(curl|wget)\b[^;]*-(?:o|output)\s+\S+[^;]*(?:&&|;)\s*(?:sudo\s+)?(?:ba)?sh\b/i.test(line)) return "curl -o file && sh";
-      return null;
-    },
-  },
-  {
-    id: "masked-failure",
-    severity: "error",
-    message: "Red mask — the step's failure is swallowed (H1). Fix the step or delete it; a mask is an incident in waiting.",
-    test(line) {
-      const m = /\|\|\s*(true|exit\s+0)\s*;?|continue-on-error\s*:\s*true|allow_failure\s*:\s*true|^\s*set\s+\+e\b/i.exec(line);
-      if (!m) return null;
-      // A written reason keeps it a reviewed exception, not a mask
-      if (/#.*(reason|because|ticket|issue|known|temporary|todo|fixme)/i.test(line)) return null;
-      return m[0].trim().slice(0, 40);
-    },
-  },
-  {
-    id: "unpinned-install",
-    severity: "warning",
-    message: "Unpinned install in CI — versions drift run-to-run (D1). Use the lockfile discipline (npm ci, frozen installs).",
-    test(line) {
-      if (/\bnpm\s+(i|install)\b(?!.*(?:ci|--frozen|--immutable))/i.test(line)) return "npm install";
-      if (/\byarn\s+(add|install)\b/i.test(line) && !/--frozen-lockfile|--immutable/.test(line)) return "yarn install";
-      if (/\bpip\s+install\b/i.test(line) && !/(-r\s+[^\s]*(?:lock|requirements\.txt)|--require-hashes|pip-compile)/i.test(line)) return "pip install";
-      if (/\bgo\s+get\b/i.test(line) && !/go\s+mod\s+(download|verify)/i.test(line)) return "go get";
-      return null;
-    },
-  },
-  {
-    id: "latest-tag",
-    severity: "warning",
-    message: "`:latest` image tag in a pipeline — 'latest' is a different image tomorrow (D2). Pin versions or digests.",
-    test(line) {
-      const m = /[\w./-]+:latest\b/i.exec(line);
-      if (m) return m[0];
-      // untagged reference — no tag IS latest: `image: app`, `FROM node`, `docker build -t app`
-      const u = /\bimage\s*:\s*["']?[\w./-]+["']?\s*$/i.exec(line) || /^\s*FROM\s+[\w./-]+\s*$/i.exec(line) ||
-        /\s-t\s+["']?[\w./-]+["']?(?=\s|$)/i.exec(line);
-      if (u) return `${u[0].trim()} (untagged = latest)`;
-      return null;
-    },
-  },
-  {
-    id: "force-flag",
-    severity: "warning",
-    message: "Force flag on a push/publish/destructive operation — the flag exists to override guards (H1-adjacent).",
-    test(line) {
-      const m = /\b(git\s+push|npm\s+publish|docker\s+push|helm\s+upgrade|kubectl\s+apply)\b[^|]*\s--?f(orce)?\b/i.exec(line);
-      return m ? m[0].trim() : null;
-    },
-  },
-  {
-    id: "destructive-op",
-    severity: "warning",
-    message: "Destructive operation in a pipeline without a visible approval/recovery reference (I2). Guard it, log it, make it reversible.",
-    test(line) {
-      const m = /\b(rm\s+-rf|kubectl\s+delete|terraform\s+destroy|helm\s+uninstall|\bDROP\s+TABLE)\b/i.exec(line);
-      if (!m) return null;
-      if (/(approval|manual|review|rollback|revert|restore|backup)/i.test(line)) return null;
-      return m[0].trim();
-    },
-  },
-];
 
 // ---------------------------------------------------------------------------
 // File discovery
@@ -185,14 +99,20 @@ function scan(file) {
   } catch {
     return findings;
   }
-  const lines = text.split("\n");
+  const rawLines = text.split("\n");
+  // Comments are prose, not evidence. One exception: masked-failure keeps
+  // testing the RAW line — its `# reason…` escape hatch is comment evidence.
+  const lines = stripComments(rawLines, file);
+  const strippedText = lines.join("\n");
   const retryLines = [];
 
-  lines.forEach((raw, i) => {
-    const rm = /\b(retry|retries|attempts|max_attempts)\s*:\s*[2-9]\d*\b/i.exec(raw);
+  lines.forEach((line, i) => {
+    if (!line.trim()) return; // comment-only/blank line — prose, not evidence (any rule)
+    const rm = /\b(retry|retries|attempts|max_attempts)\s*:\s*[2-9]\d*\b/i.exec(line);
     if (rm) retryLines.push({ line: i + 1, detail: `${rm[1]}: ${rm[0].match(/\d+/)[0]}` });
-    for (const rule of rules) {
-      const detail = rule.test(raw);
+    for (const rule of RULES) {
+      const subject = rule.id === "masked-failure" ? rawLines[i] : line;
+      const detail = rule.test(subject);
       if (detail) {
         findings.push({ file: basename(file), line: i + 1, rule: rule.id, severity: rule.severity, message: rule.message, detail });
       }
@@ -200,7 +120,7 @@ function scan(file) {
   });
 
   // File-level: pipeline retries around test/check steps (context-aware)
-  if (retryLines.length && /\b(test|check|verify)\b/i.test(text)) {
+  if (retryLines.length && /\b(test|check|verify)\b/i.test(strippedText)) {
     findings.push({
       file: basename(file), line: retryLines[0].line, rule: "pipeline-retry", severity: "warning",
       message: "Pipeline-level retry around test/check steps — the flake still exists, now slower (H3). Root-cause it (autom).",
@@ -209,8 +129,9 @@ function scan(file) {
   }
 
   // File-level: deploy semantics without any rollback reference
-  const deployish = /\b(deploy:|deploy\s|release:|publish|helm\s+upgrade|kubectl\s+apply|terraform\s+apply|aws\s+deploy|gh\s+release|releases\/create)\b/i.test(text);
-  const recoveryish = /\b(rollback|revert|restore|previous[_-]?(image|version|digest)|undo)\b/i.test(text);
+  // note: no trailing `\b` — `deploy:` ends in a non-word char before the newline
+  const deployish = /\bdeploy\b|deploy\s*:|release\s*:|publish|helm\s+upgrade|kubectl\s+apply|terraform\s+apply|aws\s+deploy|gh\s+release|releases\/create/i.test(strippedText);
+  const recoveryish = /\b(rollback|revert|restore|previous[_-]?(image|version|digest)|undo)\b/i.test(strippedText);
   if (deployish && !recoveryish && isCiFile(file)) {
     findings.push({
       file: basename(file), line: 1, rule: "deploy-without-rollback", severity: "warning",

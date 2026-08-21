@@ -228,7 +228,7 @@ ${options.map((o, idx) => `  <div class="opt" id="opt-${idx}" data-name="${esc(o
 
   server.on("error", (e) => {
 
-    console.error("optimize-review: cannot bind port ${port} — ${e.message} (is another daemon running?)");
+    console.error(`optimize-review: cannot bind port ${port} — ${e.message} (is another daemon running?)`);
 
     process.exit(2);
 

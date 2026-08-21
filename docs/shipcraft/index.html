@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shipcraft — the craft skill for DevOps / CI-CD</title>
+<style>
+  :root { --bg:#101418; --panel:#161c22; --text:#e8eaf0; --muted:#8b93a1; --line:#262e37; --accent:#4d7cfe; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.6 system-ui,-apple-system,sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 56px 24px 80px; }
+  h1 { font-size: 34px; line-height:1.15; letter-spacing:-0.02em; margin:0 0 12px; }
+  .lede { color: var(--muted); font-size: 18px; margin: 0 0 36px; }
+  h2 { font-size: 20px; margin: 40px 0 12px; letter-spacing:-0.01em; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; text-decoration:none; color:var(--text); }
+  .card:hover { border-color: var(--accent); }
+  .card b { display:block; }
+  .card span { color: var(--muted); font-size: 13px; }
+  code, pre { font-family: ui-monospace, monospace; }
+  pre { background: var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:13px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); }
+  .num { color:var(--accent); font-variant-numeric: tabular-nums; }
+  a { color: var(--accent); }
+  .back { color:var(--muted); text-decoration:none; font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="../">← the craft-skill suite</a>
+  <h1>Shipcraft</h1>
+  <p class="lede">The craft skill for delivery systems that make shipping boring. <em>The pipeline's job is to make shipping boring. A deploy is a promise you keep in production.</em></p>
+
+  <h2>Install</h2>
+  <pre>npx skills add knarayanareddy/Impeccable --skill shipcraft</pre>
+  <p>Then <code>/shipcraft pipeline .</code>, <code>/shipcraft audit .</code>, or any of the 15 commands.</p>
+
+  <h2>The commands <span class="num">15</span></h2>
+  <table>
+    <tr><th>Build</th><td>init · shape · pipeline</td></tr>
+    <tr><th>Evaluate</th><td>audit · review (· decision daemon) · measure</td></tr>
+    <tr><th>Refine</th><td>autom · deploy · rollback · env · config</td></tr>
+    <tr><th>Enhance</th><td>gate (· pipeline gate) · monitor · respond · prune</td></tr>
+  </table>
+
+  <h2>The checker</h2>
+  <pre>node skill/shipcraft/scripts/check.mjs --strict --target .
+# ERROR secret-echo      ci.yml:6   Secret echoed in a pipeline step
+# ERROR masked-failure   ci.yml:5   Red mask — the step's failure is swallowed
+# WARN  pipe-to-shell    ci.yml:7   curl | sh
+# WARN  latest-tag       ci.yml:8   docker build -t app (untagged = latest)
+# shipcraft: 17 delivery file(s) scanned · FAILED</pre>
+  <p>Zero dependencies, no LLM, no API key. Behaviors pinned by <a href="../../skill/shipcraft/tests/scenarios.mjs">43 automated scenarios</a>.</p>
+
+  <h2>ci-check — the pipeline gate</h2>
+  <pre>node skill/shipcraft/scripts/ci-check.mjs --pipeline .github/workflows/ci.yml --strict
+# ERROR masked-failure   step-2 · 1   npm test || true
+# WARN  deploy-without-rollback        Deploy steps with no rollback reference
+# ci-check: 6 step(s) · GATE FAILED</pre>
+  <p>Parses the workflow into steps (GitHub Actions, GitLab CI, Azure, CircleCI — or native JSON)
+  and gates every step with the same vocabulary. A file that parses to zero steps refuses,
+  never claims the gate holds. Built to sit in CI: the gate that gates its own pipeline.</p>
+
+  <h2>Pipeline review daemon</h2>
+  <pre>node skill/shipcraft/scripts/pipeline-review.mjs --steps steps.json --round r1 &amp;
+node skill/shipcraft/scripts/pipeline-review.mjs --round r1 --wait</pre>
+  <p>Serve every deploy step as a decision page — ship / flag / n-a — with the gaps in red:
+  no rollback reference, or high-risk without an approval reference.</p>
+
+  <h2>Platform sheets</h2>
+  <p><code>reference/platforms/</code> ships the best shapes for GitHub Actions, GitLab CI, and
+  Jenkins — one sheet, never all.</p>
+
+  <h2>Evidence</h2>
+  <div class="grid">
+    <a class="card" href="case-study.md"><b>Case study</b><span>The generic-AI workflow → the shipcraft pass, checker and gate, both directions</span></a>
+    <a class="card" href="../../demos/shipcraft/before-workflow.yml"><b>Demo — before</b><span>Runs the checker's failure list; the gate blocks it</span></a>
+    <a class="card" href="../../demos/shipcraft/after-workflow.yml"><b>Demo — after</b><span>Passes the checker and the gate</span></a>
+    <a class="card" href="../../REVIEWS/shipcraft-round1.md"><b>Expert review</b><span>Two-round panel archive</span></a>
+  </div>
+</main>
+<footer style="max-width:860px;margin:0 auto;padding:0 24px 32px;color:var(--muted);font-size:12px;">Apache-2.0 · original work, not affiliated with pbakaus/impeccable</footer>
+</body>
+</html>

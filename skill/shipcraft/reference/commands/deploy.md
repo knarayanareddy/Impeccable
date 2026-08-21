@@ -10,7 +10,8 @@ authority). Turns deploys from a moment of courage into a boring checklist — t
 2. Walk the checklist before rollout:
    - Gates green: the artifact passed its stage gates (`domains/gates.md`).
    - Rollback armed: the revert path and trigger exist *for this deploy*
-     (`domains/recovery.md`).
+     (`domains/recovery.md`). In doubt, run the decision daemon on the step inventory
+     (`reference/commands/pipeline-review.md`) and fix every flag before rollout.
    - Health checks defined: journey-level, gating the rollout (`domains/deploys.md`).
    - The log is ready: who, what commit, to where — recorded as the deploy starts (`monitor`).
 3. Execute per the strategy: staged rollout (canary → monitor → widen; or rolling batches), each

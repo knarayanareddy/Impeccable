@@ -26,7 +26,9 @@ one question: **would you ship from this pipeline at 4:55 p.m. on a Friday?** No
 2. Score each dimension with one "what's holding" and one "what's not" line, citing the exact
    step, file, or absence — "no revert path for the migration" is a citation.
 3. Deliver: the scorecard, the three highest-leverage fixes (ranked by blast radius), one honest
-   strength, and one "bold move" — the single change that would most de-risk shipping.
+   strength, and one "bold move" — the single change that would most de-risk shipping. For an
+   auditable verdict on the deploy steps themselves, record it with the decision daemon
+   (`reference/commands/pipeline-review.md`): ship / flag / n-a per step, gaps in red.
 
 ## Rules
 

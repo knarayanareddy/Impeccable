@@ -214,7 +214,7 @@ ${steps.map((s, idx) => `  <div class="step" id="step-${idx}" data-name="${esc(s
 
   server.on("error", (e) => {
 
-    console.error("migration-review: cannot bind port ${port} — ${e.message} (is another daemon running?)");
+    console.error(`migration-review: cannot bind port ${port} — ${e.message} (is another daemon running?)`);
 
     process.exit(2);
 

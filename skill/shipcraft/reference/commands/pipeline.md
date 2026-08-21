@@ -7,7 +7,9 @@ The signature build command of this skill.
 
 1. Take the release plan from `shape` (or the request) and the gate stack it defines.
 2. Write the workflow in the boring shape — start from `assets/workflow.example.yml` (the
-   canonical stage order, concurrency groups, lockfile discipline, digest-pinned deploys):
+   canonical stage order, concurrency groups, lockfile discipline, digest-pinned deploys).
+   If the target is a specific CI platform, load its sheet in `reference/platforms/` first
+   (github-actions, gitlab, jenkins) — the platform's primitives for the boring shape:
    - Fast validation first (lint, types — seconds), then tests, then build, then scan, then
      deploy, then verify (`domains/pipelines.md`).
    - One artifact built once, promoted unchanged (`domains/builds.md`).
@@ -19,8 +21,10 @@ The signature build command of this skill.
    echoed (`domains/config.md`).
 5. Guard destruction: deploy-to-prod steps carry the approval and the rollback reference; any
    destructive op is approval-gated (`domains/recovery.md`, `domains/infra.md`).
-6. Verify: run the pipeline on a branch — red fails for the right reasons, green means the
-   artifact is deployable. Quote the pipeline minutes before/after.
+6. Verify: gate the file first (`node <skill-dir>/scripts/ci-check.mjs --pipeline <file>
+   --strict` — the floor as a mechanical gate), then run the pipeline on a branch — red fails
+   for the right reasons, green means the artifact is deployable. Quote the pipeline minutes
+   before/after.
 
 ## Exit criteria
 

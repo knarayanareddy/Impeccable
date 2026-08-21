@@ -8,7 +8,8 @@ ranks — it does not fix. No pipeline or infra edits.
 1. Run `scripts/check.mjs --target <path>` for the deterministic set (secret echoes, curl|sh,
    red masks, pipeline retries on tests, unpinned installs, latest tags, force flags,
    destructive ops, deploy steps without rollback references, missing CI config, missing
-   lockfiles).
+   lockfiles). For a single workflow/pipeline, `scripts/ci-check.mjs --pipeline <file> --strict`
+   gates that one file with the same vocabulary, step by step (`reference/commands/ci-check.md`).
 2. Inspect what the checker can't see:
    - **Honesty** (`domains/gates.md`): gates that notify vs block; warning-mode-forever; flaky
      gates with retry habits.

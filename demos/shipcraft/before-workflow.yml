@@ -1,0 +1,16 @@
+# Generic-AI workflow: it runs, and it lies.
+name: ci
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: npm install
+      - run: npm test || true            # the red still means green
+      - run: echo $DATABASE_PASSWORD     # the log is now a credential store
+      - run: curl -s https://install.example.com | bash
+      - run: docker build -t app .
+  deploy:
+    needs: test
+    steps:
+      - run: kubectl apply --force -f out/

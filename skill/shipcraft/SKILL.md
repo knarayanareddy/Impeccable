@@ -53,7 +53,9 @@ every "works on my machine" as a personal insult to the craft.
    below against it, e.g. `node <skill-dir>/scripts/check.mjs`.
 2. Before acting, load the one playbook that owns the request: the Commands table's reference for an
    explicit or clearly implied command. Then inspect the target's pipeline configs, deploy tooling,
-   and environment setup before editing.
+   and environment setup before editing. If the work targets a specific CI platform, also load the
+   matching sheet in `reference/platforms/` (github-actions, gitlab, jenkins) alongside the
+   relevant domains — one sheet, never all.
 3. Load [reference/ship-floor.md](reference/ship-floor.md) **immediately before editing any
    pipeline, deploy, or infrastructure config**. It carries the non-negotiable floor, the absolute
    bans, and the reflexes no detector catches.
@@ -70,14 +72,14 @@ every "works on my machine" as a personal insult to the craft.
 | `shape [release]` | Build | Plan the release: what ships, how it rolls out, how it rolls back | [reference/commands/shape.md](reference/commands/shape.md) |
 | `pipeline [target]` | Build | Design and write CI/CD workflows with truthful gates | [reference/commands/pipeline.md](reference/commands/pipeline.md) |
 | `audit [target]` | Evaluate | Defect scan: red masks, flaky steps, secrets, drift, untested rollback | [reference/commands/audit.md](reference/commands/audit.md) |
-| `review [target]` | Evaluate | Judgment review: would you ship from this pipeline on Friday? | [reference/commands/review.md](reference/commands/review.md) |
+| `review [target]` | Evaluate | Judgment review: would you ship from this pipeline on Friday? · decision daemon: [reference/commands/pipeline-review.md](reference/commands/pipeline-review.md) | [reference/commands/review.md](reference/commands/review.md) |
 | `measure [target]` | Evaluate | Quantitative delivery metrics (DORA-shaped) | [reference/commands/measure.md](reference/commands/measure.md) |
 | `autom [target]` | Refine | Hunt and fix flaky pipeline steps — root cause, never retries | [reference/commands/autom.md](reference/commands/autom.md) |
 | `deploy [target]` | Refine | The deploy pass: strategy, health checks, the checklist | [reference/commands/deploy.md](reference/commands/deploy.md) |
 | `rollback [target]` | Refine | Make rollback real: the revert path, rehearsed | [reference/commands/rollback.md](reference/commands/rollback.md) |
 | `env [target]` | Refine | Environment parity: kill the drift | [reference/commands/env.md](reference/commands/env.md) |
 | `config [target]` | Refine | Secrets and configuration in the pipeline | [reference/commands/config.md](reference/commands/config.md) |
-| `gate [target]` | Enhance | Quality gates that block, not notify | [reference/commands/gate.md](reference/commands/gate.md) |
+| `gate [target]` | Enhance | Quality gates that block, not notify · pipeline gate: [reference/commands/ci-check.md](reference/commands/ci-check.md) | [reference/commands/gate.md](reference/commands/gate.md) |
 | `monitor [target]` | Enhance | Deploy observability: DORA metrics, deploy logs, smoke tests | [reference/commands/monitor.md](reference/commands/monitor.md) |
 | `respond [target]` | Enhance | Failed-deploy response: the recovery runbook | [reference/commands/respond.md](reference/commands/respond.md) |
 | `prune [target]` | Enhance | Pipeline debt: dead jobs, slow steps, orphaned environments | [reference/commands/prune.md](reference/commands/prune.md) |
