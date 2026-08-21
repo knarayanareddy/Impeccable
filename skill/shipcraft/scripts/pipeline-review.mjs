@@ -49,6 +49,7 @@ function usage(msg) {
   process.exit(2);
 }
 if (!round) usage("--round is required");
+if (!Number.isInteger(port) || port < 1 || port > 65535) usage("--port must be an integer 1-65535");
 
 if (has("--wait") || has("--result")) {
   const timeout = parseInt(get("--timeout") || "600", 10) * 1000;
@@ -101,8 +102,11 @@ function serveMode() {
     usage(`cannot read steps ${stepsFile}: ${e.message}`);
   }
   if (!Array.isArray(entries) || !entries.length) usage("steps.json must be a non-empty array");
+  const seen = new Set();
   for (const e of entries) {
     if (!e.name) usage("every step needs a name");
+    if (seen.has(e.name)) usage(`step names must be unique — "${e.name}" appears twice (submission could never complete)`);
+    seen.add(e.name);
     if (e.risk !== undefined && !["low", "medium", "high"].includes(String(e.risk).toLowerCase())) {
       usage(`step "${e.name}" has risk "${e.risk}" — expected low|medium|high`);
     }

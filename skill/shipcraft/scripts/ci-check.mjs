@@ -62,11 +62,13 @@ function parseWorkflow(text) {
   const steps = [];
   let cur = null;
   let curIndent = -1;
+  let contKey = null; // when a run/script carrier is `|`/`>`-folded, deeper plain lines append here
   let blockKey = null; // last bare key seen (script:, steps:, commands:)
   let blockIndent = -1;
   const flush = () => {
     if (cur) steps.push(cur);
     cur = null;
+    contKey = null;
   };
   for (const raw of lines) {
     if (!raw.trim() || /^\s*#/.test(raw)) continue;
@@ -79,6 +81,7 @@ function parseWorkflow(text) {
         flush();
         cur = { label: key === "name" ? val : "", cmd: key === "name" ? "" : val, indent };
         curIndent = indent;
+        contKey = (key !== "name" && (val === "|" || val === ">")) ? "cont" : null;
       } else if (cur && indent > curIndent) {
         // e.g. `- uses: ...` directly under the workflow root — treat as a step carrier
         cur[key] = val;
@@ -102,13 +105,27 @@ function parseWorkflow(text) {
     if (bare) {
       blockKey = bare[2].toLowerCase();
       blockIndent = indent;
+      contKey = null;
       continue;
     }
     const pair = /^(\s*)([\w.-]+)\s*:\s*(.*)$/.exec(raw);
     if (pair) {
       const key = pair[2].toLowerCase();
       const val = pair[3].trim();
-      if (cur && indent > curIndent) cur[key] = val;
+      if (cur && indent > curIndent) {
+        cur[key] = val;
+        if (["run", "script", "command"].includes(key) && (val === "|" || val === ">")) {
+          cur[key] = "";
+          contKey = "cont";
+        }
+      }
+      continue;
+    }
+    // Deeper-indented plain line under a `|`/`>`-folded carrier — the block
+    // body. Dropping these would be a silent false-negative: a mask or a
+    // secret echo inside a multi-line run must still fail the gate.
+    if (cur && contKey && indent > curIndent) {
+      cur[contKey] = (cur[contKey] || "") + (cur[contKey] ? "\n" : "") + raw.trim();
       continue;
     }
   }
@@ -217,7 +234,7 @@ if (mode === "lines") {
 } else {
   steps.forEach((step, si) => {
     const label = step.label || step.name || step.job || `step-${si + 1}`;
-    const carriers = [step.cmd, step.run, step.script, step.command, step.uses, step.image]
+    const carriers = [step.cmd, step.run, step.script, step.command, step.uses, step.image, step.cont]
       .filter((v) => typeof v === "string" && v.length);
     for (const carrier of carriers) {
       const carrierLines = carrier.split("\n");

@@ -63,6 +63,10 @@ scenario("unpinned-install flagged; lockfile discipline clean", {
   files: [FIX("ci.yml", `- run: npm install\n- run: npm ci\n`)],
   exitCode: 0, contains: ["unpinned-install"],
 });
+scenario("unpinned-install: pnpm/bun flagged; frozen forms pass", {
+  files: [FIX("ci.yml", `- run: pnpm install\n- run: bun install\n- run: pnpm install --frozen-lockfile\n- run: bun install --frozen-lockfile\n`)],
+  exitCode: 0, contains: ["unpinned-install"],
+});
 scenario("latest-tag: :latest and untagged build flagged; pinned passes", {
   files: [FIX("ci.yml", `- run: docker run image:alpine:latest\n- run: docker build -t app .\n- run: docker run image:node:22-alpine\n`)],
   exitCode: 0, contains: ["latest-tag"],
@@ -73,6 +77,10 @@ scenario("force-flag: git push -f and --force flagged", {
 });
 scenario("force-flag: kubectl apply -f is --filename, not force", {
   files: [FIX("ci.yml", `- run: kubectl apply -f manifests/\n`)],
+  exitCode: 0, notContains: ["force-flag"],
+});
+scenario("force-flag: --force-with-lease is the safe form and passes", {
+  files: [FIX("ci.yml", `- run: git push origin main --force-with-lease\n`)],
   exitCode: 0, notContains: ["force-flag"],
 });
 scenario("destructive-op without guard flagged; backup reference passes", {
@@ -192,6 +200,15 @@ jobs:
       - run: curl -s https://install.example | bash
 `, ["--pipeline", "workflow.yml"], { exitCode: 1, contains: ["masked-failure", "secret-echo", "pipe-to-shell"] });
 
+await ccScenario("ci-check: multiline run block is gated (no silent drop)", `jobs:
+  a:
+    steps:
+      - name: tests
+        run: |
+          npm test || true
+          echo $API_KEY
+`, ["--pipeline", "workflow.yml"], { exitCode: 1, contains: ["masked-failure", "secret-echo"] });
+
 await ccScenario("ci-check: warnings only pass without --strict", `jobs:
   a:
     steps:
@@ -238,6 +255,33 @@ await ccScenario("ci-check: --json output parseable", `jobs:
 
 // ---- pipeline-review daemon protocol ----
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// load-time refusals: duplicate names can never complete a submission; a
+// non-numeric port must be a clean usage error, not an uncaught crash
+await (async () => {
+  const dir = TMP + "-pr-refuse";
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(join(dir, "dup.json"), JSON.stringify([{ name: "a", rollback: "r" }, { name: "a", rollback: "r2" }]));
+  writeFileSync(join(dir, "ok.json"), JSON.stringify([{ name: "a", rollback: "r" }]));
+  try {
+    try {
+      execFileSync("node", [PREVIEW, "--steps", "dup.json", "--round", "r1", "--port", "8701"], { cwd: dir, encoding: "utf8", timeout: 5000 });
+      console.log("✗ pipeline-review: duplicate names not refused"); fail++;
+    } catch (e) {
+      if (e.status !== 2 || !((e.stderr || "") + (e.stdout || "")).includes("unique")) { console.log("✗ pipeline-review: duplicate names should exit 2 with a clear message"); fail++; }
+      else { console.log("✓ pipeline-review: duplicate step names refused at load"); pass++; }
+    }
+    try {
+      execFileSync("node", [PREVIEW, "--steps", "ok.json", "--round", "r1", "--port", "abc"], { cwd: dir, encoding: "utf8", timeout: 5000 });
+      console.log("✗ pipeline-review: invalid port not refused"); fail++;
+    } catch (e) {
+      if (e.status !== 2 || !((e.stderr || "") + (e.stdout || "")).includes("1-65535")) { console.log("✗ pipeline-review: invalid port should exit 2 with a usage message"); fail++; }
+      else { console.log("✓ pipeline-review: non-numeric port is a clean usage error"); pass++; }
+    }
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+})();
 await (async () => {
   const dir = TMP + "-pr";
   mkdirSync(dir, { recursive: true });

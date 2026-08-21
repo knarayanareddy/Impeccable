@@ -48,7 +48,7 @@ function isCiFile(p) {
 // File discovery
 // ---------------------------------------------------------------------------
 
-function walk(dir, acc = []) {
+function walk(dir, acc = [], visited, visitedFiles) {
   let entries;
   try {
     entries = readdirSync(dir);
@@ -64,14 +64,28 @@ function walk(dir, acc = []) {
     } catch {
       continue;
     }
-    if (st.isDirectory()) walk(p, acc);
-    else if (st.isFile()) acc.push(p);
+    if (st.isDirectory()) {
+      // visited set keyed by dev:ino — a symlink cycle must terminate the
+      // walk, not recurse forever
+      const key = `${st.dev}:${st.ino}`;
+      if (visited.has(key)) continue;
+      visited.add(key);
+      walk(p, acc, visited, visitedFiles);
+    } else if (st.isFile()) {
+      // the same file reached twice through symlinks is still one file
+      const key = `${st.dev}:${st.ino}`;
+      if (visitedFiles.has(key)) continue;
+      visitedFiles.add(key);
+      acc.push(p);
+    }
   }
   return acc;
 }
 
 function collect(paths) {
   const all = [];
+  const visited = new Set();
+  const visitedFiles = new Set();
   for (const p of paths) {
     const abs = resolve(p);
     let st;
@@ -81,7 +95,7 @@ function collect(paths) {
       console.error(`shipcraft: cannot read ${p}`);
       process.exit(2);
     }
-    if (st.isDirectory()) walk(abs, all);
+    if (st.isDirectory()) walk(abs, all, visited, visitedFiles);
     else all.push(abs);
   }
   return [...new Set(all)];

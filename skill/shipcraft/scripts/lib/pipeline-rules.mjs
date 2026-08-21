@@ -63,6 +63,8 @@ export const RULES = [
       if (/\byarn\s+(add|install)\b/i.test(line) && !/--frozen-lockfile|--immutable/.test(line)) return "yarn install";
       if (/\bpip\s+install\b/i.test(line) && !/(-r\s+[^\s]*(?:lock|requirements\.txt)|--require-hashes|pip-compile)/i.test(line)) return "pip install";
       if (/\bgo\s+get\b/i.test(line) && !/go\s+mod\s+(download|verify)/i.test(line)) return "go get";
+      if (/\bpnpm\s+(add|install)\b/i.test(line) && !/--frozen-lockfile|--frozen/.test(line)) return "pnpm install";
+      if (/\bbun\s+(add|install)\b/i.test(line) && !/--frozen-lockfile/.test(line)) return "bun install";
       return null;
     },
   },
@@ -87,7 +89,7 @@ export const RULES = [
     test(line) {
       // `git push -f` — the -f shorthand IS force. Everywhere else `-f` means
       // something else (`kubectl apply -f` is --filename), so require --force.
-      const m = /\bgit\s+push\b[^|]*\s(-f|--force)\b/i.exec(line);
+      const m = /\bgit\s+push\b[^|]*\s(-f|--force)(?!-with-lease)\b/i.exec(line);
       if (m) return m[0].trim();
       const m2 = /\b(npm\s+publish|docker\s+push|helm\s+upgrade|kubectl\s+apply|terraform\s+apply)\b[^|]*\s--force\b/i.exec(line);
       return m2 ? m2[0].trim() : null;

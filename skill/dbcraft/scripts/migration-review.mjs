@@ -41,6 +41,7 @@ function usage(msg) {
   process.exit(2);
 }
 if (!round) usage("--round is required");
+if (!Number.isInteger(port) || port < 1 || port > 65535) usage("--port must be an integer 1-65535");
 
 if (has("--wait") || has("--result")) {
   const timeout = parseInt(get("--timeout") || "600", 10) * 1000;
