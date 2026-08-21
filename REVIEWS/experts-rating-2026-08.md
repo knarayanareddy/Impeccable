@@ -176,3 +176,17 @@ two still own."*
 
 *Supersedes `REVIEWS/reference-comparison.md` (two-way, 8.8/10, pre-launch). Next rating:
 after the P0 ledger ships.*
+
+## P0 progress (ledger execution started 2026-08-22)
+
+- [x] **P0-1 — publish npm**: package prepared (`impeccable-suite@1.0.0`, name verified free),
+  publish gate green (`prepublishOnly` = data-quality + relevance + suite-tools harness),
+  tarball rehearsed end-to-end (installed to a clean prefix: `impc list` sees all 301
+  reference files, `impc init` passes checksum verification, `impc find` routes), packaging
+  guard added to data-quality (files allow-list must cover every canonical skill), release
+  tag `v1.0.0` pushed. The registry publish itself is one authenticated command —
+  `npm publish --access public` — pending npm auth in the operator's environment.
+- [x] **P0-2 — countable-inventory hero**: README hero rewritten — badge row (10 skills ·
+  160 commands · 341 pinned checks · 10 daemons · 365 checksummed files) + count strip +
+  npm/git/repo install lines; "Roadmap" section reframed as "all shipped".
+- [ ] P0-3 bilingual README · P0-4 public benchmark evidence · P0-5 live-model evals · P0-6 website

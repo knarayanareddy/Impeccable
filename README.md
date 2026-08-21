@@ -1,5 +1,21 @@
 # Impeccable — craft skills for AI coding agents
 
+<p align="center">
+  <img src="https://img.shields.io/badge/skills-10-4d7cfe?style=for-the-badge" alt="10 skills">
+  <img src="https://img.shields.io/badge/commands-160-4d7cfe?style=for-the-badge" alt="160 commands">
+  <img src="https://img.shields.io/badge/pinned_checks-341-2f9e6a?style=for-the-badge" alt="341 pinned checks">
+  <img src="https://img.shields.io/badge/decision_daemons-10-2f9e6a?style=for-the-badge" alt="10 decision daemons">
+  <img src="https://img.shields.io/badge/checksummed_files-365-e5a94f?style=for-the-badge" alt="365 checksummed files">
+  <br>
+  <a href="https://www.npmjs.com/package/impeccable-suite"><img src="https://img.shields.io/npm/v/impeccable-suite?style=for-the-badge&color=4d7cfe" alt="npm version"></a>
+  <img src="https://img.shields.io/badge/license-Apache--2.0-green?style=for-the-badge" alt="Apache-2.0">
+  <img src="https://img.shields.io/badge/dependencies-zero-blue?style=for-the-badge" alt="zero dependencies">
+</p>
+
+**10 skills · 160 commands · 301 reference files · 341 pinned checks · 10 decision daemons ·
+8 gate tools · 1 browser extension · 365 checksummed files · 10 docs pages · 10 case studies ·
+10 demos.**
+
 A collection of **craft skills** that make AI coding agents (and the humans driving them) produce
 work with expert judgment instead of defaults. Each skill packages one facet of building software the
 way [Impeccable](https://github.com/pbakaus/impeccable) packaged UI design: **a shared command
@@ -177,11 +193,15 @@ one-line install.**
 ## Quick start
 
 ```bash
-# One command for the whole suite — impc installs into any harness's skills dir
-node scripts/impc.mjs init --ai claude            # all ten into .claude/skills/
-node scripts/impc.mjs init --ai all --skill shipcraft   # one skill everywhere
-node scripts/impc.mjs init --ai universal --global # Agent Skills standard (~/.agents/skills)
-# …or per skill (auto-detects your agent: Claude Code, Cursor, Codex, …)
+# One command for the whole suite — install impc, point it at your harness
+npm i -g impeccable-suite                         # the pinned release (npm registry)
+npm i -g github:knarayanareddy/Impeccable         # or straight from this repo
+impc init --ai claude                             # all ten into .claude/skills/
+impc init --ai all --skill shipcraft              # one skill into every harness
+impc init --ai universal --global                 # Agent Skills standard (~/.agents/skills)
+# no npm? the repo checkout works directly:
+node scripts/impc.mjs init --ai claude
+# …or per skill with the ecosystem installer (auto-detects your agent)
 npx skills add knarayanareddy/Impeccable --skill codecraft
 npx skills add knarayanareddy/Impeccable --skill criterion
 npx skills add knarayanareddy/Impeccable --skill apicraft
@@ -237,10 +257,10 @@ skill/<name>/
     └── commands/         # one playbook per command
 ```
 
-## Roadmap — the other facets
+## The other facets — all shipped
 
-Same pattern, next domains. Each is a facet of building software where agents today ship defaults
-instead of judgment:
+Same pattern, ten facets. Each is a domain of building software where agents today ship defaults
+instead of judgment — all ten are complete, reviewed twice, and pinned by the evals suite:
 
 | Facet | Status | The anti-slop thesis |
 |---|---|---|

@@ -28,8 +28,18 @@ The install ships `SKILL.md` + `reference/` + `scripts/` + `assets/`; the behavi
 harness is excluded. A skill whose SKILL.md is missing or malformed is refused, never
 half-installed.
 
-Also on npm: `npm i -g impeccable-suite && impc init --ai claude` (publish-ready package,
-bin `impc`).
+**Install impc itself:**
+
+```bash
+npm i -g impeccable-suite                     # the pinned release (npm registry)
+npm i -g github:knarayanareddy/Impeccable     # or straight from this repo
+# repo checkout, no install at all:
+node scripts/impc.mjs init --ai claude
+```
+
+The npm package ships the ten skills, the checksum pin (`skill/CHECKSUMS.json`), and the
+`impc` bin — 371 files, zero test harnesses, and every install is checksum-verified against
+the pin it ships with.
 
 ## Route a request (`impc find`)
 

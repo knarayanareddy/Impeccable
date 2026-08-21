@@ -203,6 +203,33 @@ for (const skill of skills) {
   }
 }
 
+// 6b. npm packaging: every canonical skill must be in the files allow-list
+// (npm does not expand middle-segment globs, so the list is explicit — and
+// must not drift when skills are added)
+const pkgFile = join(root, "package.json");
+if (existsSync(pkgFile) && !explicitRoot) {
+  let pkg;
+  try {
+    pkg = JSON.parse(readFileSync(pkgFile, "utf8"));
+  } catch (e) {
+    find("packaging", "package.json", `does not parse: ${e.message}`);
+    pkg = null;
+  }
+  if (pkg && Array.isArray(pkg.files)) {
+    for (const skill of CANONICAL_SKILLS) {
+      if (!pkg.files.includes(`skill/${skill}/SKILL.md`) || !pkg.files.includes(`skill/${skill}/reference/`)) {
+        find("packaging", "package.json", `files allow-list does not cover skill "${skill}" — add its SKILL.md and reference/ entries`);
+      }
+    }
+    if (!pkg.files.includes("skill/CHECKSUMS.json")) {
+      find("packaging", "package.json", "files allow-list omits skill/CHECKSUMS.json — npm installs must stay checksum-verified");
+    }
+    if (!pkg.files.includes("scripts/impc.mjs")) {
+      find("packaging", "package.json", "files allow-list omits scripts/impc.mjs — the npm bin would not ship");
+    }
+  }
+}
+
 // ---------------------------------------------------------------------------
 // 7. Suite completion (real suite only)
 // ---------------------------------------------------------------------------

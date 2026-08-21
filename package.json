@@ -1,23 +1,57 @@
 {
   "name": "impeccable-suite",
   "version": "1.0.0",
-  "description": "Ten craft skills for AI coding agents — criterion, codecraft, apicraft, dbcraft, testcraft, perfcraft, seccraft, obscraft, shipcraft, bugcraft — with a deterministic installer, corpus-integrity gate, and routing evals.",
+  "description": "Ten craft skills for AI coding agents \u2014 criterion, codecraft, apicraft, dbcraft, testcraft, perfcraft, seccraft, obscraft, shipcraft, bugcraft \u2014 with a deterministic installer, corpus-integrity gate, and routing evals.",
   "license": "Apache-2.0",
   "type": "module",
   "bin": {
     "impc": "scripts/impc.mjs"
   },
   "files": [
-    "skill/*/SKILL.md",
-    "skill/*/reference/",
-    "skill/*/scripts/",
-    "skill/*/assets/",
+    "skill/criterion/SKILL.md",
+    "skill/criterion/reference/",
+    "skill/criterion/scripts/",
+    "skill/criterion/assets/",
+    "skill/codecraft/SKILL.md",
+    "skill/codecraft/reference/",
+    "skill/codecraft/scripts/",
+    "skill/codecraft/assets/",
+    "skill/apicraft/SKILL.md",
+    "skill/apicraft/reference/",
+    "skill/apicraft/scripts/",
+    "skill/apicraft/assets/",
+    "skill/dbcraft/SKILL.md",
+    "skill/dbcraft/reference/",
+    "skill/dbcraft/scripts/",
+    "skill/dbcraft/assets/",
+    "skill/testcraft/SKILL.md",
+    "skill/testcraft/reference/",
+    "skill/testcraft/scripts/",
+    "skill/testcraft/assets/",
+    "skill/perfcraft/SKILL.md",
+    "skill/perfcraft/reference/",
+    "skill/perfcraft/scripts/",
+    "skill/perfcraft/assets/",
+    "skill/seccraft/SKILL.md",
+    "skill/seccraft/reference/",
+    "skill/seccraft/scripts/",
+    "skill/seccraft/assets/",
+    "skill/obscraft/SKILL.md",
+    "skill/obscraft/reference/",
+    "skill/obscraft/scripts/",
+    "skill/obscraft/assets/",
+    "skill/shipcraft/SKILL.md",
+    "skill/shipcraft/reference/",
+    "skill/shipcraft/scripts/",
+    "skill/shipcraft/assets/",
+    "skill/bugcraft/SKILL.md",
+    "skill/bugcraft/reference/",
+    "skill/bugcraft/scripts/",
+    "skill/bugcraft/assets/",
     "skill/criterion/extension/",
     "skill/CHECKSUMS.json",
     "scripts/impc.mjs",
-    "scripts/lib/",
-    "LICENSE",
-    "README.md"
+    "scripts/lib/"
   ],
   "scripts": {
     "quality": "node scripts/data-quality.mjs",
@@ -26,8 +60,32 @@
     "prepublishOnly": "node scripts/data-quality.mjs && node scripts/evaluate-relevance.mjs && node tests/scenarios.mjs"
   },
   "keywords": [
-    "ai-skills", "agent-skills", "claude", "claude-code", "codex", "cursor",
-    "craft", "ui", "api", "database", "testing", "performance", "security",
-    "observability", "devops", "debugging"
-  ]
+    "ai-skills",
+    "agent-skills",
+    "claude",
+    "claude-code",
+    "codex",
+    "cursor",
+    "craft",
+    "ui",
+    "api",
+    "database",
+    "testing",
+    "performance",
+    "security",
+    "observability",
+    "devops",
+    "debugging"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/knarayanareddy/Impeccable.git"
+  },
+  "homepage": "https://github.com/knarayanareddy/Impeccable#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }
