@@ -139,4 +139,4 @@ if (json) {
     console.log(`\nbudget-check: ${breaches.length} breach(es), ${shapeIssues.length} shape issue(s) · FAILED`);
   }
 }
-process.exit(failed ? 1 : 0);
+process.exitCode = failed ? 1 : 0;

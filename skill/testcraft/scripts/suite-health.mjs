@@ -107,4 +107,4 @@ if (historyFile) {
   if (!json) console.log(`\nhistory appended → ${historyFile} (${history.length} record(s))`);
 }
 
-process.exit(totalErrors ? 1 : 0);
+process.exitCode = totalErrors ? 1 : 0;

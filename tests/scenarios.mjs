@@ -217,6 +217,45 @@ try {
 }
 
 // ---------------------------------------------------------------------------
+// live-model evals + the large-JSON drain fix
+// ---------------------------------------------------------------------------
+
+// the exitCode conversion: large --json must survive pipe capture (was
+// truncated at ~145 KB when checkers exited immediately after printing)
+await (async () => {
+  const dir = TMP + "-bigjson";
+  mkdirSync(dir, { recursive: true });
+  try {
+    const lines = [];
+    for (let i = 0; i < 1500; i++) lines.push(`console.log("here");`);
+    writeFileSync(join(dir, "t.js"), lines.join("\n") + "\n");
+    const r = spawnSync(node, [join(ROOT, "skill", "bugcraft", "scripts", "check.mjs"), "--strict", "--json", join(dir, "t.js")], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+    try {
+      const d = JSON.parse(r.stdout || "{}");
+      const n = (d.errors || []).length;
+      if (n !== 1500) { console.log(`✗ large-JSON drain: expected 1500 findings, got ${n} (output truncated?)`); fail++; }
+      else { console.log("✓ large-JSON drain: 1500 findings captured intact through a pipe"); pass++; }
+    } catch { console.log("✗ large-JSON drain: stdout did not parse — still truncated"); fail++; }
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+})();
+
+const LME = join(ROOT, "scripts", "live-model-evals.mjs");
+run("live-model-evals: offline fixture model passes all scenarios", node, [LME, "--offline"], {
+  cwd: ROOT, expect: 0, contains: ["4/4 scenarios passed"],
+});
+run("live-model-evals: refuses without a key and without --offline", node, [LME], {
+  cwd: ROOT, expect: 2, contains: ["EVALS_API_KEY is required"],
+});
+run("live-model-evals: garbage model output fails every scenario", node, [LME, "--fixture", "garbage"], {
+  cwd: ROOT, expect: 1, contains: ["0/4"],
+});
+run("live-model-evals: unchanged output is recorded and failed", node, [LME, "--fixture", "unchanged"], {
+  cwd: ROOT, expect: 1, contains: ["model returned the input unchanged"],
+});
+
+// ---------------------------------------------------------------------------
 // data-quality — corpus-integrity gate
 // ---------------------------------------------------------------------------
 
@@ -282,5 +321,6 @@ run("evaluate-relevance: dataset pointing at a missing file refuses", node, [pat
 });
 
 for (const d of [TMP, proj, linkProj, home, fix, badDs, blocked, TMP + "-skipverify"]) rmSync(d, { recursive: true, force: true });
+rmSync(join(ROOT, "live-model-results"), { recursive: true, force: true });
 console.log(`\nsuite-tools scenarios: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

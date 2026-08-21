@@ -44,7 +44,7 @@
     "reference/domains/typography.md": "f8cbba511e29ccfc8e5913f1cd9a50f25c7b347f1500bc5fd2ad07ce2ff440aa",
     "reference/domains/ux-writing.md": "c98a3d2b57b96a3b228914125459c59e7098a74f75fea22d5aa4250a341c26b0",
     "reference/new-work.md": "3e9c294e0125918f9ab5077d5562b07451794fe26697e04520d8739052382c3e",
-    "scripts/check.mjs": "ce7d3e85466923c94772c343c79b14eb13d34eace213feda89c261c58a3224c5",
+    "scripts/check.mjs": "0aff590693a30e154b85fa1c5bba4b579533885e95a83eea747692fc5c242db0",
     "scripts/live.mjs": "1ee59c2098e1d63fe0d7e4f864cc468e0439a3459da384d8588c5037a5a5262b"
   },
   "codecraft": {
@@ -83,7 +83,7 @@
     "reference/idioms/rust.md": "43d78f8277355da6066d51e36ae767b54131cb61a88937da45d6e7db4d9ef5aa",
     "reference/idioms/typescript.md": "946da7ff019a58baeeab7615dbdf108bb8937ef517ce2c513731657f0f68a0cc",
     "reference/quality-floor.md": "836f55d7980b20d4921552f17e300da23a58562a8898ef503bb56f42610c1683",
-    "scripts/check.mjs": "bdc31eaac8c8c4618c6be653199879dec97fc54fb98b715a702695de513e20d3",
+    "scripts/check.mjs": "f707ad76d983d02d7cdf7760cc2ed3a9ffc03b2a4d1a20dddf52cddab9156b6d",
     "scripts/hooks.mjs": "7c01314002cdfc428a382ca8d74ab2d9833df876964cdd5532bf604fa59a2b5a",
     "scripts/live.mjs": "a31d3dfec36ba8e890973e2215d2bb4ff094605df351ffa74971c02a0540a307"
   },
@@ -120,8 +120,8 @@
     "reference/styles/graphql.md": "efa8a440c10e812df32ab8a57ba61c5b2e67661e8c8bb5097eecf5f5f3b42e69",
     "reference/styles/grpc.md": "a7536cd069557e9c837e5c63b1eab91b5b4dd0bf1794160562ce01e13f22687e",
     "reference/styles/webhooks.md": "9ebac625e5b4b5aec27fa4d3aa9bc936e06ff9987044fb9465c047b90ced7614",
-    "scripts/check.mjs": "10b49c73bec1c413cfef10b6417e6e909e2d54ffdff0b6fc431109f18e0fba6c",
-    "scripts/contract-diff.mjs": "2d24229d68a62596e3f5065d3707a2818536454ba43d32105c81e26d11c5bfee",
+    "scripts/check.mjs": "daec3098e4673afd91b1bf26e0f210fc9a79800cccd0e5904a83ecdb4e76f58b",
+    "scripts/contract-diff.mjs": "0b3da804d393e14e717da5821b86064b957870fe1825b9c9938b21cc5c1a0d11",
     "scripts/lib/spec-extract.mjs": "84ea454da288c8f292ab899460c0c1676bbc2da3ed8dc59a095d59043f2e9bf0",
     "scripts/review.mjs": "3e3817ab7fbd73431da39f62eddc66fa58f0427fed93eac52074722c16f22e92"
   },
@@ -157,10 +157,10 @@
     "reference/engines/postgres.md": "0d609d54a32f1c6c02e21d0b92affe48902aed0bbbb031e82cffb20d7581db3c",
     "reference/engines/sqlite.md": "847e00461aef800089122c4a512ebddf1210e29993057ca754c9a40f2a8f2dd1",
     "reference/schema-floor.md": "4881894f685cfda2939236fb5da5d2f7f52cf2e74bfa6f09c4291cabfa92d1f3",
-    "scripts/check.mjs": "0340b3ac68e50097c55b6d875d90c1783b28164748c61194900f1c651cd0a728",
+    "scripts/check.mjs": "19a5f186174995a2c85ff14cfad3228129819074f8ca555549604e3443797596",
     "scripts/lib/schema-extract.mjs": "edada325522d229ed77549f8b946b2d8d3ee6e3fbda703b77e8f308779fbae83",
     "scripts/migration-review.mjs": "22e71b8fc723eff09d633213cf778571961a24e71618924911ef7adf4ce54083",
-    "scripts/schema-diff.mjs": "de898f1fabe4d5abf89440356ce37ada59ba8bc102d509f29e876c77108c0581"
+    "scripts/schema-diff.mjs": "5ffc897d4875581ff36d8523417edc0377b32c994bd83f97a400fa962657c592"
   },
   "testcraft": {
     "SKILL.md": "813b4f8835ce4bf456bc7f8f3d5b0af13bb1f4821e5dc39441cd195a2c33f665",
@@ -193,9 +193,9 @@
     "reference/frameworks/playwright.md": "fc64c96b974f9edb743392368c24040c7142e5554917089b684f2f50a1abee13",
     "reference/frameworks/pytest.md": "64fe5dddc9db38b47c24a65dba68320c37cf5538ea23a24f74d9eda0bc3a62bf",
     "reference/suite-floor.md": "4679ebef2ca11674d9849b4e131e3160cf2d27c2feebb5254e1fc4c3888786ea",
-    "scripts/check.mjs": "1839b4691c1e9f6a3cd78662166aa708ff2dad544661390aeab4d56a48c4f7ae",
+    "scripts/check.mjs": "fee489c140f7b6f4ea47f1674d9c31a8a65ffee2fe59c350489e023fccae01f1",
     "scripts/flake-review.mjs": "06cf9cb814128d208a8cda141f19d3bf4c68c03ef7b95ef3ddc2e11aea84d907",
-    "scripts/suite-health.mjs": "82d23c44ff20ee995f7107a9d7a58f9886aea65b840486bf1dc7a2f9c291b297"
+    "scripts/suite-health.mjs": "59607d8f1bc244f796e0b9c51d0280ed38e21375158d85763c03b5294c6d50c2"
   },
   "perfcraft": {
     "SKILL.md": "7dbd87433adc33969e5abde1fc87be470b812b2e48186d0ea0fe3c86b6c71570",
@@ -231,8 +231,8 @@
     "reference/measurement/browser.md": "213a5f52120f8bba8787b84c480f3f4ab953986a6c3f120e378891b205b993b6",
     "reference/measurement/data-layer.md": "5a0355fbaa5e99f1e1534aa9817091139d97d11710ce4136e6d45c8cc5b5aa5a",
     "reference/perf-floor.md": "45d3a4d1049cf3b21e1f806620b34afa425530fe8d2829aca8b472f416ff6878",
-    "scripts/budget-check.mjs": "760f2e1f9a8a3a0291d6e7ecc9e448ae3adec3f522811db7f68223e8f94d21e0",
-    "scripts/check.mjs": "13f33e7dd84af18573c7c0e45e0f461708b9321cad8b2b7d334c96d960a3992a",
+    "scripts/budget-check.mjs": "ff546ce52321160b4ccbb9b10918e81e9a8c8567c38f6807a799d0f3f49f7572",
+    "scripts/check.mjs": "178594e705828e8ef3c1e5f59c4ff1c55513c80054757f4ac96f9c04d9b7f76d",
     "scripts/optimize-review.mjs": "45e6ea7f415d8a8959866a8804f69ecd8438de9a4f2aba3f30077944a6767e20"
   },
   "seccraft": {
@@ -267,8 +267,8 @@
     "reference/surfaces/api.md": "cba0f5a241c6841c727e2a61b7925f985edeaf495d582307b612bd76ea394503",
     "reference/surfaces/mobile.md": "30b0bd6b000cf072b8bf6879a45c589c68a91660ddb87ba363452603ccb04af7",
     "reference/surfaces/web.md": "58f6bce9a4c8f10e02546d0b22f7d66d3cf834a3d4bafcc4e4f341ca052253d1",
-    "scripts/check.mjs": "5c74e76f04a75b64d78ff247c825cf56109a7af35d9b2071d49f7a7cea433f38",
-    "scripts/lock-check.mjs": "fb970ae4f96b9d1cd2876abbdafb98adf8d4de2690214755bda1790f91cacf5f",
+    "scripts/check.mjs": "a1fd1a4dfdeccc806cb319807f24321d79b5cc5ebfc3ed9484bb6ecfc5294a39",
+    "scripts/lock-check.mjs": "c0f6985475236b4c5bac4effc15758c9fe1ece1a820fca824a796b7910b29e22",
     "scripts/threat-review.mjs": "561ac21c5cd2cb11210ec90115b8adda2e624710418b933838b2110d0e355701"
   },
   "obscraft": {
@@ -304,9 +304,9 @@
     "reference/pillars/metrics.md": "ab3013043fed726e4fa9d26c60cd6dff0b965f2c7a750da665d0f09a5cd02429",
     "reference/pillars/traces.md": "2c78e0d92805b0276c0f7868a0988bb0f761f2622b8f560dc1a88ed237d03f1e",
     "reference/signal-floor.md": "cf3db27b3645283ca0c4c6b89235b0409956fca37e5f4a3dddb7da7da097ff3c",
-    "scripts/check.mjs": "5e73db16b2189192dddedc0ee40b1b3258f2660ace1e8b67a18e41d7c4d8a31c",
+    "scripts/check.mjs": "ced7f64a314800e55c218ebf99417272f690814ac1ead02116511da24e08a7e4",
     "scripts/slo-review.mjs": "6c7f976f0a44182d3d70db79523ad2ec32f0b06002b5978df749dbf47d01cc6e",
-    "scripts/telemetry-check.mjs": "d30aff6820892ae3b2e997a805ab17f0b3a5d499846d22bcda5768f8e5aa7507"
+    "scripts/telemetry-check.mjs": "75919db649ee67d7879fb0ed89ba51676ecae8b6a492af8354661110dc370c30"
   },
   "shipcraft": {
     "SKILL.md": "43c42ad63947dd1a737b48dcb17f02ae05ff8f10b7de9e68dc83582701ac777a",
@@ -342,8 +342,8 @@
     "reference/platforms/gitlab.md": "0cba268924acd985001bd4c4a538b4a507f29d41aff6b919e17e5295dba4b290",
     "reference/platforms/jenkins.md": "f525e9899c2807f90e3a7418705f7f44bfbd0d2b9bc438a460eb88eb2ea8b778",
     "reference/ship-floor.md": "7a25754fa180e59136bfc230c0f04c8a0655f88f663790e9c6a8bf59e24ae764",
-    "scripts/check.mjs": "f70905fcc381246cddf222ad7b36cfdc75063fde1e92b28872bd66de827306ec",
-    "scripts/ci-check.mjs": "a54f14235ed8dd40cf91d172ae46873d966bd7221fa75b3a96c0619893387823",
+    "scripts/check.mjs": "3944550333e07a0a57cc79049fedc53e62cef4e596f830ab6d2cbc1c533c71a2",
+    "scripts/ci-check.mjs": "30e1d23e94990b5cb084ab185cf6af4b9478a0c0fa1b86fd7c993d67a5817ebc",
     "scripts/lib/pipeline-rules.mjs": "ad5ef7f846963ea761216e0a4ebdc2d3dadd8c92686263a172779d246a3e4922",
     "scripts/pipeline-review.mjs": "e3c2d792deba626d4a97f52a9e76dcaea96bd33ac0e5dcba3b2b4112b6ad5ca3"
   },
@@ -381,7 +381,7 @@
     "reference/environments/python-services.md": "862a665ed4ad5d52b86560fee3354c37324f81b035a0a4678cb671eefadae5cb",
     "reference/evidence-floor.md": "fbf046832fd544d47320661160f035209143bba6401511c5a28b2e18ce670826",
     "scripts/bug-review.mjs": "de665610671d708390fb1ef3f9c7bf3f5e145d7e23967bb6e9d24690dcfdf565",
-    "scripts/check.mjs": "349a838477ac2268b22cc95ae5a84116291d4cd1e73c6a41672a10930032ebca",
-    "scripts/repro-check.mjs": "62818362b58a9d5b2dca7a81a7117350fcb8bfb6553d55133e2c2ea9639e8a85"
+    "scripts/check.mjs": "208b907e8f1480894d42a8143e4548a0803a844c276e6dc527fb65d7d2ce3b7b",
+    "scripts/repro-check.mjs": "ee254659f9f5933d5d20726f838b2259e53dce564fb4f5da6bc8477f1676ef49"
   }
 }

@@ -304,4 +304,4 @@ if (json) {
       (failed ? " · GATE FAILED" : warnings.length ? " · gate holds (warnings only — run with --strict to block)" : " · gate holds ✓")
   );
 }
-process.exit(failed ? 1 : 0);
+process.exitCode = failed ? 1 : 0;

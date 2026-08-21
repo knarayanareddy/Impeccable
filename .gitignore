@@ -5,3 +5,4 @@ tests/.tmp-fixtures*
 **/.tmp-fixtures*
 benchmark/repos/
 *.tgz
+live-model-results/

@@ -110,4 +110,4 @@ if (json) {
     console.log(`\nschema-diff: ${breaking.length} breaking change(s) — route through expand/contract (domains/migrations.md), never destroy first`);
   }
 }
-process.exit(breaking.length ? 1 : 0);
+process.exitCode = breaking.length ? 1 : 0;

@@ -200,4 +200,4 @@ if (json) {
     console.log(`\nrepro-check: ${gaps.length} gap(s) · FAILED`);
   }
 }
-process.exit(gaps.length ? 1 : 0);
+process.exitCode = gaps.length ? 1 : 0;

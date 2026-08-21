@@ -1,0 +1,64 @@
+{
+  "scenarios": [
+    {
+      "id": "bugcraft-swallowed-exception",
+      "skill": "bugcraft",
+      "task": "This file has debugging slop. Fix it so the bugcraft checker passes: the catch block swallows the error. Translate or propagate it — never delete evidence silently. Reply with the fixed file as a fenced code block with the path as the fence language.",
+      "files": [
+        {
+          "path": "t.js",
+          "content": "export function load(id) {\n  try {\n    return db.get(id);\n  } catch (e) {}\n}\n"
+        }
+      ],
+      "golden": {
+        "t.js": "export function load(id) {\n  try {\n    return db.get(id);\n  } catch (e) {\n    throw new Error(`load: failed for ${id}`, { cause: e });\n  }\n}\n"
+      },
+      "check": { "script": "skill/bugcraft/scripts/check.mjs", "args": ["--strict"] }
+    },
+    {
+      "id": "bugcraft-debug-marker",
+      "skill": "bugcraft",
+      "task": "This file ships print-debugging scaffolding. Remove the debug marker so the bugcraft checker passes. Reply with the fixed file as a fenced code block with the path as the fence language.",
+      "files": [
+        {
+          "path": "t.js",
+          "content": "export function total(items) {\n  console.log(\"here\");\n  return items.reduce((s, it) => s + it.price, 0);\n}\n"
+        }
+      ],
+      "golden": {
+        "t.js": "export function total(items) {\n  return items.reduce((s, it) => s + it.price, 0);\n}\n"
+      },
+      "check": { "script": "skill/bugcraft/scripts/check.mjs", "args": ["--strict"] }
+    },
+    {
+      "id": "shipcraft-masked-failure",
+      "skill": "shipcraft",
+      "task": "This CI workflow masks a failing test step. Remove the mask so the shipcraft checker passes — the step must fail the build for real. Reply with the fixed file as a fenced code block with the path as the fence language.",
+      "files": [
+        {
+          "path": "ci.yml",
+          "content": "jobs:\n  test:\n    steps:\n      - run: npm test || true\n      - run: npm ci\n"
+        }
+      ],
+      "golden": {
+        "ci.yml": "jobs:\n  test:\n    steps:\n      - run: npm test\n      - run: npm ci\n"
+      },
+      "check": { "script": "skill/shipcraft/scripts/check.mjs", "args": ["--strict"] }
+    },
+    {
+      "id": "testcraft-focused-test",
+      "skill": "testcraft",
+      "task": "This test file runs only one focused test. Remove the focus so the whole file runs and the testcraft checker passes. Reply with the fixed file as a fenced code block with the path as the fence language.",
+      "files": [
+        {
+          "path": "t.test.js",
+          "content": "it.only(\"adds\", () => {\n  expect(add(1, 2)).toBe(3);\n});\nit(\"sub\", () => {\n  expect(sub(3, 1)).toBe(2);\n});\n"
+        }
+      ],
+      "golden": {
+        "t.test.js": "it(\"adds\", () => {\n  expect(add(1, 2)).toBe(3);\n});\nit(\"sub\", () => {\n  expect(sub(3, 1)).toBe(2);\n});\n"
+      },
+      "check": { "script": "skill/testcraft/scripts/check.mjs", "args": ["--strict"] }
+    }
+  ]
+}

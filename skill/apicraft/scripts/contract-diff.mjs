@@ -79,4 +79,4 @@ if (json) {
     console.log(`\ncontract-diff: ${breaking.length} breaking change(s) — run through the versioning protocol (version.md / deprecate.md)`);
   }
 }
-process.exit(breaking.length ? 1 : 0);
+process.exitCode = breaking.length ? 1 : 0;
