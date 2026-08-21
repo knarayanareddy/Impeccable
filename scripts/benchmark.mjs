@@ -163,6 +163,13 @@ function writeSummary(results) {
   lines.push(`Cells are **errors**/warnings (checker exit 0/1 with \`--strict\`); full findings per rule in`);
   lines.push(`\`benchmark/results/*.json\`.`);
   lines.push(``);
+  lines.push(`Reading the results: errors are deterministic bans (debug markers, swallowed exceptions,`);
+  lines.push(`masks, secret echoes…). Some warning classes are deliberately heuristic and fire on`);
+  lines.push(`mature code (e.g. \`magic-number\`, \`legacy-var\`, URL mentions under \`insecure-transport\`) —`);
+  lines.push(`that over-approximation is documented per rule in each skill's anti-patterns reference, and`);
+  lines.push(`is why warnings never fail a run without \`--strict\`. The errors column is the signal; the`);
+  lines.push(`warnings column is the worklist.`);
+  lines.push(``);
   writeFileSync(SUMMARY, lines.join("\n") + "\n");
 }
 

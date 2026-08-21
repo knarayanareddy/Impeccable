@@ -1,6 +1,6 @@
 # Suite benchmark — checker runs on public repositories
 
-Generated 2026-08-21 · suite commit `361b2154` · re-run: `node scripts/benchmark.mjs --refresh`
+Generated 2026-08-21 · suite commit `8224af72` · re-run: `node scripts/benchmark.mjs --refresh`
 
 Every facet checker runs with `--strict --json` against a shallow clone of each repo at the
 recorded commit. `n/a` = the checker found no files of its types (recorded honestly, never as
@@ -18,4 +18,11 @@ the checkers run, report, and stay honest on real code.
 
 Cells are **errors**/warnings (checker exit 0/1 with `--strict`); full findings per rule in
 `benchmark/results/*.json`.
+
+Reading the results: errors are deterministic bans (debug markers, swallowed exceptions,
+masks, secret echoes…). Some warning classes are deliberately heuristic and fire on
+mature code (e.g. `magic-number`, `legacy-var`, URL mentions under `insecure-transport`) —
+that over-approximation is documented per rule in each skill's anti-patterns reference, and
+is why warnings never fail a run without `--strict`. The errors column is the signal; the
+warnings column is the worklist.
 
