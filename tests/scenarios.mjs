@@ -198,5 +198,6 @@ run("evaluate-relevance: dataset pointing at a missing file refuses", node, [pat
   cwd: ROOT, expect: 2, contains: ["dataset defect"],
 });
 
+for (const d of [TMP, proj, linkProj, home, fix, badDs, blocked]) rmSync(d, { recursive: true, force: true });
 console.log(`\nsuite-tools scenarios: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

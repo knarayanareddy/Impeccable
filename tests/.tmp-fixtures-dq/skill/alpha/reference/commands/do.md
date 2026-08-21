@@ -1,3 +1,0 @@
-# Command: do
-
-does it.
