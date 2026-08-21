@@ -99,8 +99,12 @@ skill-name/            # folder name == frontmatter `name`
 | pbakaus/**impeccable** | ~61k | Design language + 23 commands + detectors | Vocabulary, verification, brand/product registers | Operate/product-UI depth is thin vs its marketing heart; huge surface to maintain |
 | Leonxlnx/**taste-skill** | ~59–68k | 3 "dials" (variance, motion, density) + presets | Tunable like an equalizer; 11 variants | Landing pages/portfolios/redesigns; little data-dense UI guidance |
 | nutlope/**hallmark** | ~13k | 3 verbs (audit/redesign/study) + honest-copy rule | DNA extraction from screenshots/URLs; strict verification at 4 widths | Page-focused, not tool-focused |
-| nextlevelbuilder/**ui-ux-pro-max** | ~102k | 161 reasoning rules + 67 UI styles + DS generator | Breadth | Kitchen-sink breadth; no sharp POV |
+| nextlevelbuilder/**ui-ux-pro-max-skill** (renamed from `ui-ux-pro-max`) | **119.3k** (Aug 21, 2026) | BM25 search engine over 144 curated CSVs (192 reasoning profiles, 84 styles, 22 stacks) + DS generator + 7-skill bundle + npm CLI for 12+ harnesses | Breadth; data QA chain (153 unit tests, relevance evals), 0-result honesty contract, bilingual README | Checklist-without-teeth: no deterministic gate over the delivered UI; metadata drift between surfaces |
 | oso95/**scroll-world** | ~7.2k | Scroll-driven 3D brand worlds | Novelty | Narrow; experiential marketing only |
+
+**Deep dive (2026-08-21):** see [RESEARCH/ui-ux-pro-max-deep-dive.md](ui-ux-pro-max-deep-dive.md) —
+end-to-end hands-on analysis of why UI/UX Pro Max overtook Impeccable (119.3k★ vs 61.4k★) and the
+head-to-head verdict.
 
 **The white space:** every major skill optimizes for *pages that persuade* (landings, marketing,
 portfolios, editorial). Real-world frontend work is dominated by *interfaces that operate*: dashboards,
@@ -172,7 +176,8 @@ has different physics — density is a feature, decoration is a liability, and q
 - [agentskills.io/specification](https://agentskills.io/specification) — Agent Skills open spec
 - [anthropics/skills — frontend-design](https://github.com/anthropics/skills/tree/main/skills/frontend-design)
 - [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill), [nutlope/hallmark](https://github.com/nutlope/hallmark),
-  [nextlevelbuilder/ui-ux-pro-max](https://github.com/nextlevelbuilder/ui-ux-pro-max), [oso95/scroll-world](https://github.com/oso95/scroll-world)
+  [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)
+  (renamed from ui-ux-pro-max; deep-dived hands-on 2026-08-21), [oso95/scroll-world](https://github.com/oso95/scroll-world)
 - [impeccable.style](https://impeccable.style/), [aiuxplayground.com/skills/impeccable](https://aiuxplayground.com/skills/impeccable/),
   [ui-skills.com](https://www.ui-skills.com/skills/pbakaus/impeccable)
 - [dev.to — Stop Your AI Coding Tool from Generating Generic UI](https://dev.to/_46ea277e677b888e0cd13/stop-your-ai-coding-tool-from-generating-generic-ui-impeccable-design-skill-4g1l)
