@@ -145,6 +145,10 @@ scenario("--json output is machine-readable", {
   files: [FIX("ci.yml", `- run: echo $API_KEY\n`)],
   args: ["--json"], exitCode: 1, contains: [`"rule": "secret-echo"`], json: true,
 });
+scenario("Dockerfile variants (Dockerfile.prod / app.Dockerfile) are CI files", {
+  files: [FIX("Dockerfile.prod", `FROM node\nRUN npm install\n`), FIX("app.Dockerfile", `FROM node:22-alpine\n`)],
+  exitCode: 0, contains: ["unpinned-install"],
+});
 scenario("idiomatic pipeline passes clean", {
   files: [FIX(".gitlab-ci.yml", `stages: [validate, test, build, deploy]\nvalidate:\n  script:\n    - npm ci\n    - npm run lint\ntest:\n  script:\n    - npm test\nbuild:\n  script:\n    - docker build -t app:3.2.1 .\ndeploy:\n  script:\n    - ./deploy.sh && ./rollback.sh --verify\n`)],
   exitCode: 0, contains: ["clean"],

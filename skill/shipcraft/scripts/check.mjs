@@ -41,6 +41,8 @@ function isCiFile(p) {
   const rel = p.replaceAll("\\", "/");
   const base = basename(rel).toLowerCase();
   if (CI_FILES.includes(base)) return true;
+  // Dockerfile.prod / app.Dockerfile — same file, same rules
+  if (/^dockerfile([._-][\w.-]*)?$|\.dockerfile$/.test(base)) return true;
   return CI_DIRS.some((d) => rel.includes(d + "/"));
 }
 

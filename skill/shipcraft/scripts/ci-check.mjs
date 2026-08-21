@@ -166,7 +166,7 @@ function jsonSteps(node, out = []) {
 }
 
 const WORKFLOW_MARKERS = /\b(jobs|stages|steps|script|commands|pipeline|workflow)\s*:/i;
-const LINE_SCAN_NAMES = /^(dockerfile.*|makefile|docker-compose\.(yml|yaml)|jenkinsfile|\.gitlab-ci\.yml|azure-pipelines\.yml|bitbucket-pipelines\.yml|\.drone\.yml|\.woodpecker\.yml|pipeline\.(yml|yaml))$/i;
+const LINE_SCAN_NAMES = /^(dockerfile([._-][\w.-]*)?|.*\.dockerfile|makefile|docker-compose\.(yml|yaml)|jenkinsfile|\.gitlab-ci\.yml|azure-pipelines\.yml|bitbucket-pipelines\.yml|\.drone\.yml|\.woodpecker\.yml|pipeline\.(yml|yaml))$/i;
 const base = basename(pipelineFile).toLowerCase();
 
 let steps = [];
