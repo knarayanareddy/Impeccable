@@ -1,0 +1,79 @@
+{
+  "repo": "sindresorhus/ora",
+  "note": "small JS CLI library",
+  "commit": "86403dcc176ad26a94f3005774f8c7fbebad2714",
+  "runAt": "2026-08-21T23:08:19.727Z",
+  "suite": "361b2154ec5e90781fc160b28cabb0f1686c02a2",
+  "facets": [
+    {
+      "skill": "criterion",
+      "exit": 1,
+      "files": 7,
+      "errors": 2,
+      "warnings": 0
+    },
+    {
+      "skill": "codecraft",
+      "exit": 1,
+      "files": 7,
+      "errors": 25,
+      "warnings": 103
+    },
+    {
+      "skill": "apicraft",
+      "exit": 0,
+      "files": 8,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "skill": "dbcraft",
+      "exit": 1,
+      "files": 7,
+      "errors": 1,
+      "warnings": 3
+    },
+    {
+      "skill": "testcraft",
+      "exit": 0,
+      "files": 7,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "skill": "perfcraft",
+      "exit": 1,
+      "files": 20,
+      "errors": 0,
+      "warnings": 3
+    },
+    {
+      "skill": "seccraft",
+      "exit": 1,
+      "files": 8,
+      "errors": 1,
+      "warnings": 1
+    },
+    {
+      "skill": "obscraft",
+      "exit": 1,
+      "files": 10,
+      "errors": 0,
+      "warnings": 12
+    },
+    {
+      "skill": "shipcraft",
+      "exit": 1,
+      "files": 20,
+      "errors": 0,
+      "warnings": 2
+    },
+    {
+      "skill": "bugcraft",
+      "exit": 1,
+      "files": 7,
+      "errors": 0,
+      "warnings": 3
+    }
+  ]
+}

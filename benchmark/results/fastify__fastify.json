@@ -1,0 +1,79 @@
+{
+  "repo": "fastify/fastify",
+  "note": "JS/TS web framework",
+  "commit": "83e69762aff047940b376fc2a266d143499ef727",
+  "runAt": "2026-08-21T23:08:19.727Z",
+  "suite": "361b2154ec5e90781fc160b28cabb0f1686c02a2",
+  "facets": [
+    {
+      "skill": "criterion",
+      "exit": 0,
+      "files": 289,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "skill": "codecraft",
+      "exit": 1,
+      "files": 295,
+      "errors": 44,
+      "warnings": 2856
+    },
+    {
+      "skill": "apicraft",
+      "exit": 1,
+      "files": 320,
+      "errors": 38,
+      "warnings": 43
+    },
+    {
+      "skill": "dbcraft",
+      "exit": 0,
+      "files": 295,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "skill": "testcraft",
+      "exit": 1,
+      "files": 295,
+      "errors": 86,
+      "warnings": 599
+    },
+    {
+      "skill": "perfcraft",
+      "exit": 1,
+      "files": 389,
+      "errors": 23,
+      "warnings": 21
+    },
+    {
+      "skill": "seccraft",
+      "exit": 1,
+      "files": 320,
+      "errors": 1,
+      "warnings": 81
+    },
+    {
+      "skill": "obscraft",
+      "exit": 1,
+      "files": 326,
+      "errors": 0,
+      "warnings": 117
+    },
+    {
+      "skill": "shipcraft",
+      "exit": 1,
+      "files": 389,
+      "errors": 1,
+      "warnings": 5
+    },
+    {
+      "skill": "bugcraft",
+      "exit": 1,
+      "files": 295,
+      "errors": 2,
+      "warnings": 1
+    }
+  ]
+}

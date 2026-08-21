@@ -1,0 +1,79 @@
+{
+  "repo": "lodash/lodash",
+  "note": "JS utility library",
+  "commit": "a666ba591064c8011988275790ad7d625279f09c",
+  "runAt": "2026-08-21T23:08:19.727Z",
+  "suite": "361b2154ec5e90781fc160b28cabb0f1686c02a2",
+  "facets": [
+    {
+      "skill": "criterion",
+      "exit": 1,
+      "files": 32,
+      "errors": 0,
+      "warnings": 1
+    },
+    {
+      "skill": "codecraft",
+      "exit": 1,
+      "files": 27,
+      "errors": 78,
+      "warnings": 5913
+    },
+    {
+      "skill": "apicraft",
+      "exit": 1,
+      "files": 35,
+      "errors": 0,
+      "warnings": 2
+    },
+    {
+      "skill": "dbcraft",
+      "exit": 1,
+      "files": 27,
+      "errors": 1,
+      "warnings": 7
+    },
+    {
+      "skill": "testcraft",
+      "exit": 1,
+      "files": 27,
+      "errors": 52,
+      "warnings": 1
+    },
+    {
+      "skill": "perfcraft",
+      "exit": 1,
+      "files": 65,
+      "errors": 5,
+      "warnings": 19
+    },
+    {
+      "skill": "seccraft",
+      "exit": 1,
+      "files": 40,
+      "errors": 19,
+      "warnings": 1
+    },
+    {
+      "skill": "obscraft",
+      "exit": 1,
+      "files": 38,
+      "errors": 0,
+      "warnings": 30
+    },
+    {
+      "skill": "shipcraft",
+      "exit": 1,
+      "files": 65,
+      "errors": 0,
+      "warnings": 9
+    },
+    {
+      "skill": "bugcraft",
+      "exit": 1,
+      "files": 27,
+      "errors": 68,
+      "warnings": 0
+    }
+  ]
+}

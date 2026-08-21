@@ -1,0 +1,79 @@
+{
+  "repo": "pallets/flask",
+  "note": "Python web framework",
+  "commit": "d318b683471101618febed18996405ad26462110",
+  "runAt": "2026-08-21T23:08:19.727Z",
+  "suite": "361b2154ec5e90781fc160b28cabb0f1686c02a2",
+  "facets": [
+    {
+      "skill": "criterion",
+      "exit": 0,
+      "files": 22,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "skill": "codecraft",
+      "exit": 1,
+      "files": 83,
+      "errors": 21,
+      "warnings": 684
+    },
+    {
+      "skill": "apicraft",
+      "exit": 1,
+      "files": 91,
+      "errors": 35,
+      "warnings": 21
+    },
+    {
+      "skill": "dbcraft",
+      "exit": 1,
+      "files": 85,
+      "errors": 0,
+      "warnings": 8
+    },
+    {
+      "skill": "testcraft",
+      "exit": 1,
+      "files": 83,
+      "errors": 5,
+      "warnings": 0
+    },
+    {
+      "skill": "perfcraft",
+      "exit": 1,
+      "files": 236,
+      "errors": 0,
+      "warnings": 6
+    },
+    {
+      "skill": "seccraft",
+      "exit": 1,
+      "files": 112,
+      "errors": 1,
+      "warnings": 26
+    },
+    {
+      "skill": "obscraft",
+      "exit": 1,
+      "files": 98,
+      "errors": 0,
+      "warnings": 36
+    },
+    {
+      "skill": "shipcraft",
+      "exit": 1,
+      "files": 236,
+      "errors": 0,
+      "warnings": 3
+    },
+    {
+      "skill": "bugcraft",
+      "exit": 1,
+      "files": 83,
+      "errors": 25,
+      "warnings": 1
+    }
+  ]
+}
