@@ -1,0 +1,34 @@
+# The bugcraft pass: every record holds the floor — the quartet, the rung,
+# and the closure contract.
+bugs:
+  - id: CHECKOUT-31
+    title: checkout hangs on 3-item carts
+    observed: POST /checkout hangs 30s+ with 3 items in the cart
+    expected: checkout completes < 2s for any cart size
+    steps:
+      - add 3 items to the cart
+      - click pay
+    environment: prod-us, node 20, postgres 15
+    status: fixed
+    root-cause: N+1 query — one items query per cart row in the loader
+    fix: batch fetch all items with a single IN query
+    pin: tests/checkout.test.js:31
+    evidence-level: 5
+  - id: CART-44
+    title: flaky tax rounding
+    observed: tax total off by 1 cent on odd row counts
+    expected: cents match the tax table exactly
+    steps: run 100 rows through the tax calculation
+    environment: ci, python 3.12
+    status: open
+    evidence-level: reproduction
+  - id: AUTH-12
+    title: sessions vanish
+    observed: users logged out at random after deploys
+    expected: sessions survive a deploy
+    steps: login, wait, refresh
+    environment: prod-us
+    status: cannot-reproduce
+    instrumentation: structured logs on session lookup boundaries shipped
+    ticket: AUTH-12
+    evidence-level: 1

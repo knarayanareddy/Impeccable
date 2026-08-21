@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bugcraft — the craft skill for debugging</title>
+<style>
+  :root { --bg:#101418; --panel:#161c22; --text:#e8eaf0; --muted:#8b93a1; --line:#262e37; --accent:#4d7cfe; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.6 system-ui,-apple-system,sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 56px 24px 80px; }
+  h1 { font-size: 34px; line-height:1.15; letter-spacing:-0.02em; margin:0 0 12px; }
+  .lede { color: var(--muted); font-size: 18px; margin: 0 0 36px; }
+  h2 { font-size: 20px; margin: 40px 0 12px; letter-spacing:-0.01em; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; text-decoration:none; color:var(--text); }
+  .card:hover { border-color: var(--accent); }
+  .card b { display:block; }
+  .card span { color: var(--muted); font-size: 13px; }
+  code, pre { font-family: ui-monospace, monospace; }
+  pre { background: var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:13px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); }
+  .num { color:var(--accent); font-variant-numeric: tabular-nums; }
+  a { color: var(--accent); }
+  .back { color:var(--muted); text-decoration:none; font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="../">← the craft-skill suite</a>
+  <h1>Bugcraft</h1>
+  <p class="lede">The craft skill for debugging that finds causes, not coincidences. <em>Every bug is found by evidence, not by luck. Reproduce, bisect, pin.</em></p>
+
+  <h2>Install</h2>
+  <pre>npx skills add knarayanareddy/Impeccable --skill bugcraft</pre>
+  <p>Then <code>/bugcraft repro checkout-hang</code>, <code>/bugcraft diagnose .</code>, or any of the 15 commands.</p>
+
+  <h2>The commands <span class="num">15</span></h2>
+  <table>
+    <tr><th>Build</th><td>init · shape · repro (· records gate)</td></tr>
+    <tr><th>Evaluate</th><td>bisect · diagnose · trace · audit · review (· decision daemon) · measure</td></tr>
+    <tr><th>Refine</th><td>minimize · fix · pin · cleanup</td></tr>
+    <tr><th>Enhance</th><td>postmortem · document</td></tr>
+  </table>
+
+  <h2>The checker</h2>
+  <pre>node skill/bugcraft/scripts/check.mjs --strict --target src/
+# ERROR debug-marker        before.js:4   console.log("here")
+# ERROR log-and-swallow     before.js:10  catch { console.log(e) }
+# WARN  silent-catch-return before.js:22  catch { return null }
+# WARN  commented-out-debug before.js:30  // console.log(...)
+# bugcraft: 4 file(s) scanned · FAILED</pre>
+  <p>Zero dependencies, no LLM, no API key. Behaviors pinned by <a href="../../skill/bugcraft/tests/scenarios.mjs">39 automated scenarios</a>.</p>
+
+  <h2>repro-check — the evidence gate</h2>
+  <pre>node skill/bugcraft/scripts/repro-check.mjs --bugs bugs.yaml
+# GAP missing-steps          Bug "CHECKOUT-31" has no steps/repro path
+# GAP missing-pin            Bug "CHECKOUT-31" is fixed with no pin
+# repro-check: 12 gap(s) · FAILED</pre>
+  <p>The repro-signature quartet (observed, expected, steps, environment), the evidence rung,
+  and the closure contract — mechanical, CI-ready. A file that parses to zero records refuses,
+  never claims the floor holds.</p>
+
+  <h2>Bug review daemon</h2>
+  <pre>node skill/bugcraft/scripts/bug-review.mjs --bugs bugs.json --round r1 &amp;
+node skill/bugcraft/scripts/bug-review.mjs --round r1 --wait</pre>
+  <p>Serve every bug as a decision page — close / flag / n-a — with the closure gaps in red:
+  no repro, no root-cause, no pin.</p>
+
+  <h2>Environment sheets</h2>
+  <p><code>reference/environments/</code> ships the instruments for browser JavaScript, Python
+  services, and distributed systems — one sheet, never all.</p>
+
+  <h2>Evidence</h2>
+  <div class="grid">
+    <a class="card" href="case-study.md"><b>Case study</b><span>The generic-AI “fix” → the bugcraft pass, checker and records gate, both directions</span></a>
+    <a class="card" href="../../demos/bugcraft/before.js"><b>Demo — before</b><span>Runs the checker's failure list</span></a>
+    <a class="card" href="../../demos/bugcraft/after.js"><b>Demo — after</b><span>Passes clean</span></a>
+    <a class="card" href="../../REVIEWS/bugcraft-round1.md"><b>Expert review</b><span>Two-round panel archive</span></a>
+  </div>
+</main>
+<footer style="max-width:860px;margin:0 auto;padding:0 24px 32px;color:var(--muted);font-size:12px;">Apache-2.0 · original work, not affiliated with pbakaus/impeccable</footer>
+</body>
+</html>

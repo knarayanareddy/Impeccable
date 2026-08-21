@@ -7,7 +7,8 @@ beyond the experiments the plan approved.
 ## Steps
 
 1. Take `shape`'s plan (or build it now if the request came without one): candidates with their
-   falsifiable predictions, ranked by cost.
+   falsifiable predictions, ranked by cost. For the runtime's instruments, load the matching
+   sheet in `reference/environments/` (one sheet, never all).
 2. Run the tests in order — cheapest first — one at a time, recording each verdict. The
    diagnosis log is the audit trail (`evidence-floor.md` #2).
 3. Eliminate: a candidate dies at its first failed prediction. Write the prediction *before*

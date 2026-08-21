@@ -13,7 +13,9 @@ is the authority). Until it reproduces, it's a suspicion; after, it's a bug you 
    concurrency (`testcraft`'s determinism domain is the playbook). A repro that fails 1-in-10 is
    not a repro yet.
 4. Encode the repro as an artifact: a script, a test, or a runbook — one command for the next
-   engineer.
+   engineer. If the bug lives in a specific runtime, load its sheet in
+   `reference/environments/` first (browser-javascript, python-services,
+   distributed-systems).
 5. If it won't reproduce: instrument (targeted structured logging at the suspected boundary),
    capture the environment diff, and replay history/data — but **never fix blind**
    (`evidence-floor.md` #1). The honest artifact is the instrumentation + the ticket.
@@ -22,6 +24,8 @@ is the authority). Until it reproduces, it's a suspicion; after, it's a bug you 
 
 - The bug fails on demand (deterministically, or with the window documented); the repro
   artifact committed; or the can't-reproduce protocol shipped with instrumentation in place.
+- The bug record holds the floor: `node <skill-dir>/scripts/repro-check.mjs --bugs <records>`
+  passes (the quartet + the rung — `reference/commands/repro-check.md`).
 
 ## Rules
 

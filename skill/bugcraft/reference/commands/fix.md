@@ -22,6 +22,9 @@ this is done hastily.
 
 - The assumption corrected at its origin; the repro verified before/after; the suite green; the
   pin shipped in the same change; the scaffolding cleaned.
+- The record's closure contract holds: `node <skill-dir>/scripts/repro-check.mjs --bugs
+  <records>` passes — root-cause and pin present, the rung cited
+  (`reference/commands/repro-check.md`).
 
 ## Rules
 

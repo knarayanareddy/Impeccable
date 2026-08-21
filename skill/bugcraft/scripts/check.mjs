@@ -88,11 +88,13 @@ const rules = [
     id: "disabled-code",
     severity: "warning",
     message: "Disabled code block — a shipped experiment (S5). Delete it; git remembers.",
-    test(line) {
+    // subject: the STRIPPED line (code evidence) plus the RAW line (the
+    // `if (true) /* debug */` comment is evidence that it gates an experiment)
+    test(line, raw = line) {
       const m = /\bif\s*\(\s*(?:false|true|0)\s*\)\s*\{?|\bwhile\s*\(\s*(?:false|0)\s*\)/.exec(line);
       if (!m) return null;
       // `if (true)` as a comment-style gate is the tell; genuine `if (false)`/`if (0)` too
-      if (/\b(?:debug|disable|temporar|hack|experiment|todo|fixme|test)\b/i.test(line) || /\bif\s*\(\s*(?:false|0)\s*\)/.test(line)) {
+      if (/\b(?:debug|disable|temporar|hack|experiment|todo|fixme|test)\b/i.test(raw) || /\bif\s*\(\s*(?:false|0)\s*\)/.test(line)) {
         return m[0].trim();
       }
       return null;
@@ -125,7 +127,7 @@ const rules = [
 // File discovery
 // ---------------------------------------------------------------------------
 
-function walk(dir, acc = []) {
+function walk(dir, acc = [], visited, visitedFiles) {
   let entries;
   try {
     entries = readdirSync(dir);
@@ -141,14 +143,28 @@ function walk(dir, acc = []) {
     } catch {
       continue;
     }
-    if (st.isDirectory()) walk(p, acc);
-    else if (st.isFile() && EXTS.has(extname(name).toLowerCase())) acc.push(p);
+    if (st.isDirectory()) {
+      // visited set keyed by dev:ino — a symlink cycle must terminate the
+      // walk, not recurse forever
+      const key = `${st.dev}:${st.ino}`;
+      if (visited.has(key)) continue;
+      visited.add(key);
+      walk(p, acc, visited, visitedFiles);
+    } else if (st.isFile() && EXTS.has(extname(name).toLowerCase())) {
+      // the same file reached twice through symlinks is still one file
+      const key = `${st.dev}:${st.ino}`;
+      if (visitedFiles.has(key)) continue;
+      visitedFiles.add(key);
+      acc.push(p);
+    }
   }
   return acc;
 }
 
 function collect(paths) {
   const files = [];
+  const visited = new Set();
+  const visitedFiles = new Set();
   for (const p of paths) {
     const abs = resolve(p);
     let st;
@@ -158,7 +174,7 @@ function collect(paths) {
       console.error(`bugcraft: cannot read ${p}`);
       process.exit(2);
     }
-    if (st.isDirectory()) walk(abs, files);
+    if (st.isDirectory()) walk(abs, files, visited, visitedFiles);
     else if (EXTS.has(extname(abs).toLowerCase())) files.push(abs);
   }
   return [...new Set(files)];
@@ -177,11 +193,49 @@ function scan(file) {
     return findings;
   }
   const ext = extname(file).toLowerCase();
-  const lines = text.split("\n");
+  const rawLines = text.split("\n");
+  // Stateful comment stripping: comments are prose, not evidence — except for
+  // the rules whose evidence IS the comment (commented-out-debug,
+  // uncertainty-marker, and disabled-code's `if (true) /* debug */` tell).
+  // Line rules read the stripped lines; the comment rules read the raw line.
+  const JS_COMMENT = /\.(js|mjs|cjs|jsx|ts|tsx|java|cs|rs|swift|kt|kts|go|php)$/i.test(file);
+  const HASH_COMMENT = /\.(py|rb|php)$/i.test(file);
+  const lines = [];
+  {
+    let inBlock = false;
+    for (const raw of rawLines) {
+      let line = raw;
+      if (inBlock) {
+        const end = line.indexOf("*/");
+        if (end === -1) { lines.push(""); continue; }
+        line = " ".repeat(end + 2) + line.slice(end + 2);
+        inBlock = false;
+      }
+      let out = "";
+      let i = 0;
+      while (i < line.length) {
+        if (line.startsWith("/*", i)) {
+          const end = line.indexOf("*/", i + 2);
+          if (end === -1) { inBlock = true; break; }
+          out += " ".repeat(end + 2 - i);
+          i = end + 2;
+        } else if (JS_COMMENT && line.startsWith("//", i) && (i === 0 || line[i - 1] !== ":")) {
+          break;
+        } else if (HASH_COMMENT && line.startsWith("#", i)) {
+          break;
+        } else {
+          out += line[i];
+          i += 1;
+        }
+      }
+      lines.push(out);
+    }
+  }
   let pendingExcept = -1; // python: `except X:` awaiting a silent body
   let pendingCatch = -1;  // js-like: `catch (e) {` awaiting its single-statement body
 
-  lines.forEach((raw, i) => {
+  lines.forEach((line, i) => {
+    const raw = rawLines[i];
     // JS multi-line catch with a single-statement body: console.log / return null
     if (pendingCatch !== -1 && i - pendingCatch <= 2) {
       if (/^\s*console\.(log|error|warn|debug)\s*\([^)]*\)\s*;?\s*$/.test(raw)) {
@@ -198,9 +252,15 @@ function scan(file) {
         pendingCatch = -1; // a real body — not a swallow
       }
     }
-    if (/^\s*\}?\s*catch\s*\([^)]*\)\s*\{\s*(?:\/\/.*)?$/.test(raw)) pendingCatch = i;
+    if (/^\s*\}?\s*catch\s*\([^)]*\)\s*\{\s*$/.test(line)) pendingCatch = i;
     for (const rule of rules) {
-      const detail = rule.test(raw);
+      let detail;
+      if (rule.id === "disabled-code") {
+        detail = rule.test(line, raw);
+      } else {
+        const subject = (rule.id === "commented-out-debug" || rule.id === "uncertainty-marker") ? raw : line;
+        detail = rule.test(subject);
+      }
       if (detail) {
         findings.push({ file: basename(file), line: i + 1, rule: rule.id, severity: rule.severity, message: rule.message, detail });
       }

@@ -50,7 +50,10 @@ the system how to catch its class.
    below against it, e.g. `node <skill-dir>/scripts/check.mjs`.
 2. Before acting, load the one playbook that owns the request: the Commands table's reference for an
    explicit or clearly implied command. Then inspect the bug's context (error reports, logs,
-   relevant code, history) before touching anything.
+   relevant code, history) before touching anything. If the bug lives in a specific runtime or
+   deployment shape, also load the matching sheet in `reference/environments/`
+   (browser-javascript, python-services, distributed-systems) alongside the relevant domains —
+   one sheet, never all.
 3. Load [reference/evidence-floor.md](reference/evidence-floor.md) **immediately before editing any
    code in a debugging pass**. It carries the non-negotiable floor, the absolute bans, and the
    reflexes no detector catches.
@@ -65,12 +68,12 @@ the system how to catch its class.
 |---|---|---|---|
 | `init` | Build | Capture debugging context: logging, error reporting, repro environment | [reference/commands/init.md](reference/commands/init.md) |
 | `shape [bug]` | Build | Plan the debug before touching code: evidence, hypotheses, order | [reference/commands/shape.md](reference/commands/shape.md) |
-| `repro [bug]` | Build | Make the failure happen on demand — the bug isn't real until it reproduces | [reference/commands/repro.md](reference/commands/repro.md) |
+| `repro [bug]` | Build | Make the failure happen on demand — the bug isn't real until it reproduces · records gate: [reference/commands/repro-check.md](reference/commands/repro-check.md) | [reference/commands/repro.md](reference/commands/repro.md) |
 | `bisect [bug]` | Evaluate | Isolate the cause: git bisect, half-splitting, one dimension at a time | [reference/commands/bisect.md](reference/commands/bisect.md) |
 | `diagnose [bug]` | Evaluate | Hypothesis-driven diagnosis: one hypothesis, one prediction, falsify cheap | [reference/commands/diagnose.md](reference/commands/diagnose.md) |
 | `trace [bug]` | Evaluate | Follow the failure through the system: where truth diverges across layers | [reference/commands/trace.md](reference/commands/trace.md) |
 | `audit [target]` | Evaluate | Defect scan of the debugging posture: swallowed errors, markers, uncertainty | [reference/commands/audit.md](reference/commands/audit.md) |
-| `review [target]` | Evaluate | Judgment review: could the next bug be found in this system? | [reference/commands/review.md](reference/commands/review.md) |
+| `review [target]` | Evaluate | Judgment review: could the next bug be found in this system? · decision daemon: [reference/commands/bug-review.md](reference/commands/bug-review.md) | [reference/commands/review.md](reference/commands/review.md) |
 | `measure [target]` | Evaluate | Quantitative debugging metrics | [reference/commands/measure.md](reference/commands/measure.md) |
 | `minimize [bug]` | Refine | Shrink the repro to the smallest failing case — the repro is the diagnosis | [reference/commands/minimize.md](reference/commands/minimize.md) |
 | `fix [bug]` | Refine | The minimal fix: root cause, one change, verified against the repro | [reference/commands/fix.md](reference/commands/fix.md) |

@@ -29,6 +29,9 @@ Judgment review with scoring — the pass `audit`'s defect scan can't do alone. 
    honest strength, and one "bold move" — the single change that would most speed the next
    diagnosis.
 
+For an auditable verdict on the open/fixed bugs themselves, record it with the decision
+daemon (`reference/commands/bug-review.md`): close / flag / n-a per bug, the closure gaps in red.
+
 ## Rules
 
 - Review the system, not the team: a slow diagnosis is a finding about tooling and evidence,

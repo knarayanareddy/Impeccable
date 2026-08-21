@@ -42,6 +42,10 @@ one-line install.**
   `debugger;`), log-and-swallow (incl. Python windowed), swallowed exceptions, silent catch
   returns, disabled code blocks, commented-out debug lines, uncertainty markers — zero
   dependencies, no LLM, no API key
+- **Launch artifacts** — the repro-check records gate (quartet + rung + closure contract), the
+  bug-review decision daemon (close/flag/n-a with red closure gaps), environment sheets
+  (browser-javascript, python-services, distributed-systems), 39 pinned behavioral scenarios,
+  [docs](docs/bugcraft/) + [demo](demos/bugcraft/) + [case study](docs/bugcraft/case-study.md)
 
 ### shipcraft — the Impeccable of DevOps/CI-CD
 
@@ -253,27 +257,27 @@ research and the launch playbook.
 - **[Docs site](docs/)** — the suite home and the per-skill guides: [criterion](docs/criterion/),
   [codecraft](docs/codecraft/), [apicraft](docs/apicraft/), [dbcraft](docs/dbcraft/),
   [testcraft](docs/testcraft/), [perfcraft](docs/perfcraft/), [seccraft](docs/seccraft/),
-  [obscraft](docs/obscraft/), [shipcraft](docs/shipcraft/) (bugcraft's page lands with its launch pass)
+  [obscraft](docs/obscraft/), [shipcraft](docs/shipcraft/), [bugcraft](docs/bugcraft/)
 - **[Demos](demos/)** — generic-AI before/after per facet with a runner that shows the checker
   rejecting the before and passing the after:
   `node demos/criterion/run-demo.mjs` · `node demos/codecraft/run-demo.mjs` ·
   `node demos/apicraft/run-demo.mjs` · `node demos/dbcraft/run-demo.mjs` ·
   `node demos/testcraft/run-demo.mjs` · `node demos/perfcraft/run-demo.mjs` ·
   `node demos/seccraft/run-demo.mjs` · `node demos/obscraft/run-demo.mjs` ·
-  `node demos/shipcraft/run-demo.mjs`
+  `node demos/shipcraft/run-demo.mjs` · `node demos/bugcraft/run-demo.mjs`
 - **[Case studies](docs/)** — [criterion](docs/criterion/case-study.md) ·
   [codecraft](docs/codecraft/case-study.md) · [apicraft](docs/apicraft/case-study.md) ·
   [dbcraft](docs/dbcraft/case-study.md) · [testcraft](docs/testcraft/case-study.md) ·
   [perfcraft](docs/perfcraft/case-study.md) · [seccraft](docs/seccraft/case-study.md) ·
-  [obscraft](docs/obscraft/case-study.md) · [shipcraft](docs/shipcraft/case-study.md) —
-  each measured both directions
+  [obscraft](docs/obscraft/case-study.md) · [shipcraft](docs/shipcraft/case-study.md) ·
+  [bugcraft](docs/bugcraft/case-study.md) — each measured both directions
 - **Browser extension** — [skill/criterion/extension/](skill/criterion/extension/): runs the
   detector against any live page (Chrome/Edge/Brave, Load unpacked)
 - **Hook manager** — `node skill/codecraft/scripts/hooks.mjs on --apply`: wires the checker
   into the harness's PostToolUse hook
 - **Live daemons** — `node skill/criterion/scripts/live.mjs` (visual variants) ·
   `node skill/codecraft/scripts/live.mjs` (refactor variants)
-- **Behavioral evals** — `node scripts/run-evals.mjs`: 257 pinned scenarios across nine
+- **Behavioral evals** — `node scripts/run-evals.mjs`: 302 pinned scenarios across ten
   harnesses (checkers, gates, daemon protocols, port-collision behavior)
 
 ## License

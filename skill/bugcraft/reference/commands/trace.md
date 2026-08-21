@@ -7,7 +7,8 @@ detective pass — traces, logs, and correlation IDs are the trail. No code edit
 
 1. Anchor on one failing request (from the error report/logs) and pull its full story: the
    trace, the log lines with its correlation ID, the metrics around its window
-   (`obscraft`'s traces/logs domains are the authority).
+   (`obscraft`'s traces/logs domains are the authority; for the cross-service playbook, load
+   `reference/environments/distributed-systems.md`).
 2. Walk the journey hop by hop and find the boundary where truth diverges: inputs in → outputs
    out, at each service/database/queue crossing. The divergence is the cause candidate
    (`domains/bisection.md`'s boundary splitting).
