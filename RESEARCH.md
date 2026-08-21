@@ -102,7 +102,7 @@ skill-name/            # folder name == frontmatter `name`
 | nextlevelbuilder/**ui-ux-pro-max-skill** (renamed from `ui-ux-pro-max`) | **119.3k** (Aug 21, 2026) | BM25 search engine over 144 curated CSVs (192 reasoning profiles, 84 styles, 22 stacks) + DS generator + 7-skill bundle + npm CLI for 12+ harnesses | Breadth; data QA chain (153 unit tests, relevance evals), 0-result honesty contract, bilingual README | Checklist-without-teeth: no deterministic gate over the delivered UI; metadata drift between surfaces |
 | oso95/**scroll-world** | ~7.2k | Scroll-driven 3D brand worlds | Novelty | Narrow; experiential marketing only |
 
-**Deep dive (2026-08-21):** see [RESEARCH/ui-ux-pro-max-deep-dive.md](ui-ux-pro-max-deep-dive.md) —
+**Deep dive (2026-08-21):** see [RESEARCH/ui-ux-pro-max-deep-dive.md](RESEARCH/ui-ux-pro-max-deep-dive.md) —
 end-to-end hands-on analysis of why UI/UX Pro Max overtook Impeccable (119.3k★ vs 61.4k★) and the
 head-to-head verdict.
 
